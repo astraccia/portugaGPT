@@ -98,10 +98,26 @@ if (sendButton && userInput) {
   });
 }
 
+/** Menu label → GLB animation name (0.5s crossfade). */
+const MENU_TO_ANIMATION = {
+  "Proudest work?": "Backflip_Jump",
+  "Who's Portuga?": "Casual_Walk",
+  "Proudest work (trampo home)": "Idle_3",
+  "Any awards?": "Casual_Walk",
+  "Brands you touched?": "happy_jump_male",
+  "Where are you now?": "Victory_Cheer",
+  "Sneakers count?": "You_Groove",
+  "Why Portuga?": "Big_Wave_Hello",
+  "Let's get a coffee?": "Walking"
+};
+
 const bottomMenuItems = document.querySelectorAll('.bottom-menu-item');
 bottomMenuItems.forEach((item) => {
   item.addEventListener('click', () => {
-    trackQuickBtn(item.textContent.trim());
+    const text = item.textContent.trim();
+    trackQuickBtn(text);
+    const animation = MENU_TO_ANIMATION[text];
+    if (animation && threeViewer) threeViewer.playAnimation(animation);
     sendQuestionToChat(item.textContent, 'button');
   });
 });
@@ -111,6 +127,8 @@ leftMenuItems.forEach((item) => {
   item.addEventListener('click', () => {
     const text = item.textContent.trim();
     trackQuickBtn(text);
+    const animation = MENU_TO_ANIMATION[text];
+    if (animation && threeViewer) threeViewer.playAnimation(animation);
     if (userInput) userInput.value = text;
     if (sendButton) sendButton.click();
   });

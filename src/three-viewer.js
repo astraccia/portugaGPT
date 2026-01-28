@@ -15,6 +15,7 @@ export class ThreeViewer {
     this.model = null;
     this.mixer = null;
     this.animationAction = null;
+    this.animationClips = [];
     this.clock = new THREE.Clock(true);
     this.isModelLoaded = false;
     this.errorMessage = null;
@@ -206,6 +207,7 @@ export class ThreeViewer {
       return;
     }
 
+    this.animationClips = gltf.animations;
     this.mixer = new THREE.AnimationMixer(this.model);
 
     const walkAnimation = gltf.animations.find(
@@ -223,9 +225,9 @@ export class ThreeViewer {
         action: this.animationAction
       });
     } else {
-      console.warn('Casual_Walk animation not found. Available animations:', 
+      console.warn('Casual_Walk animation not found. Available animations:',
         gltf.animations.map(a => a.name));
-      
+
       if (gltf.animations.length > 0) {
         this.animationAction = this.mixer.clipAction(gltf.animations[0]);
         this.animationAction.setLoop(THREE.LoopRepeat);
@@ -237,6 +239,27 @@ export class ThreeViewer {
         });
       }
     }
+  }
+
+  playAnimation(clipName, transitionDuration = 0.5) {
+    if (!this.mixer || !this.animationClips || this.animationClips.length === 0) return;
+
+    const clip = this.animationClips.find(
+      (c) => c.name === clipName || c.name.toLowerCase().includes(clipName.toLowerCase().replace(/_/g, ' '))
+    );
+    if (!clip) {
+      console.warn(`Animation "${clipName}" not found. Available:`, this.animationClips.map((c) => c.name));
+      return;
+    }
+
+    const newAction = this.mixer.clipAction(clip);
+    newAction.setLoop(THREE.LoopRepeat);
+
+    if (this.animationAction) {
+      this.animationAction.fadeOut(transitionDuration);
+    }
+    newAction.reset().fadeIn(transitionDuration).play();
+    this.animationAction = newAction;
   }
 
   showError(message) {
