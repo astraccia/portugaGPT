@@ -101,7 +101,7 @@ body {
 }
 
 .ola-text {
-  font-size: 24px;
+  font-size: 34px;
   color: #000000;
   font-family: 'Selfie Printed', cursive, 'Roboto', sans-serif;
   font-weight: normal;
@@ -381,12 +381,19 @@ body {
   gap: 6px;
   font-size: 12px;
   color: #AAAAAA;
-  margin-top: -10px;
+  margin-top: -15px;
+  margin-left: 25px;
   font-family: 'Roboto', sans-serif;
 }
 
+.powered-by img {
+  width: 18px;
+  object-fit: contain;
+}
+
 .powered-by span:first-child {
-  font-size: 14px;
+  font-size: 12px;
+  font-weight: 700;
 }
 
 .bottom-menu {

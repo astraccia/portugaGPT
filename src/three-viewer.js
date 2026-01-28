@@ -111,7 +111,7 @@ export class ThreeViewer {
 
   loadModel() {
     const loader = new GLTFLoader();
-    const modelPath = '/models/character.glb';
+    const modelPath = import.meta.env.BASE_URL + 'models/character.glb';
 
     loader.load(
       modelPath,

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portuga WebApp</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <!-- Fonts are loaded locally from /public/fonts/ via CSS @font-face -->
+  <script type="module" crossorigin src="./assets/index-BR1_28_6.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-D7U_8Bfw.css">
+</head>
+<body>
+
+  <!-- Top Header -->
+  <header class="top-header">
+    <div class="header-left">
+      <div class="ola-section">
+        <span class="ola-text">Olá,</span>
+        <input type="text" class="name-input" placeholder="type your name" />
+      </div>
+      <h1 class="portuga-heading">
+        <span class="im-text">I'm</span>
+        <span class="daniel-text">Daniel</span>
+        <span class="portuga-text">Portuga</span>
+      </h1>
+    </div>
+    <div class="header-right">
+      <nav class="header-nav">
+        <span class="contact-phone">+1 347 820 0044</span>
+        <span class="contact-email">SMILE@DANIELPORTUGA.COM</span>
+        <a href="#" class="nav-link">AWARDS</a>
+        <a href="#" class="nav-link">RESUME</a>
+        <a href="#" class="nav-link">LINKEDIN</a>
+      </nav>
+      <button class="speaker-icon" aria-label="Speaker"></button>
+    </div>
+  </header>
+
+  <!-- Main Content Area (3-Column Grid) -->
+  <main class="main-content" id="main-container">
+    <!-- Left Column: Menu -->
+    <aside class="left-menu">
+      <h2 class="menu-heading">???</h2>
+      <ul class="menu-list">
+        <li class="menu-item">Who's Portuga?</li>
+        <li class="menu-item">Proudest work?</li>
+        <li class="menu-item">Any awards?</li>
+        <li class="menu-item">Brands you touched?</li>
+        <li class="menu-item">Where are you now?</li>
+        <li class="menu-item">Sneakers count?</li>
+        <li class="menu-item">Why Portuga?</li>
+        <li class="menu-item">Let's get a coffee?</li>
+      </ul>
+    </aside>
+
+    <!-- Center Column: Canvas + Large Background Text -->
+    <section class="center-display">
+      <div class="background-text"></div>
+    </section>
+
+    <!-- Right Column: Chat Panel -->
+    <aside class="right-chat-panel">
+      <div class="chat-output-box" id="answer-box">
+        <div class="status-indicator"></div>
+        <textarea class="answer-content" readonly placeholder="PortugaGPT answer will appear here..."></textarea>
+      </div>
+      <div class="input-pill-container">
+        <input 
+          type="text" 
+          class="input-pill" 
+          id="user-input" 
+          placeholder="Ask me anything ..."
+        />
+        <button class="send-button" id="send-button" aria-label="Send">
+          <img src="images/send-button.png" alt="Send" class="send-button-img" />
+        </button>
+      </div>
+      <div class="powered-by">
+        <span>Powered by PortugaGPT - BETA</span>
+        <span><img src="images/icon_i.jpg" alt="Info" class="info-icon" /></span>
+      </div>
+    </aside>
+  </main>
+
+  <!-- Bottom Fixed Menu -->
+  <footer class="bottom-menu">
+    <nav class="bottom-menu-nav">
+      <ul class="bottom-menu-list">
+        <li class="bottom-menu-item">Who's Portuga?</li>
+        <li class="bottom-menu-item">Proudest work?</li>
+        <li class="bottom-menu-item">Any awards?</li>
+        <li class="bottom-menu-item">Brands you touched?</li>
+        <li class="bottom-menu-item">Where are you now?</li>
+        <li class="bottom-menu-item">Sneakers count?</li>
+        <li class="bottom-menu-item">Why Portuga?</li>
+        <li class="bottom-menu-item">Let's get a coffee?</li>
+      </ul>
+    </nav>
+  </footer>
+
+  <!-- Three.js Canvas - Full Page Overlay -->
+  <canvas id="three-canvas"></canvas>
+
+</body>
+</html>

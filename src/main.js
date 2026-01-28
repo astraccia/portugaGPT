@@ -109,8 +109,10 @@ bottomMenuItems.forEach((item) => {
 const leftMenuItems = document.querySelectorAll('.menu-item');
 leftMenuItems.forEach((item) => {
   item.addEventListener('click', () => {
-    trackQuickBtn(item.textContent.trim());
-    sendQuestionToChat(item.textContent, 'button');
+    const text = item.textContent.trim();
+    trackQuickBtn(text);
+    if (userInput) userInput.value = text;
+    if (sendButton) sendButton.click();
   });
 });
 
@@ -135,7 +137,7 @@ let savedVolumes = new Map();
 
 if (speakerButton) {
   try {
-    audio = new Audio('/sound/whistler_walking.mp3');
+    audio = new Audio(import.meta.env.BASE_URL + 'sound/whistler_walking.mp3');
     audio.loop = true;
     audio.volume = 0.5;
     savedVolumes.set(audio, 0.5);
