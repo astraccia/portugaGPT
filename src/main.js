@@ -122,6 +122,14 @@ bottomMenuItems.forEach((item) => {
   });
 });
 
+const leftMenu = document.querySelector('.left-menu');
+const menuHeading = document.querySelector('.menu-heading');
+if (leftMenu && menuHeading) {
+  menuHeading.addEventListener('click', () => {
+    leftMenu.classList.toggle('menu-open');
+  });
+}
+
 const leftMenuItems = document.querySelectorAll('.menu-item');
 leftMenuItems.forEach((item) => {
   item.addEventListener('click', () => {
