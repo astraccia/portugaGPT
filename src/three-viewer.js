@@ -218,35 +218,47 @@ export class ThreeViewer {
     this.animationClips = gltf.animations;
     this.mixer = new THREE.AnimationMixer(this.model);
 
-    const walkAnimation = gltf.animations.find(
-      (anim) => anim.name === 'Casual_Walk' || anim.name.toLowerCase().includes('walk')
-    );
+    // Resolve by name first, then by index (in case GLB order differs)
+    const ironmanClip = gltf.animations.find((a) => a.name.toLowerCase() === 'ironman') || gltf.animations[12];
+    const walkClip = gltf.animations.find((a) => a.name.toLowerCase() === 'walk') || gltf.animations[8];
 
-    if (walkAnimation) {
-      this.animationAction = this.mixer.clipAction(walkAnimation);
-      this.animationAction.setLoop(THREE.LoopRepeat);
-      this.animationAction.play();
-      this.animationAction.paused = false;
-      console.log('Casual_Walk animation started', {
-        name: walkAnimation.name,
-        duration: walkAnimation.duration,
-        action: this.animationAction
-      });
-    } else {
-      console.warn('Casual_Walk animation not found. Available animations:',
-        gltf.animations.map(a => a.name));
-
+    if (!ironmanClip || !walkClip) {
+      console.warn('ironman or walk clip missing. Count:', gltf.animations.length, 'Clips:', gltf.animations.map((a, i) => `${i}. ${a.name}`));
       if (gltf.animations.length > 0) {
         this.animationAction = this.mixer.clipAction(gltf.animations[0]);
         this.animationAction.setLoop(THREE.LoopRepeat);
         this.animationAction.play();
         this.animationAction.paused = false;
-        console.log(`Playing first available animation: ${gltf.animations[0].name}`, {
-          duration: gltf.animations[0].duration,
-          action: this.animationAction
-        });
       }
+      return;
     }
+
+    // Start with ironman (play once)
+    const ironmanAction = this.mixer.clipAction(ironmanClip);
+    ironmanAction.setLoop(THREE.LoopOnce);
+    ironmanAction.clampWhenFinished = true;
+    ironmanAction.setEffectiveWeight(1);
+    ironmanAction.enabled = true;
+    ironmanAction.reset().play();
+    this.animationAction = ironmanAction;
+
+    const transitionToWalk = () => {
+      if (this.animationAction !== ironmanAction) return;
+      this.mixer.removeEventListener('finished', transitionToWalk);
+      const walkAction = this.mixer.clipAction(walkClip);
+      walkAction.setLoop(THREE.LoopRepeat);
+      ironmanAction.fadeOut(0.5);
+      walkAction.reset().fadeIn(0.5).play();
+      this.animationAction = walkAction;
+      console.log('Switched to walk (loop)');
+    };
+
+    this.mixer.addEventListener('finished', transitionToWalk);
+    console.log('Started ironman, will transition to walk on finish', {
+      ironman: ironmanClip.name,
+      ironmanDuration: ironmanClip.duration,
+      walk: walkClip.name
+    });
   }
 
   playAnimation(clipName, transitionDuration = 0.5) {

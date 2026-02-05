@@ -98,17 +98,20 @@ if (sendButton && userInput) {
   });
 }
 
-/** Menu label → GLB animation name (0.5s crossfade). */
+/** Menu / context label → Animation Mixer clip name (exact names from GLB). */
 const MENU_TO_ANIMATION = {
-  "Proudest work?": "Backflip_Jump",
-  "Who's Portuga?": "Casual_Walk",
-  "Proudest work (trampo home)": "Idle_3",
-  "Any awards?": "Casual_Walk",
-  "Brands you touched?": "happy_jump_male",
-  "Where are you now?": "Victory_Cheer",
-  "Sneakers count?": "You_Groove",
-  "Why Portuga?": "Big_Wave_Hello",
-  "Let's get a coffee?": "Walking"
+  "Home Enter": "ironman",
+  "Home (default)": "walk",
+  "Transition HOME to WORK": "backflip",
+  "Who's Portuga?": "spining",
+  "Proudest work (trampo home)": "idle",
+  "Proudest work?": "idle",
+  "Any awards?": "dance01",
+  "Brands you touched?": "hifive",
+  "Where are you now?": "hi",
+  "Sneaker count?": "dance02",
+  "Why Portuga?": "yes",
+  "Let's get a coffee?": "celphonewalk"
 };
 
 const bottomMenuItems = document.querySelectorAll('.bottom-menu-item');
