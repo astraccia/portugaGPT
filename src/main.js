@@ -100,18 +100,16 @@ if (sendButton && userInput) {
 
 /** Menu / context label → Animation Mixer clip name (exact names from GLB). */
 const MENU_TO_ANIMATION = {
-  "Home Enter": "ironman",
   "Home (default)": "walk",
   "Transition HOME to WORK": "backflip",
   "Who's Portuga?": "spining",
-  "Proudest work (trampo home)": "idle",
   "Proudest work?": "idle",
   "Any awards?": "dance01",
   "Brands you touched?": "hifive",
   "Where are you now?": "hi",
   "Sneaker count?": "dance02",
   "Why Portuga?": "yes",
-  "Let's get a coffee?": "celphonewalk"
+  "Let's get a coffee?": "cellphonewalk"
 };
 
 const bottomMenuItems = document.querySelectorAll('.bottom-menu-item');
