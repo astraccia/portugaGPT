@@ -22,11 +22,12 @@ export class ThreeViewer {
     this.errorMessage = null;
     this.shadowPlane = null;
     this.headBone = null;
+    this.headLookEnabled = false;
     this.mouse = new THREE.Vector2();
     this.mouseTarget = new THREE.Vector3();
     this.smoothedMouseTarget = new THREE.Vector3();
-    this.headLookLerpFactor = 0.08;
-    this.headRotationLerpFactor = 0.12;
+    this.headLookLerpFactor = 0.04;
+    this.headRotationLerpFactor = 0.06;
     this.smoothedHeadWorldQuat = new THREE.Quaternion();
     this.headRotationInitialized = false;
     this._headLookHelper = new THREE.Object3D();
@@ -247,7 +248,7 @@ export class ThreeViewer {
     this.animationClips = gltf.animations;
     this.mixer = new THREE.AnimationMixer(this.model);
 
-    // Resolve by name first, then by index (in case GLB order differs)
+
     const ironmanClip = gltf.animations.find((a) => a.name.toLowerCase() === 'ironman') || gltf.animations[12];
     const walkClip = gltf.animations.find((a) => a.name.toLowerCase() === 'walk') || gltf.animations[8];
 
@@ -262,7 +263,7 @@ export class ThreeViewer {
       return;
     }
 
-    // Start with ironman (play once)
+
     const ironmanAction = this.mixer.clipAction(ironmanClip);
     ironmanAction.setLoop(THREE.LoopOnce);
     ironmanAction.clampWhenFinished = true;
@@ -279,7 +280,8 @@ export class ThreeViewer {
       ironmanAction.fadeOut(0.5);
       walkAction.reset().fadeIn(0.5).play();
       this.animationAction = walkAction;
-      console.log('Switched to walk (loop)');
+      this.headLookEnabled = true;
+      console.log('Switched to walk (loop), head look enabled');
     };
 
     this.mixer.addEventListener('finished', transitionToWalk);
@@ -369,7 +371,7 @@ export class ThreeViewer {
     if (this.mixer) {
       this.mixer.update(delta);
     }
-    if (this.headBone && this.smoothedMouseTarget) {
+    if (this.headLookEnabled && this.headBone && this.smoothedMouseTarget) {
       const head = this.headBone;
       const helper = this._headLookHelper;
       const desiredQuat = helper.quaternion;

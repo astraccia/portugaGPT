@@ -98,7 +98,7 @@ if (sendButton && userInput) {
   });
 }
 
-/** Menu / context label → Animation Mixer clip name (exact names from GLB). */
+
 const MENU_TO_ANIMATION = {
   "Home (default)": "walk",
   "Transition HOME to WORK": "backflip",
