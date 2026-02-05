@@ -130,6 +130,7 @@ export class ThreeViewer {
         
         this.model.traverse((child) => {
           if (child.isMesh) {
+            child.frustumCulled = false;
             child.castShadow = true;
             child.receiveShadow = true;
           }
