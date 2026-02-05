@@ -21,6 +21,11 @@ export class ThreeViewer {
     this.isModelLoaded = false;
     this.errorMessage = null;
     this.shadowPlane = null;
+    this.headBone = null;
+    this.mouse = new THREE.Vector2();
+    this.mouseTarget = new THREE.Vector3();
+    this.planeZ = new THREE.Plane(new THREE.Vector3(0, 0, -1), -5);
+    this.raycaster = new THREE.Raycaster();
 
     this.init();
   }
@@ -54,6 +59,7 @@ export class ThreeViewer {
       this.setupShadowPlane();
       this.setupLighting();
       this.setupResizeHandler();
+      this.setupMouseTracking();
       this.loadModel();
       this.animate();
     } catch (error) {
@@ -111,6 +117,19 @@ export class ThreeViewer {
     window.addEventListener('resize', handleResize);
   }
 
+  setupMouseTracking() {
+    window.addEventListener('mousemove', (e) => {
+      this.mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+      this.mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+    });
+  }
+
+  updateMouseTarget() {
+    if (!this.camera) return;
+    this.raycaster.setFromCamera(this.mouse, this.camera);
+    this.raycaster.ray.intersectPlane(this.planeZ, this.mouseTarget);
+  }
+
   loadModel() {
     const dracoLoader = new DRACOLoader();
     dracoLoader.setDecoderPath(
@@ -133,6 +152,9 @@ export class ThreeViewer {
             child.frustumCulled = false;
             child.castShadow = true;
             child.receiveShadow = true;
+          }
+          if (child.name === 'Head') {
+            this.headBone = child;
           }
         });
         
@@ -335,8 +357,13 @@ export class ThreeViewer {
 
     const delta = this.clock.getDelta();
     
+    this.updateMouseTarget();
+    
     if (this.mixer) {
       this.mixer.update(delta);
+    }
+    if (this.headBone && this.mouseTarget) {
+      this.headBone.lookAt(this.mouseTarget);
     }
 
     this.renderer.render(this.scene, this.camera);
