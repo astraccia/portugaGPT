@@ -126,7 +126,7 @@ export class ThreeViewer {
 
   updateMouseTarget() {
     if (!this.camera) return;
-    this.raycaster.setFromCamera(this.mouse, this.camera);
+    this.raycaster.setFromCamera(new THREE.Vector2(-this.mouse.x, -this.mouse.y), this.camera);
     this.raycaster.ray.intersectPlane(this.planeZ, this.mouseTarget);
   }
 
@@ -161,8 +161,6 @@ export class ThreeViewer {
         this.scene.add(this.model);
         this.model.position.set(1.5, 0, 0);
 
-        // this.centerAndNormalizeModel();
-        // this.frameModel();
         this.pointCameraAtModel();
         this.setupAnimations(gltf);
 
