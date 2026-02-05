@@ -24,6 +24,14 @@ export class ThreeViewer {
     this.headBone = null;
     this.mouse = new THREE.Vector2();
     this.mouseTarget = new THREE.Vector3();
+    this.smoothedMouseTarget = new THREE.Vector3();
+    this.headLookLerpFactor = 0.08;
+    this.headRotationLerpFactor = 0.12;
+    this.smoothedHeadWorldQuat = new THREE.Quaternion();
+    this.headRotationInitialized = false;
+    this._headLookHelper = new THREE.Object3D();
+    this._headWorldPos = new THREE.Vector3();
+    this._parentWorldQuat = new THREE.Quaternion();
     this.planeZ = new THREE.Plane(new THREE.Vector3(0, 0, -1), -5);
     this.raycaster = new THREE.Raycaster();
 
@@ -356,13 +364,30 @@ export class ThreeViewer {
     const delta = this.clock.getDelta();
     
     this.updateMouseTarget();
-    
+    this.smoothedMouseTarget.lerp(this.mouseTarget, this.headLookLerpFactor);
+
     if (this.mixer) {
       this.mixer.update(delta);
     }
-    if (this.headBone && this.mouseTarget) {
-      this.headBone.lookAt(this.mouseTarget);
-      this.headBone.rotateY(Math.PI);
+    if (this.headBone && this.smoothedMouseTarget) {
+      const head = this.headBone;
+      const helper = this._headLookHelper;
+      const desiredQuat = helper.quaternion;
+      head.getWorldPosition(this._headWorldPos);
+      helper.position.copy(this._headWorldPos);
+      helper.lookAt(this.smoothedMouseTarget);
+      helper.rotateY(Math.PI);
+      if (!this.headRotationInitialized) {
+        head.getWorldQuaternion(this.smoothedHeadWorldQuat);
+        this.headRotationInitialized = true;
+      }
+      this.smoothedHeadWorldQuat.slerp(desiredQuat, this.headRotationLerpFactor);
+      if (head.parent) {
+        head.parent.getWorldQuaternion(this._parentWorldQuat);
+        head.quaternion.copy(this.smoothedHeadWorldQuat).premultiply(this._parentWorldQuat.clone().invert());
+      } else {
+        head.quaternion.copy(this.smoothedHeadWorldQuat);
+      }
     }
 
     this.renderer.render(this.scene, this.camera);
