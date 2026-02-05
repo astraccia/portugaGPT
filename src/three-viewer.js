@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 
 export class ThreeViewer {
   constructor(canvasId) {
@@ -111,7 +112,14 @@ export class ThreeViewer {
   }
 
   loadModel() {
+    const dracoLoader = new DRACOLoader();
+    dracoLoader.setDecoderPath(
+      import.meta.env.BASE_URL + 'draco/'
+    );
+
     const loader = new GLTFLoader();
+    loader.setDRACOLoader(dracoLoader);
+
     const modelPath = import.meta.env.BASE_URL + 'models/character.glb';
 
     loader.load(
