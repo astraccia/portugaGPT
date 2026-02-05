@@ -364,6 +364,7 @@ export class ThreeViewer {
     }
     if (this.headBone && this.mouseTarget) {
       this.headBone.lookAt(this.mouseTarget);
+      this.headBone.rotateY(Math.PI);
     }
 
     this.renderer.render(this.scene, this.camera);
