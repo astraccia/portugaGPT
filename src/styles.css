@@ -428,6 +428,7 @@ body {
   z-index: 100;
   padding: 0px 0px;
   height: auto;
+  background-color: #fff;
 }
 
 .bottom-menu-nav {
@@ -447,7 +448,8 @@ body {
 }
 
 .bottom-menu-item {
-  font-size: 13px;
+  font-size: clamp(11px, 1.15vw, 20px);
+  letter-spacing: 0;
   color: #333333;
   text-transform: uppercase;
   cursor: pointer;
