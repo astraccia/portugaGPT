@@ -32,6 +32,8 @@ export class ThreeViewer {
     this.headRotationInitialized = false;
     this._headLookHelper = new THREE.Object3D();
     this._headWorldPos = new THREE.Vector3();
+    this._headLookAtPoint = new THREE.Vector3();
+    this.headLookYFactor = 0.25;
     this._parentWorldQuat = new THREE.Quaternion();
     this.planeZ = new THREE.Plane(new THREE.Vector3(0, 0, -1), -5);
     this.raycaster = new THREE.Raycaster();
@@ -337,8 +339,13 @@ export class ThreeViewer {
       const helper = this._headLookHelper;
       const desiredQuat = helper.quaternion;
       head.getWorldPosition(this._headWorldPos);
+      this._headLookAtPoint.set(
+        this.smoothedMouseTarget.x,
+        this._headWorldPos.y + (this.smoothedMouseTarget.y - this._headWorldPos.y) * this.headLookYFactor,
+        this.smoothedMouseTarget.z
+      );
       helper.position.copy(this._headWorldPos);
-      helper.lookAt(this.smoothedMouseTarget);
+      helper.lookAt(this._headLookAtPoint);
       helper.rotateY(Math.PI);
       if (!this.headRotationInitialized) {
         head.getWorldQuaternion(this.smoothedHeadWorldQuat);
