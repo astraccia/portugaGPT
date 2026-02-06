@@ -34,10 +34,21 @@ const sendButton = document.getElementById('send-button');
 const userInput = document.getElementById('user-input');
 const nameInputEl = document.querySelector('.name-input');
 
+function growAnswerContent() {
+  if (!answerContent) return;
+  answerContent.style.height = 'auto';
+  answerContent.style.height = Math.min(answerContent.scrollHeight, 360) + 'px';
+}
+
+if (answerContent) {
+  window.addEventListener('resize', growAnswerContent);
+}
+
 function setAnswer(text, isError = false) {
   if (answerContent) {
     answerContent.value = text || '';
     answerContent.classList.toggle('answer-error', isError);
+    growAnswerContent();
   }
 }
 

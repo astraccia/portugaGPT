@@ -301,9 +301,12 @@ body {
   max-height: 400px;
   overflow-y: auto;
   display: flex;
+  flex-direction: row;
   gap: 12px;
   flex: 1;
   min-height: 200px;
+  justify-content: flex-end;
+  align-items: flex-end;
 }
 
 .status-indicator {
@@ -320,6 +323,9 @@ body {
 
 .answer-content {
   flex: 1;
+  min-height: 1.2em;
+  max-height: 360px;
+  overflow-y: auto;
   background-color: transparent;
   border: none;
   outline: none;
@@ -329,6 +335,7 @@ body {
   resize: none;
   padding: 0;
   margin: 0;
+  display: block;
 }
 
 .answer-content::placeholder {
@@ -428,7 +435,6 @@ body {
   z-index: 100;
   padding: 0px 0px;
   height: auto;
-  background-color: #fff;
 }
 
 .bottom-menu-nav {
@@ -449,7 +455,6 @@ body {
 
 .bottom-menu-item {
   font-size: clamp(11px, 1.15vw, 20px);
-  letter-spacing: 0;
   color: #333333;
   text-transform: uppercase;
   cursor: pointer;
