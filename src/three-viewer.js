@@ -48,7 +48,7 @@ export class ThreeViewer {
       const height = window.innerHeight;
       const aspect = width / height;
       this.camera = new THREE.PerspectiveCamera(50, aspect, 0.1, 1000);
-      this.camera.position.set(1.5, 1.7, 2.5);
+      this.camera.position.set(0, 1.7, 2.5);
 
       this.renderer = new THREE.WebGLRenderer({
         canvas: this.canvas,
@@ -79,7 +79,7 @@ export class ThreeViewer {
 
   setupShadowPlane() {
     const planeGeometry = new THREE.PlaneGeometry(20, 20);
-    const planeMaterial = new THREE.ShadowMaterial({ opacity: 0.3 });
+    const planeMaterial = new THREE.ShadowMaterial({ opacity: 0.1 });
     this.shadowPlane = new THREE.Mesh(planeGeometry, planeMaterial);
     this.shadowPlane.rotation.x = -Math.PI / 2;
     this.shadowPlane.position.y = 0;
@@ -92,7 +92,7 @@ export class ThreeViewer {
     this.scene.add(ambientLight);
 
     const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-    directionalLight.position.set(5, 10, 5);
+    directionalLight.position.set(2.5, 10, 5);
     directionalLight.castShadow = true;
     directionalLight.shadow.mapSize.width = 2048;
     directionalLight.shadow.mapSize.height = 2048;
@@ -168,7 +168,7 @@ export class ThreeViewer {
         });
         
         this.scene.add(this.model);
-        this.model.position.set(1.5, 0, 0);
+        this.model.position.set(0, 0, 0);
 
         this.pointCameraAtModel();
         this.setupAnimations(gltf);
@@ -187,57 +187,18 @@ export class ThreeViewer {
     );
   }
 
-  centerAndNormalizeModel() {
-    if (!this.model) return;
-
-    const box = new THREE.Box3().setFromObject(this.model);
-    const center = box.getCenter(new THREE.Vector3());
-    const size = box.getSize(new THREE.Vector3());
-
-    const maxDim = Math.max(size.x, size.y, size.z);
-    const scale = 1.5 / maxDim;
-
-    this.model.position.x = -center.x;
-    this.model.position.y = -center.y;
-    this.model.position.z = -center.z;
-
-    this.model.scale.multiplyScalar(scale);
-
-    console.log('Model centered and normalized:', {
-      originalCenter: center,
-      originalSize: size,
-      scale: scale
-    });
-  }
+  
 
   pointCameraAtModel() {
     if (!this.model || !this.camera) return;
 
     const box = new THREE.Box3().setFromObject(this.model);
-    const center = box.getCenter(new THREE.Vector3()).add(new THREE.Vector3(0.5, 0.4, 0));
+    const center = box.getCenter(new THREE.Vector3()).add(new THREE.Vector3(0, 0.4, 0));
     
     this.camera.lookAt(center);
     
   }
 
-  frameModel() {
-    if (!this.model || !this.camera) return;
-
-    const box = new THREE.Box3().setFromObject(this.model);
-    const size = box.getSize(new THREE.Vector3());
-    const center = box.getCenter(new THREE.Vector3());
-
-    const fov = this.camera.fov * (Math.PI / 180);
-    const distance = Math.max(size.x, size.y, size.z) / (2 * Math.tan(fov / 2));
-    
-    this.camera.position.set(0, center.y + size.y * 0.3, distance * 1.2);
-    this.camera.lookAt(center);
-
-    console.log('Camera framed for model:', {
-      cameraPosition: this.camera.position,
-      lookAt: center
-    });
-  }
 
   setupAnimations(gltf) {
     if (!gltf.animations || gltf.animations.length === 0) {

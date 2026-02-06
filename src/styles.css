@@ -193,22 +193,24 @@ body {
 }
 
 .main-content {
-  display: grid;
-  grid-template-columns: minmax(180px, 0.25fr) 0.67fr minmax(250px, 0.73fr);
+  display: flex;
   gap: 0;
-  padding: 30px 100px 0 80px;
+  padding: 30px 0px 0 0px;
   padding-bottom: 100px;
   position: relative;
   background-image: url('/images/smiles.png');
   background-size: 50%;
   background-repeat: no-repeat;
   background-position: 30% 20%;
+  width: 100%;
 }
 
 .left-menu {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  width: 33vw;
+  padding-left: 80px;
 }
 
 .menu-heading {
@@ -258,8 +260,8 @@ body {
   align-items: center;
   justify-content: center;
   border-radius: 0;
-  min-height: 500px;
   overflow: hidden;
+  width: 33vw;
 }
 
 #three-canvas {
@@ -280,6 +282,7 @@ body {
   gap: 25px;
   padding-left: 20px;
   font-family: 'Roboto', sans-serif;
+  width: 33vw;
 }
 
 .chat-output-box {
@@ -506,7 +509,7 @@ body {
 
   .center-display {
     order: 2;
-    min-height: 300px;
+    width: 33vw;
   }
 
   #three-canvas {
