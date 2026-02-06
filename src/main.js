@@ -6,16 +6,7 @@ document.fonts.ready.then(() => {
   const selfiePrinted = document.fonts.check('14px "Selfie Printed"');
   const cooperBlack = document.fonts.check('48px "CooperBlack"');
   
-  console.log('Font loading status:');
-  console.log('- Selfie Printed:', selfiePrinted ? '✓ Loaded from local files' : '✗ Not loaded (using fallback)');
-  console.log('- CooperBlack:', cooperBlack ? '✓ Loaded from local files' : '✗ Not loaded (using fallback)');
   
-  if (!selfiePrinted) {
-    console.warn('Selfie Printed font not detected. Check /public/fonts/selfie_light-webfont files.');
-  }
-  if (!cooperBlack) {
-    console.warn('CooperBlack font not detected. Check /public/fonts/CooperBlackStd files.');
-  }
 });
 
 let threeViewer = null;
