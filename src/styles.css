@@ -225,6 +225,12 @@ body {
   user-select: none;
 }
 
+.menu-heading:hover {
+  color: #ff005a;
+  text-decoration: underline;
+  font-weight: bold;
+}
+
 .menu-list {
   list-style: none;
   display: flex;
@@ -251,9 +257,12 @@ body {
   font-weight: 400;
 }
 
-.menu-item:hover {
+.menu-item:hover,
+.menu-item:active,
+.menu-item.active {
   color: #ff005a;
-  text-decoration: underline !important	;
+  text-decoration: underline !important;
+  font-weight: bold;
 }
 
 .center-display {
@@ -452,8 +461,10 @@ body {
   transition: 0.2s;
 }
 
-.bottom-menu-item:hover {
+.bottom-menu-item:hover,
+.bottom-menu-item.active {
   color: #ff005a;
+  font-weight: bold;
 }
 
 .bottom-menu-nav::-webkit-scrollbar {

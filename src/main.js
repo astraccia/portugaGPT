@@ -103,10 +103,19 @@ const MENU_TO_ANIMATION = {
   "Let's get a coffee?": "cellphonewalk"
 };
 
+function setActiveMenuByText(text) {
+  const allItems = document.querySelectorAll('.menu-item, .bottom-menu-item');
+  allItems.forEach((el) => el.classList.remove('active'));
+  allItems.forEach((el) => {
+    if (el.textContent.trim() === text) el.classList.add('active');
+  });
+}
+
 const bottomMenuItems = document.querySelectorAll('.bottom-menu-item');
 bottomMenuItems.forEach((item) => {
   item.addEventListener('click', () => {
     const text = item.textContent.trim();
+    setActiveMenuByText(text);
     trackQuickBtn(text);
     const animation = MENU_TO_ANIMATION[text];
     if (animation && threeViewer) threeViewer.playAnimation(animation);
@@ -126,6 +135,7 @@ const leftMenuItems = document.querySelectorAll('.menu-item');
 leftMenuItems.forEach((item) => {
   item.addEventListener('click', () => {
     const text = item.textContent.trim();
+    setActiveMenuByText(text);
     trackQuickBtn(text);
     const animation = MENU_TO_ANIMATION[text];
     if (animation && threeViewer) threeViewer.playAnimation(animation);
