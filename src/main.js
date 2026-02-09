@@ -34,6 +34,13 @@ const sendButton = document.getElementById('send-button');
 const userInput = document.getElementById('user-input');
 const nameInputEl = document.querySelector('.name-input');
 
+let userName = '';
+if (nameInputEl) {
+  nameInputEl.addEventListener('blur', () => {
+    userName = (nameInputEl.value && nameInputEl.value.trim()) || '';
+  });
+}
+
 function growAnswerContent() {
   if (!answerContent) return;
   answerContent.style.height = 'auto';
@@ -110,9 +117,27 @@ const MENU_TO_ANIMATION = {
   "Brands you touched?": "hifive",
   "Where are you now?": "hi",
   "Sneaker count?": "dance02",
+  "Sneakers count?": "dance02",
   "Why Portuga?": "yes",
   "Let's get a coffee?": "cellphonewalk"
 };
+
+const MENU_PREDEFINED_REPLIES = {
+  "Who's Portuga?": "A Brazilian creative with 25+ years of multicultural experience across Brazil, UK, Singapore, and US, grounded in ideas, art direction, innovation and business solutions, fueled by smiles and passion. I've led global brands, built cool client relationships, and grown teams that, EOD, became good friends.",
+  "Any awards?": "Yes, a few — maybe 90 so far, including #Cannes, One Show, Webby, New York Festivals, and Lürzer's Archive. I've also been a judge for the Effies, Webbys, and a few others. Tbh, <amigo>, awards were never the goal, just a natural consequence of courage, focus on solving client problems, and creative criteria.",
+  "Brands you touched?": "Roughly 130 brands, from Samsung, Stellantis, Mondelez, Citi, Abott, L'Oréal, Uniliver, Mars, Google, Asics, Sony, KPMG, Cartoon, Dow, Moët and McDonald's. But <amigo> the real joy is the human side, meeting clients, working closely, talking ideas, business, life, and occasionally a bit of nonsense.",
+  "Where are you now?": "Right now, I'm a VP, Group Creative Director at Razorfish New York. Along the way, I've worked at Sapient, RAPP, MullenLowe, Y&R, and some boutique agencies. Fun fact: my first-ever job was at the Brazilian Yellow Pages. Can you believe it <amigo>? Lol",
+  "Sneakers count?": "God <amigo>! My wife wants to kill me over my 92 pairs of sneakers. But my alibi is that my therapist says my collection is my natural way to show my never-ending willingness to explore the world. Totally makes sense.",
+  "Why Portuga?": "Because <amigo>, I care deeply about what I deliver and work hard to bring good shit to life. It's definitely not my style to overcomplicate things — it's literally tattooed on me: \"More brain, less storm.\" And, most importantly, using creativity to make brands and consumers smile together.",
+  "Let's get a coffee?": "Sure, sure, sure <amigo>! But sorry, I hate coffee. We can go for a tea or a Portuguese wine instead. Just reach me at +1 347 820 0044 or smile@danielportuga.com Sounds like a fun plan, right?"
+};
+
+function getPredefinedReply(menuText) {
+  const reply = MENU_PREDEFINED_REPLIES[menuText];
+  if (!reply) return null;
+  const name = userName || (nameInputEl && nameInputEl.value && nameInputEl.value.trim()) || '';
+  return reply.replace(/<amigo>/g, name);
+}
 
 function setActiveMenuByText(text) {
   const allItems = document.querySelectorAll('.menu-item, .bottom-menu-item');
@@ -130,7 +155,12 @@ bottomMenuItems.forEach((item) => {
     trackQuickBtn(text);
     const animation = MENU_TO_ANIMATION[text];
     if (animation && threeViewer) threeViewer.playAnimation(animation);
-    sendQuestionToChat(item.textContent, 'button');
+    const predefined = getPredefinedReply(text);
+    if (predefined != null) {
+      setAnswer(predefined, false);
+    } else {
+      sendQuestionToChat(item.textContent, 'button');
+    }
   });
 });
 
@@ -151,7 +181,12 @@ leftMenuItems.forEach((item) => {
     const animation = MENU_TO_ANIMATION[text];
     if (animation && threeViewer) threeViewer.playAnimation(animation);
     if (userInput) userInput.value = text;
-    if (sendButton) sendButton.click();
+    const predefined = getPredefinedReply(text);
+    if (predefined != null) {
+      setAnswer(predefined, false);
+    } else {
+      if (sendButton) sendButton.click();
+    }
   });
 });
 
@@ -163,11 +198,6 @@ navLinks.forEach((link) => {
   });
 });
 
-if (nameInputEl) {
-  nameInputEl.addEventListener('blur', () => {
-    console.log('Name input changed (placeholder):', nameInputEl.value);
-  });
-}
 
 const speakerButton = document.querySelector('.speaker-icon');
 let audio = null;
