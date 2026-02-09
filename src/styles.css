@@ -49,6 +49,41 @@ body {
   overflow-x: hidden;
 }
 
+#loader {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  pointer-events: none;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+
+#loader.loaded {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.bulb-loader {
+  width: 80px;
+  height: auto;
+  animation: bulb-pulse 1.2s ease-in-out infinite;
+}
+
+.bulb-loader svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+@keyframes bulb-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.85; transform: scale(1.05); }
+}
+
 .design-overlay {
   position: fixed;
   top: 0;

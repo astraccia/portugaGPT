@@ -2,11 +2,19 @@ import { ThreeViewer } from './three-viewer.js';
 
 console.log('Portuga WebApp loaded');
 
+const loaderEl = document.getElementById('loader');
+
+function showLoader() {
+  if (loaderEl) loaderEl.classList.remove('loaded');
+}
+
+function hideLoader() {
+  if (loaderEl) loaderEl.classList.add('loaded');
+}
+
 document.fonts.ready.then(() => {
   const selfiePrinted = document.fonts.check('14px "Selfie Printed"');
   const cooperBlack = document.fonts.check('48px "CooperBlack"');
-  
-  
 });
 
 let threeViewer = null;
@@ -21,7 +29,11 @@ function initThreeViewer() {
   const canvas = document.getElementById('three-canvas');
   if (canvas) {
     console.log('Initializing Three.js viewer...');
-    threeViewer = new ThreeViewer('three-canvas');
+    threeViewer = new ThreeViewer('three-canvas', {
+      onModelLoadStart: showLoader,
+      onModelLoaded: hideLoader,
+      onModelLoadError: hideLoader
+    });
   } else {
     console.error('Canvas element not found');
   }

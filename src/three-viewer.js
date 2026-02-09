@@ -3,12 +3,15 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 
 export class ThreeViewer {
-  constructor(canvasId) {
+  constructor(canvasId, options = {}) {
     this.canvas = document.getElementById(canvasId);
     if (!this.canvas) {
       console.error(`Canvas element with id "${canvasId}" not found`);
       return;
     }
+    this.onModelLoadStart = options.onModelLoadStart || (() => {});
+    this.onModelLoaded = options.onModelLoaded || (() => {});
+    this.onModelLoadError = options.onModelLoadError || (() => {});
 
     this.scene = null;
     this.camera = null;
@@ -142,6 +145,7 @@ export class ThreeViewer {
   }
 
   loadModel() {
+    this.onModelLoadStart();
     const dracoLoader = new DRACOLoader();
     dracoLoader.setDecoderPath(
       import.meta.env.BASE_URL + 'draco/'
@@ -177,6 +181,7 @@ export class ThreeViewer {
 
         this.isModelLoaded = true;
         this.hideError();
+        this.onModelLoaded();
       },
       (progress) => {
         const percent = (progress.loaded / progress.total) * 100;
@@ -185,6 +190,7 @@ export class ThreeViewer {
       (error) => {
         console.error('Error loading model:', error);
         this.showError('Model file not found. Please ensure /models/character.glb exists.');
+        this.onModelLoadError();
       }
     );
   }
