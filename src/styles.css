@@ -440,6 +440,7 @@ body {
   z-index: 100;
   padding: 0px 0px;
   height: auto;
+  margin-bottom: -9px;
 }
 
 .bottom-menu-nav {

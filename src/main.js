@@ -316,3 +316,33 @@ if (speakerButton) {
     console.error('Error initializing audio:', error);
   }
 }
+
+const bottomMenuNav = document.querySelector('.bottom-menu-nav');
+const BOTTOM_MENU_ZONE_FRACTION = 0.12;
+const BOTTOM_MENU_SCROLL_SPEED = 8;
+let mouseX = 0;
+
+if (bottomMenuNav) {
+  document.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX;
+  });
+
+  function tickBottomMenuScroll() {
+    const maxScroll = bottomMenuNav.scrollWidth - bottomMenuNav.clientWidth;
+    if (maxScroll <= 0) {
+      requestAnimationFrame(tickBottomMenuScroll);
+      return;
+    }
+    const zoneWidth = window.innerWidth * BOTTOM_MENU_ZONE_FRACTION;
+    let delta = 0;
+    if (mouseX < zoneWidth) {
+      delta = -BOTTOM_MENU_SCROLL_SPEED * (1 - mouseX / zoneWidth);
+    } else if (mouseX > window.innerWidth - zoneWidth) {
+      delta = BOTTOM_MENU_SCROLL_SPEED * (1 - (window.innerWidth - mouseX) / zoneWidth);
+    }
+    const next = bottomMenuNav.scrollLeft + delta;
+    bottomMenuNav.scrollLeft = Math.max(0, Math.min(next, maxScroll));
+    requestAnimationFrame(tickBottomMenuScroll);
+  }
+  tickBottomMenuScroll();
+}
