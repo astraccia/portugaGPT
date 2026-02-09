@@ -186,18 +186,22 @@ function showPredefinedReplyAfterDelay(predefined) {
   }, PREDEFINED_REPLY_DELAY_MS);
 }
 
+function getMenuItemText(el) {
+  return el.getAttribute('data-menu-text') || el.textContent.trim();
+}
+
 function setActiveMenuByText(text) {
   const allItems = document.querySelectorAll('.menu-item, .bottom-menu-item');
   allItems.forEach((el) => el.classList.remove('active'));
   allItems.forEach((el) => {
-    if (el.textContent.trim() === text) el.classList.add('active');
+    if (getMenuItemText(el) === text) el.classList.add('active');
   });
 }
 
 const bottomMenuItems = document.querySelectorAll('.bottom-menu-item');
 bottomMenuItems.forEach((item) => {
   item.addEventListener('click', () => {
-    const text = item.textContent.trim();
+    const text = getMenuItemText(item);
     setActiveMenuByText(text);
     trackQuickBtn(text);
     const animation = MENU_TO_ANIMATION[text];
@@ -206,7 +210,7 @@ bottomMenuItems.forEach((item) => {
     if (predefined != null) {
       showPredefinedReplyAfterDelay(predefined);
     } else {
-      sendQuestionToChat(item.textContent, 'button');
+      sendQuestionToChat(text, 'button');
     }
   });
 });

@@ -446,6 +446,7 @@ body {
   width: 100%;
   overflow-x: auto;
   overflow-y: hidden;
+  background-color: #f8f8f8;
 }
 
 .bottom-menu-list {
@@ -459,24 +460,26 @@ body {
 }
 
 .bottom-menu-item {
-  font-size: clamp(11px, 1.15vw, 20px);
-  color: #333333;
-  text-transform: uppercase;
   cursor: pointer;
-  padding: 0px 5px;
+  padding: 6px 8px;
   border-radius: 20px;
-  transition: background-color 0.2s;
-  white-space: nowrap;
-  font-family: 'Helvetica', 'Helvetica Neue', Arial, sans-serif;
-  font-style: normal;
-  transform: scaleY(2);
   transition: 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  list-style: none;
 }
 
-.bottom-menu-item:hover,
-.bottom-menu-item.active {
-  color: #ff005a;
-  font-weight: bold;
+.bottom-menu-item img {
+  display: block;
+  height: clamp(20px, 2.2vw, 36px);
+  width: auto;
+  transition: filter 0.2s;
+}
+
+.bottom-menu-item:hover img,
+.bottom-menu-item.active img {
+  filter: brightness(0) saturate(100%) invert(27%) sepia(98%) saturate(5000%) hue-rotate(330deg);
 }
 
 .bottom-menu-nav::-webkit-scrollbar {
