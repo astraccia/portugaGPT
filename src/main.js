@@ -147,14 +147,42 @@ function getPredefinedReply(menuText) {
 }
 
 let predefinedReplyTimeoutId = null;
+let typewriterIntervalId = null;
 const PREDEFINED_REPLY_DELAY_MS = 3000;
+const TYPEWRITER_MS_PER_CHAR = 15;
+
+function stopTypewriter() {
+  if (typewriterIntervalId) {
+    clearInterval(typewriterIntervalId);
+    typewriterIntervalId = null;
+  }
+}
+
+function typewriterEffect(fullText) {
+  stopTypewriter();
+  if (!answerContent) return;
+  let index = 0;
+  answerContent.value = '';
+  growAnswerContent();
+  typewriterIntervalId = setInterval(() => {
+    if (index >= fullText.length) {
+      stopTypewriter();
+      growAnswerContent();
+      return;
+    }
+    index += 1;
+    answerContent.value = fullText.slice(0, index);
+    growAnswerContent();
+  }, TYPEWRITER_MS_PER_CHAR);
+}
 
 function showPredefinedReplyAfterDelay(predefined) {
   if (predefinedReplyTimeoutId) clearTimeout(predefinedReplyTimeoutId);
+  stopTypewriter();
   setAnswer('PortugaGPT is thinking...', false);
   predefinedReplyTimeoutId = setTimeout(() => {
-    setAnswer(predefined, false);
     predefinedReplyTimeoutId = null;
+    typewriterEffect(predefined);
   }, PREDEFINED_REPLY_DELAY_MS);
 }
 
