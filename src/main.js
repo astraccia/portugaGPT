@@ -139,6 +139,18 @@ function getPredefinedReply(menuText) {
   return reply.replace(/<amigo>/g, name);
 }
 
+let predefinedReplyTimeoutId = null;
+const PREDEFINED_REPLY_DELAY_MS = 3000;
+
+function showPredefinedReplyAfterDelay(predefined) {
+  if (predefinedReplyTimeoutId) clearTimeout(predefinedReplyTimeoutId);
+  setAnswer('PortugaGPT is thinking...', false);
+  predefinedReplyTimeoutId = setTimeout(() => {
+    setAnswer(predefined, false);
+    predefinedReplyTimeoutId = null;
+  }, PREDEFINED_REPLY_DELAY_MS);
+}
+
 function setActiveMenuByText(text) {
   const allItems = document.querySelectorAll('.menu-item, .bottom-menu-item');
   allItems.forEach((el) => el.classList.remove('active'));
@@ -157,7 +169,7 @@ bottomMenuItems.forEach((item) => {
     if (animation && threeViewer) threeViewer.playAnimation(animation);
     const predefined = getPredefinedReply(text);
     if (predefined != null) {
-      setAnswer(predefined, false);
+      showPredefinedReplyAfterDelay(predefined);
     } else {
       sendQuestionToChat(item.textContent, 'button');
     }
@@ -183,7 +195,7 @@ leftMenuItems.forEach((item) => {
     if (userInput) userInput.value = text;
     const predefined = getPredefinedReply(text);
     if (predefined != null) {
-      setAnswer(predefined, false);
+      showPredefinedReplyAfterDelay(predefined);
     } else {
       if (sendButton) sendButton.click();
     }
