@@ -4,7 +4,7 @@ export default defineConfig({
   root: '.',
   base: './',
   server: {
-    port: 3000,
+    port: 3001,
     open: true
   },
   optimizeDeps: {
