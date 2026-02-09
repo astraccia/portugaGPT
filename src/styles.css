@@ -272,7 +272,7 @@ body {
   justify-content: center;
   border-radius: 0;
   overflow: hidden;
-  width: 33vw;
+  width: 27vw;
 }
 
 #three-canvas {
@@ -293,7 +293,7 @@ body {
   gap: 25px;
   padding-left: 20px;
   font-family: 'Roboto', sans-serif;
-  width: 33vw;
+  width: 39vw;
 }
 
 .chat-output-box {
@@ -303,10 +303,14 @@ body {
   display: flex;
   flex-direction: row;
   gap: 12px;
-  flex: 1;
-  min-height: 200px;
+  flex: 0 0 auto;
+  min-height: 0;
   justify-content: flex-end;
-  align-items: flex-end;
+  align-items: flex-start;
+  margin-bottom: -15px;
+  margin-top: auto;
+  box-sizing: border-box;
+  width: 90%;
 }
 
 .status-indicator {
@@ -322,7 +326,7 @@ body {
 }
 
 .answer-content {
-  flex: 1;
+  flex: 1 1 auto;
   min-height: 1.2em;
   max-height: 360px;
   overflow-y: auto;
@@ -336,6 +340,7 @@ body {
   padding: 0;
   margin: 0;
   display: block;
+  box-sizing: border-box;
 }
 
 .answer-content::placeholder {

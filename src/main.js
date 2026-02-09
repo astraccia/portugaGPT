@@ -41,13 +41,20 @@ if (nameInputEl) {
   });
 }
 
+const chatOutputBox = document.querySelector('.chat-output-box');
+const CHAT_OUTPUT_BOX_PADDING = 40;
+
 function growAnswerContent() {
   if (!answerContent) return;
   answerContent.style.height = 'auto';
   answerContent.style.height = Math.min(answerContent.scrollHeight, 360) + 'px';
+  if (chatOutputBox) {
+    chatOutputBox.style.height = (answerContent.offsetHeight + CHAT_OUTPUT_BOX_PADDING) + 'px';
+  }
 }
 
 if (answerContent) {
+  growAnswerContent();
   window.addEventListener('resize', growAnswerContent);
 }
 
