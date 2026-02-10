@@ -32,7 +32,8 @@ function initThreeViewer() {
     threeViewer = new ThreeViewer('three-canvas', {
       onModelLoadStart: showLoader,
       onModelLoaded: hideLoader,
-      onModelLoadError: hideLoader
+      onModelLoadError: hideLoader,
+      onWalkStart: startWalkingSound
     });
   } else {
     console.error('Canvas element not found');
@@ -267,6 +268,10 @@ let audio = null;
 let isSoundOn = false;
 let savedVolumes = new Map();
 
+function startWalkingSound() {
+  if (audio) audio.play().catch(() => {});
+}
+
 if (speakerButton) {
   try {
     audio = new Audio(import.meta.env.BASE_URL + 'sound/whistler_walking.mp3');
@@ -284,9 +289,6 @@ if (speakerButton) {
         speakerButton.classList.remove('sound-on');
         isSoundOn = false;
       } else {
-        audio.play().catch((error) => {
-          console.error('Error playing audio:', error);
-        });
         updatePageVolume(1.0);
         speakerButton.classList.remove('sound-off');
         speakerButton.classList.add('sound-on');

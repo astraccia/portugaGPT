@@ -12,6 +12,7 @@ export class ThreeViewer {
     this.onModelLoadStart = options.onModelLoadStart || (() => {});
     this.onModelLoaded = options.onModelLoaded || (() => {});
     this.onModelLoadError = options.onModelLoadError || (() => {});
+    this.onWalkStart = options.onWalkStart || (() => {});
 
     this.scene = null;
     this.camera = null;
@@ -241,6 +242,9 @@ export class ThreeViewer {
     ironmanAction.reset().play();
     this.animationAction = ironmanAction;
 
+    const ironmanSound = new Audio(import.meta.env.BASE_URL + 'sound/ironman.mp3');
+    ironmanSound.play().catch(() => {});
+
     const transitionToWalk = () => {
       if (this.animationAction !== ironmanAction) return;
       this.mixer.removeEventListener('finished', transitionToWalk);
@@ -250,6 +254,7 @@ export class ThreeViewer {
       walkAction.reset().fadeIn(0.5).play();
       this.animationAction = walkAction;
       this.headLookEnabled = true;
+      this.onWalkStart();
       console.log('Switched to walk (loop), head look enabled');
     };
 
