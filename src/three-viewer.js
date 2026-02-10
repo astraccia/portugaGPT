@@ -180,6 +180,7 @@ export class ThreeViewer {
         
         this.scene.add(this.model);
         this.model.position.set(0, 0, 0);
+        this.model.visible = false;
 
         this.pointCameraAtModel();
         this.setupAnimations(gltf);
@@ -242,6 +243,8 @@ export class ThreeViewer {
 
   startIntroSequence() {
     if (!this.mixer || !this._ironmanClip || !this._walkClip) return;
+
+    if (this.model) this.model.visible = true;
 
     const ironmanClip = this._ironmanClip;
     const walkClip = this._walkClip;
