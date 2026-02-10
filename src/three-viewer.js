@@ -222,7 +222,6 @@ export class ThreeViewer {
     this.animationClips = gltf.animations;
     this.mixer = new THREE.AnimationMixer(this.model);
 
-
     const ironmanClip = gltf.animations.find((a) => a.name.toLowerCase() === 'ironman') || gltf.animations[12];
     const walkClip = gltf.animations.find((a) => a.name.toLowerCase() === 'walk') || gltf.animations[8];
 
@@ -237,7 +236,15 @@ export class ThreeViewer {
       return;
     }
 
+    this._ironmanClip = ironmanClip;
+    this._walkClip = walkClip;
+  }
 
+  startIntroSequence() {
+    if (!this.mixer || !this._ironmanClip || !this._walkClip) return;
+
+    const ironmanClip = this._ironmanClip;
+    const walkClip = this._walkClip;
     const ironmanAction = this.mixer.clipAction(ironmanClip);
     ironmanAction.setLoop(THREE.LoopOnce);
     ironmanAction.clampWhenFinished = true;
@@ -262,7 +269,6 @@ export class ThreeViewer {
       ironmanAction.fadeOut(0.5);
       walkAction.reset().fadeIn(0.5).play();
       this.animationAction = walkAction;
-      // this.headLookEnabled = true; disabled due issues with head rotation
       this.onWalkStart();
       console.log('Switched to walk (loop), head look enabled');
     };

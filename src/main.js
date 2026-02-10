@@ -307,6 +307,11 @@ if (cookiesModalAcceptBtn) {
   cookiesModalAcceptBtn.addEventListener('click', () => {
     dismissCookiesModal();
     if (turnSoundOn) turnSoundOn();
+    setTimeout(() => {
+      if (threeViewer && typeof threeViewer.startIntroSequence === 'function') {
+        threeViewer.startIntroSequence();
+      }
+    }, 500);
   });
 }
 
