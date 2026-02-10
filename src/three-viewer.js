@@ -262,7 +262,7 @@ export class ThreeViewer {
       ironmanAction.fadeOut(0.5);
       walkAction.reset().fadeIn(0.5).play();
       this.animationAction = walkAction;
-      this.headLookEnabled = true;
+      // this.headLookEnabled = true; disabled due issues with head rotation
       this.onWalkStart();
       console.log('Switched to walk (loop), head look enabled');
     };

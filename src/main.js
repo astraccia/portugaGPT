@@ -297,7 +297,6 @@ if (warningModalBackBtn) {
 
 const cookiesModal = document.getElementById('cookies-modal');
 const cookiesModalAcceptBtn = document.getElementById('cookies-modal-accept-btn');
-const cookiesModalRefuseBtn = document.getElementById('cookies-modal-refuse-btn');
 function dismissCookiesModal() {
   if (cookiesModal) {
     cookiesModal.classList.add('is-dismissed');
@@ -305,16 +304,17 @@ function dismissCookiesModal() {
   }
 }
 if (cookiesModalAcceptBtn) {
-  cookiesModalAcceptBtn.addEventListener('click', dismissCookiesModal);
-}
-if (cookiesModalRefuseBtn) {
-  cookiesModalRefuseBtn.addEventListener('click', dismissCookiesModal);
+  cookiesModalAcceptBtn.addEventListener('click', () => {
+    dismissCookiesModal();
+    if (turnSoundOn) turnSoundOn();
+  });
 }
 
 const speakerButton = document.querySelector('.speaker-icon');
 let audio = null;
 let isSoundOn = false;
 let savedVolumes = new Map();
+let turnSoundOn = null;
 
 function startWalkingSound() {
   if (audio) audio.play().catch(() => {});
@@ -343,7 +343,15 @@ if (speakerButton) {
         isSoundOn = true;
       }
     });
-    
+
+    turnSoundOn = () => {
+      if (isSoundOn) return;
+      updatePageVolume(1.0);
+      speakerButton.classList.remove('sound-off');
+      speakerButton.classList.add('sound-on');
+      isSoundOn = true;
+    };
+
     function updatePageVolume(multiplier) {
       if (audio) {
         if (multiplier === 0) {
