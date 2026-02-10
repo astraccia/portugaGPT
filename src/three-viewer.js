@@ -32,12 +32,16 @@ export class ThreeViewer {
     this.smoothedMouseTarget = new THREE.Vector3();
     this.headLookLerpFactor = 0.04;
     this.headRotationLerpFactor = 0.06;
+    this.headLookInfluence = 0.4;
     this.smoothedHeadWorldQuat = new THREE.Quaternion();
     this.headRotationInitialized = false;
     this._headLookHelper = new THREE.Object3D();
     this._headWorldPos = new THREE.Vector3();
     this._headLookAtPoint = new THREE.Vector3();
-    this.headLookYFactor = 0.25;
+    this._animHeadWorldQuat = new THREE.Quaternion();
+    this._headLookDeltaQuat = new THREE.Quaternion();
+    this._headLookBlendQuat = new THREE.Quaternion();
+    this.headLookYFactor = 0.75;
     this._parentWorldQuat = new THREE.Quaternion();
     this.planeZ = new THREE.Plane(new THREE.Vector3(0, 0, -1), -5);
     this.raycaster = new THREE.Raycaster();
@@ -353,7 +357,6 @@ export class ThreeViewer {
     if (this.headLookEnabled && this.headBone && this.smoothedMouseTarget) {
       const head = this.headBone;
       const helper = this._headLookHelper;
-      const desiredQuat = helper.quaternion;
       head.getWorldPosition(this._headWorldPos);
       this._headLookAtPoint.set(
         this.smoothedMouseTarget.x,
@@ -363,11 +366,12 @@ export class ThreeViewer {
       helper.position.copy(this._headWorldPos);
       helper.lookAt(this._headLookAtPoint);
       helper.rotateY(Math.PI);
-      if (!this.headRotationInitialized) {
-        head.getWorldQuaternion(this.smoothedHeadWorldQuat);
-        this.headRotationInitialized = true;
-      }
-      this.smoothedHeadWorldQuat.slerp(desiredQuat, this.headRotationLerpFactor);
+      const desiredQuat = helper.quaternion.clone();
+      head.getWorldQuaternion(this._animHeadWorldQuat);
+      this._headLookDeltaQuat.copy(desiredQuat).premultiply(this._animHeadWorldQuat.clone().invert());
+      this.smoothedHeadWorldQuat.copy(this._animHeadWorldQuat).multiply(
+        this._headLookBlendQuat.identity().slerp(this._headLookDeltaQuat, this.headLookInfluence)
+      );
       if (head.parent) {
         head.parent.getWorldQuaternion(this._parentWorldQuat);
         head.quaternion.copy(this.smoothedHeadWorldQuat).premultiply(this._parentWorldQuat.clone().invert());
