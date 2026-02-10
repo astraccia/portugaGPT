@@ -646,7 +646,7 @@ body {
 }
 
 .cookies-modal-top {
-  flex: 0 0 50%;
+  flex: 0 0 65%;
   min-height: 50vh;
   background: #fff;
 }
@@ -667,11 +667,12 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 24px;
+  gap: 5px;
   padding: 24px;
   pointer-events: auto;
-  transform: translateY(-65%) scale(0.8);
+  transform: translateY(-47%) scale(0.8);
   transform-origin: center;
+  mix-blend-mode: multiply;
 }
 
 .cookies-modal-image {
