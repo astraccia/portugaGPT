@@ -71,6 +71,7 @@ body {
   width: 80px;
   height: auto;
   animation: bulb-pulse 1.2s ease-in-out infinite;
+  animation: glow 1.2s ease-in-out infinite;
 }
 
 .bulb-loader svg {
@@ -82,6 +83,38 @@ body {
 @keyframes bulb-pulse {
   0%, 100% { opacity: 1; transform: scale(1); }
   50% { opacity: 0.85; transform: scale(1.05); }
+}
+
+body.body-shake {
+  animation: body-shake 2s ease-out;
+  overflow: hidden;
+}
+
+@keyframes body-shake {
+  0%, 100% { transform: translate(0, 0); }
+  5% { transform: translate(-24px, -16px); }
+  10% { transform: translate(20px, 14px); }
+  15% { transform: translate(-20px, 16px); }
+  20% { transform: translate(18px, -14px); }
+  25% { transform: translate(-16px, -12px); }
+  30% { transform: translate(14px, 12px); }
+  35% { transform: translate(-12px, 10px); }
+  40% { transform: translate(10px, -10px); }
+  45% { transform: translate(-8px, 6px); }
+  50% { transform: translate(6px, 5px); }
+  55% { transform: translate(-4px, -3px); }
+  60%, 100% { transform: translate(0, 0); }
+}
+
+@keyframes glow { 
+  0%, 100% {
+    filter: drop-shadow(0 0 8px #FF3399) drop-shadow(0 0 15px #FF3399);
+    opacity: 0.6;
+  }
+  50% {
+    filter: drop-shadow(0 0 25px #FF3399) drop-shadow(0 0 50px #FF3399);
+    opacity: 1;
+  }
 }
 
 .design-overlay {
