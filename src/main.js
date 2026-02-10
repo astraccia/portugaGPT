@@ -295,6 +295,22 @@ if (warningModalBackBtn) {
   warningModalBackBtn.addEventListener('click', closeWarningModal);
 }
 
+const cookiesModal = document.getElementById('cookies-modal');
+const cookiesModalAcceptBtn = document.getElementById('cookies-modal-accept-btn');
+const cookiesModalRefuseBtn = document.getElementById('cookies-modal-refuse-btn');
+function dismissCookiesModal() {
+  if (cookiesModal) {
+    cookiesModal.classList.add('is-dismissed');
+    cookiesModal.setAttribute('aria-hidden', 'true');
+  }
+}
+if (cookiesModalAcceptBtn) {
+  cookiesModalAcceptBtn.addEventListener('click', dismissCookiesModal);
+}
+if (cookiesModalRefuseBtn) {
+  cookiesModalRefuseBtn.addEventListener('click', dismissCookiesModal);
+}
+
 const speakerButton = document.querySelector('.speaker-icon');
 let audio = null;
 let isSoundOn = false;
