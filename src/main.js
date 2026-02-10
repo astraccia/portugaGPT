@@ -47,11 +47,26 @@ const sendButton = document.getElementById('send-button');
 const userInput = document.getElementById('user-input');
 const nameInputEl = document.querySelector('.name-input');
 
+const ANSWER_CONTENT_DEFAULT_TEMPLATE = "Nice to meet you, <amigo>!\nI'm really glad you landed in my portfolio. I hope you enjoy it and it makes you smile.";
+
+function getDefaultAnswerContent() {
+  const name = (nameInputEl && nameInputEl.value && nameInputEl.value.trim()) || '';
+  return ANSWER_CONTENT_DEFAULT_TEMPLATE.replace(/<amigo>/g, name);
+}
+
+function syncAnswerContentToName() {
+  if (answerContent) {
+    answerContent.value = getDefaultAnswerContent();
+    growAnswerContent();
+  }
+}
+
 let userName = '';
 if (nameInputEl) {
   nameInputEl.addEventListener('blur', () => {
     userName = (nameInputEl.value && nameInputEl.value.trim()) || '';
   });
+  nameInputEl.addEventListener('input', syncAnswerContentToName);
 }
 
 const chatOutputBox = document.querySelector('.chat-output-box');
@@ -67,6 +82,7 @@ function growAnswerContent() {
 }
 
 if (answerContent) {
+  answerContent.value = getDefaultAnswerContent();
   growAnswerContent();
   window.addEventListener('resize', growAnswerContent);
 }
