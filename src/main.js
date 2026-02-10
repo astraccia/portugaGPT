@@ -262,6 +262,38 @@ navLinks.forEach((link) => {
   });
 });
 
+const warningModal = document.getElementById('warning-modal');
+const infoWarningBtn = document.getElementById('info-warning-btn');
+const warningModalClose = document.querySelector('.warning-modal-close');
+const warningModalOverlay = document.querySelector('.warning-modal-overlay');
+
+function openWarningModal() {
+  if (warningModal) {
+    warningModal.classList.add('is-open');
+    warningModal.setAttribute('aria-hidden', 'false');
+  }
+}
+
+function closeWarningModal() {
+  if (warningModal) {
+    warningModal.classList.remove('is-open');
+    warningModal.setAttribute('aria-hidden', 'true');
+  }
+}
+
+if (infoWarningBtn) {
+  infoWarningBtn.addEventListener('click', openWarningModal);
+}
+if (warningModalClose) {
+  warningModalClose.addEventListener('click', closeWarningModal);
+}
+if (warningModalOverlay) {
+  warningModalOverlay.addEventListener('click', closeWarningModal);
+}
+const warningModalBackBtn = document.getElementById('warning-modal-back-btn');
+if (warningModalBackBtn) {
+  warningModalBackBtn.addEventListener('click', closeWarningModal);
+}
 
 const speakerButton = document.querySelector('.speaker-icon');
 let audio = null;

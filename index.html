@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
- 
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/src/styles.css">
 </head>
 <body>
@@ -90,7 +90,9 @@
       </div>
       <div class="powered-by">
         <span>Powered by PortugaGPT - BETA</span>
-        <span><img src="images/icon_i.jpg" alt="Info" class="info-icon" /></span>
+        <button type="button" class="info-icon-btn" id="info-warning-btn" aria-label="View warning">
+          <img src="images/icon_i.jpg" alt="Info" class="info-icon" />
+        </button>
       </div>
     </aside>
   </main>
@@ -113,6 +115,22 @@
 
   
   <canvas id="three-canvas"></canvas>
+
+  <div id="warning-modal" class="warning-modal" aria-hidden="true">
+    <div class="warning-modal-overlay"></div>
+    <div class="warning-modal-box">
+      <button type="button" class="warning-modal-close" aria-label="Close">×</button>
+      <div class="container">
+        <h1>WARNING</h1>
+        <div class="subtitle">PortugaGPT</div>
+        <div class="content">
+          I SPENT THREE MONTHS TURNING MY BRAIN INTO DATA — 200+ QUESTIONS AND ANSWERS TO TRAIN PORTUGAGPT AROUND MY CREATIVE PERSPECTIVE AND WORLDVIEW. PORTUGAGPT IS A BETA VERSION POWERED BY THE CHATGPT API. IT'S SMART, BUT NOT PERFECT — LIKE ME, YOU, AND HUMANS IN GENERAL. SOME ANSWERS MAY BE INCOMPLETE, OUTDATED, OR SIMPLY TOTALLY WRONG (YES, MACHINES MESS UP TOO). THINK OF IT AS A CONVERSATION WITH A FRIEND AT A BAR, OR A BREAK-THE-ICE JOKE IN A STRANGE MEETING MEANT TO MAKE SOMEONE SMILE. PLEASE DON'T USE THIS AS LEGAL, MEDICAL OR MAKE ME CREATE YOUR NEXT CAMPAIGN FOR FREE. WHEN IN DOUBT, JUST TALK DIRECTLY TO ME. ANY FORM OF RACISM, MISOGYNY, SEXISM, DISCRIMINATION, HARASSMENT, HATE SPEECH, OR ABUSIVE BEHAVIOR IS UNACCEPTABLE AND WON'T BE TOLERATED IN QUESTIONS.
+          <div class="obrigado">OBRIGADO.</div>
+        </div>
+        <button type="button" class="back-link" id="warning-modal-back-btn">← Back to PortugaGPT</button>
+      </div>
+    </div>
+  </div>
 
   <script type="module" src="/src/main.js"></script>
 </body>
