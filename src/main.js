@@ -208,11 +208,7 @@ function typewriterEffect(fullText) {
 function showPredefinedReplyAfterDelay(predefined) {
   if (predefinedReplyTimeoutId) clearTimeout(predefinedReplyTimeoutId);
   stopTypewriter();
-  setAnswer('PortugaGPT is thinking...', false);
-  predefinedReplyTimeoutId = setTimeout(() => {
-    predefinedReplyTimeoutId = null;
-    typewriterEffect(predefined);
-  }, PREDEFINED_REPLY_DELAY_MS);
+  typewriterEffect(predefined);
 }
 
 function getMenuItemText(el) {

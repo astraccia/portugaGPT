@@ -58,7 +58,7 @@ body {
   justify-content: center;
   background-color: transparent;
   pointer-events: none;
-  transition: opacity 0.4s ease, visibility 0.4s ease;
+  transition: ease, visibility 0.4s ease;
 }
 
 #loader.loaded {
@@ -70,7 +70,6 @@ body {
 .bulb-loader {
   width: 80px;
   height: auto;
-  animation: bulb-pulse 1.2s ease-in-out infinite;
   animation: glow 1.2s ease-in-out infinite;
 }
 
@@ -81,8 +80,8 @@ body {
 }
 
 @keyframes bulb-pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.85; transform: scale(1.05); }
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
 }
 
 body.body-shake {
@@ -108,11 +107,11 @@ body.body-shake {
 
 @keyframes glow { 
   0%, 100% {
-    filter: drop-shadow(0 0 8px #FF3399) drop-shadow(0 0 15px #FF3399);
-    opacity: 0.6;
+    filter: drop-shadow(0 0 15px #FF3399) drop-shadow(0 0 15px #FF3399);
+    opacity: 0.8;
   }
   50% {
-    filter: drop-shadow(0 0 25px #FF3399) drop-shadow(0 0 50px #FF3399);
+    filter: drop-shadow(0 0 40px #FF3399) drop-shadow(0 0 50px #FF3399);
     opacity: 1;
   }
 }
