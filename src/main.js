@@ -185,11 +185,19 @@ function stopTypewriter() {
     clearInterval(typewriterIntervalId);
     typewriterIntervalId = null;
   }
+  const wrap = answerContent?.parentElement;
+  if (wrap?.classList.contains('answer-content-wrap')) {
+    wrap.classList.remove('is-typing');
+  }
 }
 
 function typewriterEffect(fullText) {
   stopTypewriter();
   if (!answerContent) return;
+  const wrap = answerContent.parentElement;
+  if (wrap?.classList.contains('answer-content-wrap')) {
+    wrap.classList.add('is-typing');
+  }
   let index = 0;
   answerContent.value = '';
   growAnswerContent();
