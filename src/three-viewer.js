@@ -45,7 +45,6 @@ export class ThreeViewer {
     this._parentWorldQuat = new THREE.Quaternion();
     this.planeZ = new THREE.Plane(new THREE.Vector3(0, 0, -1), -5);
     this.raycaster = new THREE.Raycaster();
-
     this.init();
   }
 
@@ -58,7 +57,9 @@ export class ThreeViewer {
       const height = window.innerHeight;
       const aspect = width / height;
       this.camera = new THREE.PerspectiveCamera(50, aspect, 0.1, 1000);
-      this.camera.position.set(0, 1.0, 2.4);
+      this.camera.position.set(0, 0.9, 2.4);
+      this.modelPosition = new THREE.Vector3(0, 0, 0);
+      this.cameraTweakPosition = new THREE.Vector3(0, -1, 0);
 
       this.renderer = new THREE.WebGLRenderer({
         canvas: this.canvas,
@@ -179,11 +180,12 @@ export class ThreeViewer {
         });
         
         this.scene.add(this.model);
-        this.model.position.set(0, 0, 0);
+        this.model.position.set(0,0,0);
         this.model.visible = false;
 
-        this.pointCameraAtModel();
         this.setupAnimations(gltf);
+
+        // pointCameraAtModel();
 
         this.isModelLoaded = true;
         this.hideError();
@@ -207,8 +209,7 @@ export class ThreeViewer {
     if (!this.model || !this.camera) return;
 
     const box = new THREE.Box3().setFromObject(this.model);
-    const center = box.getCenter(new THREE.Vector3()).add(new THREE.Vector3(0, 0.4, 0));
-    
+    const center = box.getCenter(new THREE.Vector3()).add(this.cameraTweakPosition);
     this.camera.lookAt(center);
     
   }

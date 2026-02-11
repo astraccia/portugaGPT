@@ -313,23 +313,27 @@ if (warningModalBackBtn) {
 
 const cookiesModal = document.getElementById('cookies-modal');
 const cookiesModalAcceptBtn = document.getElementById('cookies-modal-accept-btn');
+const cookiesModalRefuseBtn = document.getElementById('cookies-modal-refuse-btn');
+
 function dismissCookiesModal() {
   if (cookiesModal) {
     cookiesModal.classList.add('is-dismissed');
     cookiesModal.setAttribute('aria-hidden', 'true');
   }
 }
-if (cookiesModalAcceptBtn) {
-  cookiesModalAcceptBtn.addEventListener('click', () => {
-    dismissCookiesModal();
-    if (turnSoundOn) turnSoundOn();
-    setTimeout(() => {
-      if (threeViewer && typeof threeViewer.startIntroSequence === 'function') {
-        threeViewer.startIntroSequence();
-      }
-    }, 500);
-  });
+
+function onCookiesModalDismiss() {
+  dismissCookiesModal();
+  if (turnSoundOn) turnSoundOn();
+  setTimeout(() => {
+    if (threeViewer && typeof threeViewer.startIntroSequence === 'function') {
+      threeViewer.startIntroSequence();
+    }
+  }, 500);
 }
+
+if (cookiesModalAcceptBtn) cookiesModalAcceptBtn.addEventListener('click', onCookiesModalDismiss);
+if (cookiesModalRefuseBtn) cookiesModalRefuseBtn.addEventListener('click', onCookiesModalDismiss);
 
 const speakerButton = document.querySelector('.speaker-icon');
 let audio = null;
