@@ -302,14 +302,15 @@ export class ThreeViewer {
     }
 
     const newAction = this.mixer.clipAction(clip);
-    newAction.setLoop(THREE.LoopRepeat);
+    const name = clip.name.toLowerCase();
+    const pingPongClips = ['spining', 'dance01', 'hi', 'yes'];
+    newAction.setLoop(pingPongClips.includes(name) ? THREE.LoopPingPong : THREE.LoopRepeat);
 
     if (this.animationAction) {
       this.animationAction.fadeOut(transitionDuration);
     }
     newAction.reset().fadeIn(transitionDuration).play();
     this.animationAction = newAction;
-    const name = clip.name.toLowerCase();
     this.headLookEnabled = name === 'walk' || name === 'idle';
   }
 
