@@ -58,7 +58,7 @@ export class ThreeViewer {
       const height = window.innerHeight;
       const aspect = width / height;
       this.camera = new THREE.PerspectiveCamera(50, aspect, 0.1, 1000);
-      this.camera.position.set(0, 1.7, 2.5);
+      this.camera.position.set(0, 1.0, 2.4);
 
       this.renderer = new THREE.WebGLRenderer({
         canvas: this.canvas,

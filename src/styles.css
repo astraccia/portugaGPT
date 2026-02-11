@@ -637,6 +637,7 @@ body {
   opacity: 1;
   visibility: visible;
   transition: opacity 0.3s ease, visibility 0.3s ease;
+  background-color: white;
 }
 
 .cookies-modal.is-dismissed {
@@ -670,7 +671,7 @@ body {
   gap: 5px;
   padding: 24px;
   pointer-events: auto;
-  transform: translateY(-47%) scale(0.8);
+  transform: translateY(-47%) scale(1);
   transform-origin: center;
   mix-blend-mode: multiply;
 }
@@ -705,20 +706,12 @@ body {
   height: 48px;
   width: auto;
   transition: filter 0.2s;
-}
-
-.cookies-modal-btn-yes img {
-  filter: brightness(0) saturate(100%) invert(27%) sepia(98%) saturate(5000%) hue-rotate(330deg);
-}
-
-.cookies-modal-btn-yes:hover img,
-.cookies-modal-btn-yes:focus-visible img {
   filter: brightness(0);
 }
 
-.cookies-modal-btn-nah:hover img,
-.cookies-modal-btn-nah:focus-visible img {
-  filter: brightness(0) saturate(100%) invert(27%) sepia(98%) saturate(5000%) hue-rotate(330deg);
+.cookies-modal-btn:hover img,
+.cookies-modal-btn:focus-visible img {
+  filter: brightness(0) saturate(100%) invert(20%) sepia(98%) saturate(5000%) hue-rotate(328deg);
 }
 
 .bottom-menu {
