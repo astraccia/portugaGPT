@@ -116,6 +116,56 @@ body.body-shake {
   }
 }
 
+ /* Thinking animation */
+ .thinking {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.thinking-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #ff0066;
+  animation: glowPulse 1.5s ease-in-out infinite;
+  box-shadow: 0 0 10px #ff0066, 0 0 20px #ff0066, 0 0 30px #ff006640;
+}
+
+.thinking-text {
+  font-size: 14px;
+  color: #666;
+}
+
+@keyframes glowPulse {
+  0%, 100% { 
+      transform: scale(1); 
+      opacity: 0.7;
+      box-shadow: 0 0 10px #ff0066, 0 0 20px #ff006680, 0 0 30px #ff006640;
+  }
+  50% { 
+      transform: scale(1.2); 
+      opacity: 1;
+      box-shadow: 0 0 20px #ff0066, 0 0 40px #ff0066, 0 0 60px #ff006680;
+  }
+}
+
+.typewriter-cursor {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #ff0066;
+  margin-left: 4px;
+  animation: cursorPulse 0.8s ease-in-out infinite;
+  vertical-align: middle;
+}
+
+@keyframes cursorPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
 .design-overlay {
   position: fixed;
   top: 0;
@@ -369,15 +419,15 @@ body {
   overflow-y: auto;
   display: flex;
   flex-direction: row;
-  gap: 12px;
   flex: 0 0 auto;
   min-height: 0;
   justify-content: flex-end;
   align-items: flex-start;
-  margin-bottom: -15px;
+  margin-bottom: -40px;
   margin-top: auto;
-  box-sizing: border-box;
   width: 90%;
+  padding: 0px 25px;
+  box-sizing: border-box;
 }
 
 .status-indicator {
@@ -422,7 +472,7 @@ body {
   border-radius: 9999px;
   padding: 12px 20px;
   height: 65px;
-  gap: 12px;
+  width: 85%;
 }
 
 .input-pill {
