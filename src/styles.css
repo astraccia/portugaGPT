@@ -432,8 +432,11 @@ body {
 
 .chat-area {
   width: 100%;
-  margin-bottom: 24px;
+  margin-bottom: 45px;
   min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
 }
 
 .question-display {
@@ -474,11 +477,13 @@ body {
 
 .voice-toggle-row {
   display: flex;
-  align-items: center;
   gap: 8px;
-  margin-top: -20px;
-  margin-bottom: 4px;
-  margin-left: 25px;
+  margin-top: -10px;
+  margin-left: 10px;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-content: center;
+  align-items: center;
 }
 
 .voice-toggle-label {
@@ -678,8 +683,6 @@ body {
   gap: 6px;
   font-size: 12px;
   color: #AAAAAA;
-  margin-top: -15px;
-  margin-left: 25px;
   font-family: 'Roboto', sans-serif;
 }
 
@@ -689,7 +692,7 @@ body {
 }
 
 .powered-by span:first-child {
-  font-size: 12px;
+  font-size: 10px;
   font-weight: 700;
 }
 

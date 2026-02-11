@@ -78,10 +78,11 @@ if (audioElement) {
   });
 }
 
-let userName = '';
+// Saved name used for <amigo> in static answers; updated when user leaves the name field
+let savedUserName = '';
 if (nameInputEl) {
   nameInputEl.addEventListener('blur', () => {
-    userName = (nameInputEl.value && nameInputEl.value.trim()) || '';
+    savedUserName = (nameInputEl.value && nameInputEl.value.trim()) || '';
   });
 }
 
@@ -198,23 +199,26 @@ function typeWriter(element, text, audioUrl = null) {
 }
 
 async function showAnswer(question, answer, { signal } = {}) {
-  if (questionDisplay) questionDisplay.textContent = question;
-  if (answerDisplay) answerDisplay.classList.remove('placeholder');
+  const answerEl = document.getElementById('answerDisplay') || answerDisplay;
+  const questionEl = document.getElementById('questionDisplay') || questionDisplay;
+  if (!answerEl) return;
+  if (questionEl) questionEl.textContent = question;
+  answerEl.classList.remove('placeholder');
   if (voiceModeEnabled) {
     try {
       const audioUrl = await generateVoice(answer, signal);
       if (signal?.aborted) return;
       if (audioUrl) {
-        typeWriter(answerDisplay, answer, audioUrl);
+        typeWriter(answerEl, answer, audioUrl);
       } else {
-        typeWriter(answerDisplay, answer);
+        typeWriter(answerEl, answer);
       }
     } catch (e) {
       if (e.name === 'AbortError') return;
-      typeWriter(answerDisplay, answer);
+      typeWriter(answerEl, answer);
     }
   } else {
-    typeWriter(answerDisplay, answer);
+    typeWriter(answerEl, answer);
   }
 }
 
@@ -274,8 +278,22 @@ const MENU_TO_ANIMATION = {
   "Let's get a coffee?": "cellphonewalk"
 };
 
+// Canonical menu question strings (must match menu HTML / data-menu-text).
+const MENU_QUESTIONS = [
+  "Who's Portuga?",
+  "Proudest work?",
+  "Any awards?",
+  "Brands you touched?",
+  "Where are you now?",
+  "Sneakers count?",
+  "Why Portuga?",
+  "Let's get a coffee?"
+];
+
+// Static answers used only when user clicks a menu item (not when typing).
 const MENU_PREDEFINED_REPLIES = {
   "Who's Portuga?": "A Brazilian creative with 25+ years of multicultural experience across Brazil, UK, Singapore, and US, grounded in ideas, art direction, innovation and business solutions, fueled by smiles and passion. I've led global brands, built cool client relationships, and grown teams that, EOD, became good friends.",
+  "Proudest work?": "So many moments <amigo> — but the ones that stick are when an idea actually moved a brand and people, campaigns that got talked about, and teams that grew into friends. I'm most proud when courage meets a great brief and the client says yes.",
   "Any awards?": "Yes, a few — maybe 90 so far, including #Cannes, One Show, Webby, New York Festivals, and Lürzer's Archive. I've also been a judge for the Effies, Webbys, and a few others. Tbh, <amigo>, awards were never the goal, just a natural consequence of courage, focus on solving client problems, and creative criteria.",
   "Brands you touched?": "Roughly 130 brands, from Samsung, Stellantis, Mondelez, Citi, Abott, L'Oréal, Uniliver, Mars, Google, Asics, Sony, KPMG, Cartoon, Dow, Moët and McDonald's. But <amigo> the real joy is the human side, meeting clients, working closely, talking ideas, business, life, and occasionally a bit of nonsense.",
   "Where are you now?": "Right now, I'm a VP, Group Creative Director at Razorfish New York. Along the way, I've worked at Sapient, RAPP, MullenLowe, Y&R, and some boutique agencies. Fun fact: my first-ever job was at the Brazilian Yellow Pages. Can you believe it <amigo>? Lol",
@@ -284,15 +302,28 @@ const MENU_PREDEFINED_REPLIES = {
   "Let's get a coffee?": "Sure, sure, sure <amigo>! But sorry, I hate coffee. We can go for a tea or a Portuguese wine instead. Just reach me at +1 347 820 0044 or smile@danielportuga.com Sounds like a fun plan, right?"
 };
 
+// Normalize so "Who's" (curly apostrophe) and spacing always match
+function normalizeMenuText(s) {
+  if (typeof s !== 'string') return '';
+  return s
+    .trim()
+    .replace(/\u2019/g, "'")
+    .replace(/\u2018/g, "'")
+    .replace(/\s+/g, ' ');
+}
+
 function getPredefinedReply(menuText) {
-  const reply = MENU_PREDEFINED_REPLIES[menuText];
-  if (!reply) return null;
-  const name = userName || (nameInputEl && nameInputEl.value && nameInputEl.value.trim()) || '';
-  return reply.replace(/<amigo>/g, name);
+  const normalized = normalizeMenuText(menuText);
+  if (!normalized) return null;
+  const canonical = MENU_QUESTIONS.find((q) => normalizeMenuText(q) === normalized);
+  if (!canonical || !MENU_PREDEFINED_REPLIES[canonical]) return null;
+  return MENU_PREDEFINED_REPLIES[canonical].replace(/<amigo>/g, savedUserName);
 }
 
 function getMenuItemText(el) {
-  return el.getAttribute('data-menu-text') || el.textContent.trim();
+  if (!el) return '';
+  const raw = el.getAttribute('data-menu-text') || (el.textContent || '').trim();
+  return normalizeMenuText(raw) || raw;
 }
 
 function setActiveMenuByText(text) {
@@ -334,7 +365,7 @@ if (leftMenu && menuHeading) {
 const leftMenuItems = document.querySelectorAll('.menu-item');
 leftMenuItems.forEach((item) => {
   item.addEventListener('click', () => {
-    const text = item.textContent.trim();
+    const text = getMenuItemText(item);
     setActiveMenuByText(text);
     trackQuickBtn(text);
     const animation = MENU_TO_ANIMATION[text];

@@ -8,8 +8,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;900&display=swap" rel="stylesheet">
-  <script type="module" crossorigin src="./assets/index-BLZoHVmQ.js"></script>
-  <link rel="stylesheet" crossorigin href="./assets/index-3oHU9ySc.css">
+  <script type="module" crossorigin src="./assets/index-DhlqIjrr.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-mfCbZMF8.css">
 </head>
 <body>
 
@@ -80,34 +80,11 @@
           <div id="answerDisplay" class="answer-display placeholder">Nice to meet you! Ask me anything or pick a question below.</div>
           <div class="voice-loading" id="voiceLoading">🎙️ Generating audio...</div>
           <div class="voice-player" id="voicePlayer">
-            <div class="voice-wave">
-              <div class="wave-bar"></div>
-              <div class="wave-bar"></div>
-              <div class="wave-bar"></div>
-              <div class="wave-bar"></div>
-              <div class="wave-bar"></div>
-              <div class="wave-bar"></div>
-              <div class="wave-bar"></div>
-              <div class="wave-bar"></div>
-              <div class="wave-bar"></div>
-              <div class="wave-bar"></div>
-              <div class="wave-bar"></div>
-              <div class="wave-bar"></div>
-              <div class="wave-bar"></div>
-              <div class="wave-bar"></div>
-              <div class="wave-bar"></div>
-              <div class="wave-bar"></div>
-            </div>
           </div>
           <audio id="audioElement"></audio>
         </div>
       </div>
-      <div class="voice-toggle-row">
-        <span class="voice-toggle-label">Voice</span>
-        <button type="button" class="voice-toggle" id="voiceToggle" aria-label="Toggle voice">
-          <span class="toggle-switch" id="toggleSwitch"></span>
-        </button>
-      </div>
+      
       <div class="input-pill-container">
         <input 
           type="text" 
@@ -119,12 +96,19 @@
           <img src="images/send-button.png" alt="Send" class="send-button-img" />
         </button>
       </div>
-      <div class="powered-by">
-        <span>Powered by PortugaGPT - BETA</span>
-        <button type="button" class="info-icon-btn" id="info-warning-btn" aria-label="View warning">
-          <img src="images/icon_i.jpg" alt="Info" class="info-icon" />
+      <div class="voice-toggle-row">
+        <span class="voice-toggle-label">Portuga’s Voice</span>
+        <button type="button" class="voice-toggle" id="voiceToggle" aria-label="Toggle voice">
+          <span class="toggle-switch" id="toggleSwitch"></span>
         </button>
+        <div class="powered-by">
+          <span>Powered by PortugaGPT - BETA</span>
+          <button type="button" class="info-icon-btn" id="info-warning-btn" aria-label="View warning">
+            <img src="images/icon_i.png?v=2" alt="Info" class="info-icon" />
+          </button>
+        </div>
       </div>
+      
     </aside>
   </main>
 
@@ -148,9 +132,9 @@
   <canvas id="three-canvas"></canvas>
 
   <div id="warning-modal" class="warning-modal" aria-hidden="true">
+    <button type="button" class="warning-modal-close" aria-label="Close">×</button>
     <div class="warning-modal-overlay"></div>
     <div class="warning-modal-box">
-      <button type="button" class="warning-modal-close" aria-label="Close">×</button>
       <div class="container">
         <h1>WARNING</h1>
         <div class="subtitle">PortugaGPT</div>
@@ -158,16 +142,13 @@
           I SPENT THREE MONTHS TURNING MY BRAIN INTO DATA — 200+ QUESTIONS AND ANSWERS TO TRAIN PORTUGAGPT AROUND MY CREATIVE PERSPECTIVE AND WORLDVIEW. PORTUGAGPT IS A BETA VERSION POWERED BY THE CHATGPT API. IT'S SMART, BUT NOT PERFECT — LIKE ME, YOU, AND HUMANS IN GENERAL. SOME ANSWERS MAY BE INCOMPLETE, OUTDATED, OR SIMPLY TOTALLY WRONG (YES, MACHINES MESS UP TOO). THINK OF IT AS A CONVERSATION WITH A FRIEND AT A BAR, OR A BREAK-THE-ICE JOKE IN A STRANGE MEETING MEANT TO MAKE SOMEONE SMILE. PLEASE DON'T USE THIS AS LEGAL, MEDICAL OR MAKE ME CREATE YOUR NEXT CAMPAIGN FOR FREE. WHEN IN DOUBT, JUST TALK DIRECTLY TO ME. ANY FORM OF RACISM, MISOGYNY, SEXISM, DISCRIMINATION, HARASSMENT, HATE SPEECH, OR ABUSIVE BEHAVIOR IS UNACCEPTABLE AND WON'T BE TOLERATED IN QUESTIONS.
           <div class="obrigado">OBRIGADO.</div>
         </div>
-        <button type="button" class="back-link" id="warning-modal-back-btn">← Back to PortugaGPT</button>
       </div>
     </div>
   </div>
 
   <div id="cookies-modal" class="cookies-modal" aria-hidden="false">
-    <div class="cookies-modal-top"></div>
-    <div class="cookies-modal-bottom"></div>
     <div class="cookies-modal-content">
-      <video src="videos/cookies.mp4?v=3" class="cookies-modal-image" autoplay loop muted playsinline></video>
+      <video src="videos/cookies.mp4?v=3" class="cookies-modal-image" autoplay muted playsinline></video>
       <div class="cookies-modal-buttons">
         <button type="button" class="cookies-modal-btn cookies-modal-btn-yes" id="cookies-modal-accept-btn" aria-label="Accept cookies">
           <img src="images/menu_cookie_yes.svg" alt="Yes" />

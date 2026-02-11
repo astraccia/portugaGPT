@@ -79,34 +79,11 @@
           <div id="answerDisplay" class="answer-display placeholder">Nice to meet you! Ask me anything or pick a question below.</div>
           <div class="voice-loading" id="voiceLoading">🎙️ Generating audio...</div>
           <div class="voice-player" id="voicePlayer">
-            <div class="voice-wave">
-              <div class="wave-bar"></div>
-              <div class="wave-bar"></div>
-              <div class="wave-bar"></div>
-              <div class="wave-bar"></div>
-              <div class="wave-bar"></div>
-              <div class="wave-bar"></div>
-              <div class="wave-bar"></div>
-              <div class="wave-bar"></div>
-              <div class="wave-bar"></div>
-              <div class="wave-bar"></div>
-              <div class="wave-bar"></div>
-              <div class="wave-bar"></div>
-              <div class="wave-bar"></div>
-              <div class="wave-bar"></div>
-              <div class="wave-bar"></div>
-              <div class="wave-bar"></div>
-            </div>
           </div>
           <audio id="audioElement"></audio>
         </div>
       </div>
-      <div class="voice-toggle-row">
-        <span class="voice-toggle-label">Voice</span>
-        <button type="button" class="voice-toggle" id="voiceToggle" aria-label="Toggle voice">
-          <span class="toggle-switch" id="toggleSwitch"></span>
-        </button>
-      </div>
+      
       <div class="input-pill-container">
         <input 
           type="text" 
@@ -118,12 +95,19 @@
           <img src="images/send-button.png" alt="Send" class="send-button-img" />
         </button>
       </div>
-      <div class="powered-by">
-        <span>Powered by PortugaGPT - BETA</span>
-        <button type="button" class="info-icon-btn" id="info-warning-btn" aria-label="View warning">
-          <img src="images/icon_i.png?v=2" alt="Info" class="info-icon" />
+      <div class="voice-toggle-row">
+        <span class="voice-toggle-label">Portuga’s Voice</span>
+        <button type="button" class="voice-toggle" id="voiceToggle" aria-label="Toggle voice">
+          <span class="toggle-switch" id="toggleSwitch"></span>
         </button>
+        <div class="powered-by">
+          <span>Powered by PortugaGPT - BETA</span>
+          <button type="button" class="info-icon-btn" id="info-warning-btn" aria-label="View warning">
+            <img src="images/icon_i.png?v=2" alt="Info" class="info-icon" />
+          </button>
+        </div>
       </div>
+      
     </aside>
   </main>
 
