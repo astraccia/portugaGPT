@@ -107,14 +107,14 @@ trackPageView();
 let currentAbortController = null;
 let typewriterGeneration = 0;
 
-function cancelCurrentQuestion() {
+function cancelCurrentQuestion(showThinkingState = true) {
   if (currentAbortController) {
     currentAbortController.abort();
     currentAbortController = null;
   }
   typewriterGeneration++;
   stopAudioAndHidePlayer();
-  showThinking();
+  if (showThinkingState) showThinking();
 }
 
 function stopAudioAndHidePlayer() {
@@ -198,12 +198,16 @@ function typeWriter(element, text, audioUrl = null) {
   }
 }
 
-async function showAnswer(question, answer, { signal } = {}) {
+async function showAnswer(question, answer, { signal, isStatic } = {}) {
   const answerEl = document.getElementById('answerDisplay') || answerDisplay;
   const questionEl = document.getElementById('questionDisplay') || questionDisplay;
   if (!answerEl) return;
   if (questionEl) questionEl.textContent = question;
   answerEl.classList.remove('placeholder');
+  if (isStatic) {
+    typeWriter(answerEl, answer);
+    return;
+  }
   if (voiceModeEnabled) {
     try {
       const audioUrl = await generateVoice(answer, signal);
@@ -278,7 +282,7 @@ const MENU_TO_ANIMATION = {
   "Let's get a coffee?": "cellphonewalk"
 };
 
-// Canonical menu question strings (must match menu HTML / data-menu-text).
+
 const MENU_QUESTIONS = [
   "Who's Portuga?",
   "Proudest work?",
@@ -290,7 +294,7 @@ const MENU_QUESTIONS = [
   "Let's get a coffee?"
 ];
 
-// Static answers used only when user clicks a menu item (not when typing).
+
 const MENU_PREDEFINED_REPLIES = {
   "Who's Portuga?": "A Brazilian creative with 25+ years of multicultural experience across Brazil, UK, Singapore, and US, grounded in ideas, art direction, innovation and business solutions, fueled by smiles and passion. I've led global brands, built cool client relationships, and grown teams that, EOD, became good friends.",
   "Proudest work?": "So many moments <amigo> — but the ones that stick are when an idea actually moved a brand and people, campaigns that got talked about, and teams that grew into friends. I'm most proud when courage meets a great brief and the client says yes.",
@@ -302,7 +306,7 @@ const MENU_PREDEFINED_REPLIES = {
   "Let's get a coffee?": "Sure, sure, sure <amigo>! But sorry, I hate coffee. We can go for a tea or a Portuguese wine instead. Just reach me at +1 347 820 0044 or smile@danielportuga.com Sounds like a fun plan, right?"
 };
 
-// Normalize so "Who's" (curly apostrophe) and spacing always match
+
 function normalizeMenuText(s) {
   if (typeof s !== 'string') return '';
   return s
@@ -342,12 +346,11 @@ bottomMenuItems.forEach((item) => {
     trackQuickBtn(text);
     const animation = MENU_TO_ANIMATION[text];
     if (animation && threeViewer) threeViewer.playAnimation(animation);
-    cancelCurrentQuestion();
-    currentAbortController = new AbortController();
-    const signal = currentAbortController.signal;
     const predefined = getPredefinedReply(text);
     if (predefined != null) {
-      showAnswer(text, predefined, { signal });
+      cancelCurrentQuestion(false);
+      currentAbortController = new AbortController();
+      showAnswer(text, predefined, { signal: currentAbortController.signal, isStatic: true });
     } else {
       sendQuestionToChat(text, 'button');
     }
@@ -371,12 +374,11 @@ leftMenuItems.forEach((item) => {
     const animation = MENU_TO_ANIMATION[text];
     if (animation && threeViewer) threeViewer.playAnimation(animation);
     if (userInput) userInput.value = text;
-    cancelCurrentQuestion();
-    currentAbortController = new AbortController();
-    const signal = currentAbortController.signal;
     const predefined = getPredefinedReply(text);
     if (predefined != null) {
-      showAnswer(text, predefined, { signal });
+      cancelCurrentQuestion(false);
+      currentAbortController = new AbortController();
+      showAnswer(text, predefined, { signal: currentAbortController.signal, isStatic: true });
     } else {
       if (sendButton) sendButton.click();
     }
