@@ -41,6 +41,8 @@ export class ThreeViewer {
     this._animHeadWorldQuat = new THREE.Quaternion();
     this._headLookDeltaQuat = new THREE.Quaternion();
     this._headLookBlendQuat = new THREE.Quaternion();
+    this._headLookTempQuat = new THREE.Quaternion();
+    this._headLookTargetWorldQuat = new THREE.Quaternion();
     this.headLookYFactor = 0.75;
     this._parentWorldQuat = new THREE.Quaternion();
     this.planeZ = new THREE.Plane(new THREE.Vector3(0, 0, -1), -5);
@@ -146,7 +148,9 @@ export class ThreeViewer {
 
   updateMouseTarget() {
     if (!this.camera) return;
-    this.raycaster.setFromCamera(new THREE.Vector2(-this.mouse.x, -this.mouse.y), this.camera);
+    if (!this._mouseNormalized) this._mouseNormalized = new THREE.Vector2();
+    this._mouseNormalized.set(-this.mouse.x, -this.mouse.y);
+    this.raycaster.setFromCamera(this._mouseNormalized, this.camera);
     this.raycaster.ray.intersectPlane(this.planeZ, this.mouseTarget);
   }
 
@@ -273,6 +277,7 @@ export class ThreeViewer {
       ironmanAction.fadeOut(0.5);
       walkAction.reset().fadeIn(0.5).play();
       this.animationAction = walkAction;
+      this.headLookEnabled = true;
       this.onWalkStart();
       console.log('Switched to walk (loop), head look enabled');
     };
@@ -304,6 +309,8 @@ export class ThreeViewer {
     }
     newAction.reset().fadeIn(transitionDuration).play();
     this.animationAction = newAction;
+    const name = clip.name.toLowerCase();
+    this.headLookEnabled = name === 'walk' || name === 'idle';
   }
 
   showError(message) {
@@ -376,15 +383,19 @@ export class ThreeViewer {
       helper.position.copy(this._headWorldPos);
       helper.lookAt(this._headLookAtPoint);
       helper.rotateY(Math.PI);
-      const desiredQuat = helper.quaternion.clone();
       head.getWorldQuaternion(this._animHeadWorldQuat);
-      this._headLookDeltaQuat.copy(desiredQuat).premultiply(this._animHeadWorldQuat.clone().invert());
-      this.smoothedHeadWorldQuat.copy(this._animHeadWorldQuat).multiply(
+      this._headLookDeltaQuat.copy(helper.quaternion).premultiply(
+        this._headLookTempQuat.copy(this._animHeadWorldQuat).invert()
+      );
+      this._headLookTargetWorldQuat.copy(this._animHeadWorldQuat).multiply(
         this._headLookBlendQuat.identity().slerp(this._headLookDeltaQuat, this.headLookInfluence)
       );
+      this.smoothedHeadWorldQuat.slerp(this._headLookTargetWorldQuat, this.headRotationLerpFactor);
       if (head.parent) {
         head.parent.getWorldQuaternion(this._parentWorldQuat);
-        head.quaternion.copy(this.smoothedHeadWorldQuat).premultiply(this._parentWorldQuat.clone().invert());
+        head.quaternion.copy(this.smoothedHeadWorldQuat).premultiply(
+          this._headLookTempQuat.copy(this._parentWorldQuat).invert()
+        );
       } else {
         head.quaternion.copy(this.smoothedHeadWorldQuat);
       }
