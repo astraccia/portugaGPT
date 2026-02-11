@@ -103,6 +103,19 @@ function trackQuickBtn(label) {
 
 trackPageView();
 
+let currentAbortController = null;
+let typewriterGeneration = 0;
+
+function cancelCurrentQuestion() {
+  if (currentAbortController) {
+    currentAbortController.abort();
+    currentAbortController = null;
+  }
+  typewriterGeneration++;
+  stopAudioAndHidePlayer();
+  showThinking();
+}
+
 function stopAudioAndHidePlayer() {
   if (audioElement && !audioElement.paused) {
     audioElement.pause();
@@ -119,7 +132,6 @@ function showThinking() {
     : 'PortugaGPT is thinking...';
   el.innerHTML = `<div class="thinking"><span class="thinking-dot"></span><span class="thinking-text">${thinkingText}</span></div>`;
   el.classList.remove('placeholder');
-  stopAudioAndHidePlayer();
   voiceLoading?.classList.remove('visible');
 }
 
@@ -132,18 +144,21 @@ function showError() {
   voiceLoading?.classList.remove('visible');
 }
 
-async function generateVoice(text) {
+async function generateVoice(text, signal = null) {
   if (!voiceModeEnabled || !text || text.length > 1000) return null;
   try {
-    const response = await fetch(TTS_API, {
+    const opts = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ text })
-    });
+    };
+    if (signal) opts.signal = signal;
+    const response = await fetch(TTS_API, opts);
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const data = await response.json();
     return (data.success && data.audio_url) ? data.audio_url : null;
   } catch (e) {
+    if (e.name === 'AbortError') throw e;
     console.warn('Voice generation failed', e);
     return null;
   }
@@ -161,9 +176,11 @@ const TYPEWRITER_AUDIO_DELAY_MS = 600;
 
 function typeWriter(element, text, audioUrl = null) {
   if (!element) return;
+  const myGen = typewriterGeneration;
   element.innerHTML = '';
   let i = 0;
   function type() {
+    if (myGen !== typewriterGeneration) return;
     if (i < text.length) {
       element.innerHTML = text.substring(0, i + 1) + '<span class="typewriter-cursor"></span>';
       i++;
@@ -174,20 +191,26 @@ function typeWriter(element, text, audioUrl = null) {
   }
   if (audioUrl) {
     setupAndPlayAudio(audioUrl);
-    setTimeout(type, TYPEWRITER_AUDIO_DELAY_MS);
+    setTimeout(() => { if (myGen === typewriterGeneration) type(); }, TYPEWRITER_AUDIO_DELAY_MS);
   } else {
     type();
   }
 }
 
-async function showAnswer(question, answer) {
+async function showAnswer(question, answer, { signal } = {}) {
   if (questionDisplay) questionDisplay.textContent = question;
   if (answerDisplay) answerDisplay.classList.remove('placeholder');
   if (voiceModeEnabled) {
-    const audioUrl = await generateVoice(answer);
-    if (audioUrl) {
-      typeWriter(answerDisplay, answer, audioUrl);
-    } else {
+    try {
+      const audioUrl = await generateVoice(answer, signal);
+      if (signal?.aborted) return;
+      if (audioUrl) {
+        typeWriter(answerDisplay, answer, audioUrl);
+      } else {
+        typeWriter(answerDisplay, answer);
+      }
+    } catch (e) {
+      if (e.name === 'AbortError') return;
       typeWriter(answerDisplay, answer);
     }
   } else {
@@ -198,24 +221,29 @@ async function showAnswer(question, answer) {
 async function sendQuestionToChat(question, source = 'typed') {
   const q = typeof question === 'string' ? question.trim() : '';
   if (!q) return;
+  cancelCurrentQuestion();
+  currentAbortController = new AbortController();
+  const signal = currentAbortController.signal;
   if (userInput && userInput === document.activeElement) userInput.value = '';
   if (sendButton) sendButton.disabled = true;
-  showThinking();
   const name = (nameInputEl && nameInputEl.value && nameInputEl.value.trim()) || '';
   try {
     const res = await fetch(CHAT_API, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: q, name, source })
+      body: JSON.stringify({ message: q, name, source }),
+      signal
     });
+    if (signal.aborted) return;
     const data = await res.json();
     if (!res.ok) {
       showError();
       if (answerDisplay) answerDisplay.textContent = data.reply || data.error || 'Request failed';
       return;
     }
-    await showAnswer(q, data.reply || '');
+    await showAnswer(q, data.reply || '', { signal });
   } catch (err) {
+    if (err.name === 'AbortError') return;
     showError();
     if (answerDisplay) answerDisplay.textContent = 'Network error. Try again?';
   } finally {
@@ -283,9 +311,12 @@ bottomMenuItems.forEach((item) => {
     trackQuickBtn(text);
     const animation = MENU_TO_ANIMATION[text];
     if (animation && threeViewer) threeViewer.playAnimation(animation);
+    cancelCurrentQuestion();
+    currentAbortController = new AbortController();
+    const signal = currentAbortController.signal;
     const predefined = getPredefinedReply(text);
     if (predefined != null) {
-      showAnswer(text, predefined);
+      showAnswer(text, predefined, { signal });
     } else {
       sendQuestionToChat(text, 'button');
     }
@@ -309,9 +340,12 @@ leftMenuItems.forEach((item) => {
     const animation = MENU_TO_ANIMATION[text];
     if (animation && threeViewer) threeViewer.playAnimation(animation);
     if (userInput) userInput.value = text;
+    cancelCurrentQuestion();
+    currentAbortController = new AbortController();
+    const signal = currentAbortController.signal;
     const predefined = getPredefinedReply(text);
     if (predefined != null) {
-      showAnswer(text, predefined);
+      showAnswer(text, predefined, { signal });
     } else {
       if (sendButton) sendButton.click();
     }
