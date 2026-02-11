@@ -32,7 +32,7 @@ export class ThreeViewer {
     this.smoothedMouseTarget = new THREE.Vector3();
     this.headLookLerpFactor = 0.04;
     this.headRotationLerpFactor = 0.06;
-    this.headLookInfluence = 0.4;
+    this.headLookInfluence = 1;
     this.smoothedHeadWorldQuat = new THREE.Quaternion();
     this.headRotationInitialized = false;
     this._headLookHelper = new THREE.Object3D();
@@ -43,7 +43,7 @@ export class ThreeViewer {
     this._headLookBlendQuat = new THREE.Quaternion();
     this._headLookTempQuat = new THREE.Quaternion();
     this._headLookTargetWorldQuat = new THREE.Quaternion();
-    this.headLookYFactor = 0.75;
+    this.headLookYFactor = 1;
     this._parentWorldQuat = new THREE.Quaternion();
     this.planeZ = new THREE.Plane(new THREE.Vector3(0, 0, -1), -5);
     this.raycaster = new THREE.Raycaster();
@@ -377,7 +377,7 @@ export class ThreeViewer {
       head.getWorldPosition(this._headWorldPos);
       this._headLookAtPoint.set(
         this.smoothedMouseTarget.x,
-        this._headWorldPos.y + (this.smoothedMouseTarget.y - this._headWorldPos.y) * this.headLookYFactor,
+        this._headWorldPos.y + (this.smoothedMouseTarget.y - this._headWorldPos.y+1.5) * this.headLookYFactor,
         this.smoothedMouseTarget.z
       );
       helper.position.copy(this._headWorldPos);
