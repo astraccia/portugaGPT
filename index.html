@@ -74,7 +74,38 @@
     
     <aside class="right-chat-panel">
       <div class="chat-output-box" id="answer-box">
-        <textarea class="answer-content" readonly placeholder="PortugaGPT answer will appear here..."></textarea>
+        <div class="chat-area">
+          <div id="questionDisplay" class="question-display"></div>
+          <div id="answerDisplay" class="answer-display placeholder">Nice to meet you! Ask me anything or pick a question below.</div>
+          <div class="voice-loading" id="voiceLoading">🎙️ Generating audio...</div>
+          <div class="voice-player" id="voicePlayer">
+            <div class="voice-wave">
+              <div class="wave-bar"></div>
+              <div class="wave-bar"></div>
+              <div class="wave-bar"></div>
+              <div class="wave-bar"></div>
+              <div class="wave-bar"></div>
+              <div class="wave-bar"></div>
+              <div class="wave-bar"></div>
+              <div class="wave-bar"></div>
+              <div class="wave-bar"></div>
+              <div class="wave-bar"></div>
+              <div class="wave-bar"></div>
+              <div class="wave-bar"></div>
+              <div class="wave-bar"></div>
+              <div class="wave-bar"></div>
+              <div class="wave-bar"></div>
+              <div class="wave-bar"></div>
+            </div>
+          </div>
+          <audio id="audioElement"></audio>
+        </div>
+      </div>
+      <div class="voice-toggle-row">
+        <span class="voice-toggle-label">Voice</span>
+        <button type="button" class="voice-toggle" id="voiceToggle" aria-label="Toggle voice">
+          <span class="toggle-switch" id="toggleSwitch"></span>
+        </button>
       </div>
       <div class="input-pill-container">
         <input 

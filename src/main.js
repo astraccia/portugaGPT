@@ -41,24 +41,41 @@ function initThreeViewer() {
 }
 
 const CHAT_API = 'https://danielportuga.com/portugaGPT/chat.php';
+const TTS_API = CHAT_API.replace('chat.php', 'tts-api.php');
 
-const answerContent = document.querySelector('.answer-content');
+const questionDisplay = document.getElementById('questionDisplay');
+const answerDisplay = document.getElementById('answerDisplay');
 const sendButton = document.getElementById('send-button');
 const userInput = document.getElementById('user-input');
 const nameInputEl = document.querySelector('.name-input');
 
-const ANSWER_CONTENT_DEFAULT_TEMPLATE = "Nice to meet you, <amigo>!\nI'm really glad you landed in my portfolio. I hope you enjoy it and it makes you smile.";
+const voiceToggle = document.getElementById('voiceToggle');
+const toggleSwitch = document.getElementById('toggleSwitch');
+const voiceLoading = document.getElementById('voiceLoading');
+const voicePlayer = document.getElementById('voicePlayer');
+const audioElement = document.getElementById('audioElement');
 
-function getDefaultAnswerContent() {
-  const name = (nameInputEl && nameInputEl.value && nameInputEl.value.trim()) || '';
-  return ANSWER_CONTENT_DEFAULT_TEMPLATE.replace(/<amigo>/g, name);
+let voiceModeEnabled = localStorage.getItem('portugagpt_voice_mode') !== 'false';
+
+function updateVoiceUI() {
+  if (toggleSwitch) {
+    toggleSwitch.classList.toggle('active', voiceModeEnabled);
+  }
+}
+updateVoiceUI();
+
+if (voiceToggle) {
+  voiceToggle.addEventListener('click', () => {
+    voiceModeEnabled = !voiceModeEnabled;
+    localStorage.setItem('portugagpt_voice_mode', voiceModeEnabled);
+    updateVoiceUI();
+  });
 }
 
-function syncAnswerContentToName() {
-  if (answerContent) {
-    answerContent.value = getDefaultAnswerContent();
-    growAnswerContent();
-  }
+if (audioElement) {
+  audioElement.addEventListener('ended', () => {
+    voicePlayer?.classList.remove('playing');
+  });
 }
 
 let userName = '';
@@ -66,33 +83,6 @@ if (nameInputEl) {
   nameInputEl.addEventListener('blur', () => {
     userName = (nameInputEl.value && nameInputEl.value.trim()) || '';
   });
-  nameInputEl.addEventListener('input', syncAnswerContentToName);
-}
-
-const chatOutputBox = document.querySelector('.chat-output-box');
-const CHAT_OUTPUT_BOX_PADDING = 40;
-
-function growAnswerContent() {
-  if (!answerContent) return;
-  answerContent.style.height = 'auto';
-  answerContent.style.height = Math.min(answerContent.scrollHeight, 360) + 'px';
-  if (chatOutputBox) {
-    chatOutputBox.style.height = (answerContent.offsetHeight + CHAT_OUTPUT_BOX_PADDING) + 'px';
-  }
-}
-
-if (answerContent) {
-  answerContent.value = getDefaultAnswerContent();
-  growAnswerContent();
-  window.addEventListener('resize', growAnswerContent);
-}
-
-function setAnswer(text, isError = false) {
-  if (answerContent) {
-    answerContent.value = text || '';
-    answerContent.classList.toggle('answer-error', isError);
-    growAnswerContent();
-  }
 }
 
 function trackPageView() {
@@ -113,11 +103,104 @@ function trackQuickBtn(label) {
 
 trackPageView();
 
+function stopAudioAndHidePlayer() {
+  if (audioElement && !audioElement.paused) {
+    audioElement.pause();
+    audioElement.currentTime = 0;
+  }
+  voicePlayer?.classList.remove('playing', 'visible');
+}
+
+function showThinking() {
+  const el = document.getElementById('answerDisplay') || answerDisplay;
+  if (!el) return;
+  const thinkingText = voiceModeEnabled
+    ? 'PortugaGPT is thinking and warming up the accent...'
+    : 'PortugaGPT is thinking...';
+  el.innerHTML = `<div class="thinking"><span class="thinking-dot"></span><span class="thinking-text">${thinkingText}</span></div>`;
+  el.classList.remove('placeholder');
+  stopAudioAndHidePlayer();
+  voiceLoading?.classList.remove('visible');
+}
+
+function showError() {
+  if (answerDisplay) {
+    answerDisplay.textContent = 'Oops, something broke. Try again?';
+    answerDisplay.classList.remove('placeholder');
+  }
+  voicePlayer?.classList.remove('visible');
+  voiceLoading?.classList.remove('visible');
+}
+
+async function generateVoice(text) {
+  if (!voiceModeEnabled || !text || text.length > 1000) return null;
+  try {
+    const response = await fetch(TTS_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text })
+    });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const data = await response.json();
+    return (data.success && data.audio_url) ? data.audio_url : null;
+  } catch (e) {
+    console.warn('Voice generation failed', e);
+    return null;
+  }
+}
+
+function setupAndPlayAudio(audioUrl) {
+  if (!audioElement || !voicePlayer) return;
+  audioElement.src = audioUrl;
+  voicePlayer.classList.add('visible');
+  audioElement.play().then(() => voicePlayer.classList.add('playing')).catch(() => {});
+}
+
+const TYPEWRITER_MS_PER_CHAR = 62;
+const TYPEWRITER_AUDIO_DELAY_MS = 600;
+
+function typeWriter(element, text, audioUrl = null) {
+  if (!element) return;
+  element.innerHTML = '';
+  let i = 0;
+  function type() {
+    if (i < text.length) {
+      element.innerHTML = text.substring(0, i + 1) + '<span class="typewriter-cursor"></span>';
+      i++;
+      setTimeout(type, TYPEWRITER_MS_PER_CHAR);
+    } else {
+      element.innerHTML = text;
+    }
+  }
+  if (audioUrl) {
+    setupAndPlayAudio(audioUrl);
+    setTimeout(type, TYPEWRITER_AUDIO_DELAY_MS);
+  } else {
+    type();
+  }
+}
+
+async function showAnswer(question, answer) {
+  if (questionDisplay) questionDisplay.textContent = question;
+  if (answerDisplay) answerDisplay.classList.remove('placeholder');
+  if (voiceModeEnabled) {
+    const audioUrl = await generateVoice(answer);
+    if (audioUrl) {
+      typeWriter(answerDisplay, answer, audioUrl);
+    } else {
+      typeWriter(answerDisplay, answer);
+    }
+  } else {
+    typeWriter(answerDisplay, answer);
+  }
+}
+
 async function sendQuestionToChat(question, source = 'typed') {
   const q = typeof question === 'string' ? question.trim() : '';
   if (!q) return;
   if (userInput && userInput === document.activeElement) userInput.value = '';
-  setAnswer('PortugaGPT is thinking...', false);
+  if (sendButton) sendButton.disabled = true;
+  showThinking();
   const name = (nameInputEl && nameInputEl.value && nameInputEl.value.trim()) || '';
   try {
     const res = await fetch(CHAT_API, {
@@ -127,12 +210,17 @@ async function sendQuestionToChat(question, source = 'typed') {
     });
     const data = await res.json();
     if (!res.ok) {
-      setAnswer(data.reply || data.error || 'Request failed', true);
+      showError();
+      if (answerDisplay) answerDisplay.textContent = data.reply || data.error || 'Request failed';
       return;
     }
-    setAnswer(data.reply || '', false);
+    await showAnswer(q, data.reply || '');
   } catch (err) {
-    setAnswer('Network error. Try again?', true);
+    showError();
+    if (answerDisplay) answerDisplay.textContent = 'Network error. Try again?';
+  } finally {
+    if (sendButton) sendButton.disabled = false;
+    userInput?.focus();
   }
 }
 
@@ -175,50 +263,6 @@ function getPredefinedReply(menuText) {
   return reply.replace(/<amigo>/g, name);
 }
 
-let predefinedReplyTimeoutId = null;
-let typewriterIntervalId = null;
-const PREDEFINED_REPLY_DELAY_MS = 3000;
-const TYPEWRITER_MS_PER_CHAR = 15;
-
-function stopTypewriter() {
-  if (typewriterIntervalId) {
-    clearInterval(typewriterIntervalId);
-    typewriterIntervalId = null;
-  }
-  const wrap = answerContent?.parentElement;
-  if (wrap?.classList.contains('answer-content-wrap')) {
-    wrap.classList.remove('is-typing');
-  }
-}
-
-function typewriterEffect(fullText) {
-  stopTypewriter();
-  if (!answerContent) return;
-  const wrap = answerContent.parentElement;
-  if (wrap?.classList.contains('answer-content-wrap')) {
-    wrap.classList.add('is-typing');
-  }
-  let index = 0;
-  answerContent.value = '';
-  growAnswerContent();
-  typewriterIntervalId = setInterval(() => {
-    if (index >= fullText.length) {
-      stopTypewriter();
-      growAnswerContent();
-      return;
-    }
-    index += 1;
-    answerContent.value = fullText.slice(0, index);
-    growAnswerContent();
-  }, TYPEWRITER_MS_PER_CHAR);
-}
-
-function showPredefinedReplyAfterDelay(predefined) {
-  if (predefinedReplyTimeoutId) clearTimeout(predefinedReplyTimeoutId);
-  stopTypewriter();
-  typewriterEffect(predefined);
-}
-
 function getMenuItemText(el) {
   return el.getAttribute('data-menu-text') || el.textContent.trim();
 }
@@ -241,7 +285,7 @@ bottomMenuItems.forEach((item) => {
     if (animation && threeViewer) threeViewer.playAnimation(animation);
     const predefined = getPredefinedReply(text);
     if (predefined != null) {
-      showPredefinedReplyAfterDelay(predefined);
+      showAnswer(text, predefined);
     } else {
       sendQuestionToChat(text, 'button');
     }
@@ -267,7 +311,7 @@ leftMenuItems.forEach((item) => {
     if (userInput) userInput.value = text;
     const predefined = getPredefinedReply(text);
     if (predefined != null) {
-      showPredefinedReplyAfterDelay(predefined);
+      showAnswer(text, predefined);
     } else {
       if (sendButton) sendButton.click();
     }
