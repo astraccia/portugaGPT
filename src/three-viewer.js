@@ -47,6 +47,7 @@ export class ThreeViewer {
     this._parentWorldQuat = new THREE.Quaternion();
     this.planeZ = new THREE.Plane(new THREE.Vector3(0, 0, -1), -5);
     this.raycaster = new THREE.Raycaster();
+    this._headLookEnableTimeoutId = null;
     this.init();
   }
 
@@ -306,12 +307,28 @@ export class ThreeViewer {
     const pingPongClips = ['spining', 'dance01', 'hi', 'yes'];
     newAction.setLoop(pingPongClips.includes(name) ? THREE.LoopPingPong : THREE.LoopRepeat);
 
+    if (this._headLookEnableTimeoutId != null) {
+      clearTimeout(this._headLookEnableTimeoutId);
+      this._headLookEnableTimeoutId = null;
+    }
+    this.headLookEnabled = false;
+
     if (this.animationAction) {
       this.animationAction.fadeOut(transitionDuration);
     }
     newAction.reset().fadeIn(transitionDuration).play();
     this.animationAction = newAction;
-    this.headLookEnabled = name === 'walk' || name === 'idle';
+
+    const enableHeadLookForClip = name === 'walk' || name === 'idle';
+    if (enableHeadLookForClip) {
+      this._headLookEnableTimeoutId = setTimeout(() => {
+        this._headLookEnableTimeoutId = null;
+        if (this.animationAction === newAction && this.headBone) {
+          this.headBone.getWorldQuaternion(this.smoothedHeadWorldQuat);
+          this.headLookEnabled = true;
+        }
+      }, transitionDuration * 1000);
+    }
   }
 
   showError(message) {
@@ -406,6 +423,10 @@ export class ThreeViewer {
   }
 
   dispose() {
+    if (this._headLookEnableTimeoutId != null) {
+      clearTimeout(this._headLookEnableTimeoutId);
+      this._headLookEnableTimeoutId = null;
+    }
     if (this.mixer) {
       this.mixer.stopAllAction();
       this.mixer = null;
