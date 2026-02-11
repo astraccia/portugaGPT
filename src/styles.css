@@ -508,10 +508,18 @@ body {
   border: none;
   background: none;
   cursor: pointer;
+  transform: translateY(-2px);
 }
 
-.info-icon-btn:hover {
-  opacity: 0.8;
+.info-icon-btn .info-icon {
+  display: block;
+  pointer-events: none;
+  transition: filter 0.2s ease;
+}
+
+.info-icon-btn:hover .info-icon,
+.info-icon-btn:focus-visible .info-icon {
+  filter: saturate(100%) invert(20%) sepia(98%) saturate(5000%) hue-rotate(328deg);
 }
 
 .warning-modal {
