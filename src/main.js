@@ -126,20 +126,24 @@ function stopAudioAndHidePlayer() {
 }
 
 function showThinking() {
-  const el = document.getElementById('answerDisplay') || answerDisplay;
+  const el = document.getElementById('answerDisplay') || document.querySelector('.answer-display');
   if (!el) return;
   const thinkingText = voiceModeEnabled
     ? 'PortugaGPT is thinking and warming up the accent...'
     : 'PortugaGPT is thinking...';
   el.innerHTML = `<div class="thinking"><span class="thinking-dot"></span><span class="thinking-text">${thinkingText}</span></div>`;
   el.classList.remove('placeholder');
-  voiceLoading?.classList.remove('visible');
+  el.style.display = '';
+  el.style.visibility = 'visible';
+  el.style.opacity = '1';
+  if (voiceLoading) voiceLoading.classList.remove('visible');
 }
 
 function showError() {
-  if (answerDisplay) {
-    answerDisplay.textContent = 'Oops, something broke. Try again?';
-    answerDisplay.classList.remove('placeholder');
+  const el = document.getElementById('answerDisplay') || document.querySelector('.answer-display');
+  if (el) {
+    el.textContent = 'Oops, something broke. Try again?';
+    el.classList.remove('placeholder');
   }
   voicePlayer?.classList.remove('visible');
   voiceLoading?.classList.remove('visible');
@@ -258,14 +262,18 @@ async function showAnswer(question, answer, { signal, isStatic } = {}) {
   }
 }
 
+const MIN_THINKING_MS = 600;
+
 async function sendQuestionToChat(question, source = 'typed') {
   const q = typeof question === 'string' ? question.trim() : '';
   if (!q) return;
-  cancelCurrentQuestion();
+  showThinking();
+  cancelCurrentQuestion(false);
   currentAbortController = new AbortController();
   const signal = currentAbortController.signal;
   if (userInput && userInput === document.activeElement) userInput.value = '';
   if (sendButton) sendButton.disabled = true;
+  const thinkingShownAt = Date.now();
   const name = (nameInputEl && nameInputEl.value && nameInputEl.value.trim()) || '';
   try {
     const res = await fetch(CHAT_API, {
@@ -281,6 +289,11 @@ async function sendQuestionToChat(question, source = 'typed') {
       if (answerDisplay) answerDisplay.textContent = data.reply || data.error || 'Request failed';
       return;
     }
+    const elapsed = Date.now() - thinkingShownAt;
+    if (elapsed < MIN_THINKING_MS) {
+      await new Promise((r) => setTimeout(r, MIN_THINKING_MS - elapsed));
+    }
+    if (signal.aborted) return;
     await showAnswer(q, data.reply || '', { signal });
   } catch (err) {
     if (err.name === 'AbortError') return;
@@ -380,6 +393,7 @@ bottomMenuItems.forEach((item) => {
     if (animation && threeViewer) threeViewer.playAnimation(animation);
     const predefined = getPredefinedReply(text);
     if (predefined != null) {
+      showThinking();
       cancelCurrentQuestion(false);
       currentAbortController = new AbortController();
       showAnswer(text, predefined, { signal: currentAbortController.signal, isStatic: true });
@@ -408,6 +422,7 @@ leftMenuItems.forEach((item) => {
     if (userInput) userInput.value = text;
     const predefined = getPredefinedReply(text);
     if (predefined != null) {
+      showThinking();
       cancelCurrentQuestion(false);
       currentAbortController = new AbortController();
       showAnswer(text, predefined, { signal: currentAbortController.signal, isStatic: true });
