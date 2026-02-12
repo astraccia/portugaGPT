@@ -320,8 +320,30 @@ body {
   background-image: url('/images/smiles.png');
   background-size: 50%;
   background-repeat: no-repeat;
-  background-position: 30% 20%;
+  background-position: 7% 20%;
   width: 100%;
+}
+
+.resize-warning {
+  position: fixed;
+  display: flex;
+  z-index: 99999999999;
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-content: center;
+  justify-content: center;
+  align-items: center;
+  background-color: #fff;
+  pointer-events: none;
+  display: none;
+}
+
+@media (max-width: 960px) {
+  .resize-warning {
+    display: flex;
+  }
 }
 
 .left-menu {
