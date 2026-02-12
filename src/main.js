@@ -145,13 +145,27 @@ function showError() {
   voiceLoading?.classList.remove('visible');
 }
 
+function sanitizeTextForTTS(text) {
+  if (typeof text !== 'string') return '';
+  return text
+    .replace(/\u2019/g, "'")
+    .replace(/\u2018/g, "'")
+    .replace(/\u201c/g, '"')
+    .replace(/\u201d/g, '"')
+    .replace(/\u2014/g, ' - ')
+    .replace(/\u00eb/g, 'e')
+    .trim();
+}
+
 async function generateVoice(text, signal = null) {
   if (!voiceModeEnabled || !text || text.length > 1000) return null;
+  const bodyText = sanitizeTextForTTS(text);
+  if (!bodyText) return null;
   try {
     const opts = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text })
+      body: JSON.stringify({ text: bodyText })
     };
     if (signal) opts.signal = signal;
     const response = await fetch(TTS_API, opts);
@@ -208,7 +222,22 @@ async function showAnswer(question, answer, { signal, isStatic } = {}) {
   if (questionEl) questionEl.textContent = question;
   answerEl.classList.remove('placeholder');
   if (isStatic) {
-    typeWriter(answerEl, answer);
+    if (voiceModeEnabled) {
+      try {
+        const audioUrl = await generateVoice(answer, signal);
+        if (signal?.aborted) return;
+        if (audioUrl) {
+          typeWriter(answerEl, answer, audioUrl);
+        } else {
+          typeWriter(answerEl, answer);
+        }
+      } catch (e) {
+        if (e.name === 'AbortError') return;
+        typeWriter(answerEl, answer);
+      }
+    } else {
+      typeWriter(answerEl, answer);
+    }
     return;
   }
   if (voiceModeEnabled) {
