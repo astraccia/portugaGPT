@@ -157,7 +157,10 @@ async function generateVoice(text, signal = null) {
     const response = await fetch(TTS_API, opts);
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const data = await response.json();
-    return (data.success && data.audio_url) ? data.audio_url : null;
+    if (!data.success || !data.audio_url) return null;
+    const url = data.audio_url;
+    const absoluteUrl = url.startsWith('http') ? url : new URL(url, TTS_API).href;
+    return absoluteUrl;
   } catch (e) {
     if (e.name === 'AbortError') throw e;
     console.warn('Voice generation failed', e);
