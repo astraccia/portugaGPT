@@ -385,13 +385,6 @@ leftMenuItems.forEach((item) => {
   });
 });
 
-const navLinks = document.querySelectorAll('.nav-link');
-navLinks.forEach((link) => {
-  link.addEventListener('click', (e) => {
-    e.preventDefault();
-    console.log('Navigation link clicked (placeholder):', link.textContent);
-  });
-});
 
 const warningModal = document.getElementById('warning-modal');
 const infoWarningBtn = document.getElementById('info-warning-btn');
