@@ -134,7 +134,7 @@ body.body-shake {
 
 .thinking-text {
   font-size: 14px;
-  color: #666;
+  color: #000;
 }
 
 @keyframes glowPulse {
@@ -478,7 +478,7 @@ body {
 }
 
 .answer-display.placeholder {
-  color: #666;
+  color: #000;
   font-size: 20px;
 }
 

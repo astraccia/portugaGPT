@@ -240,6 +240,8 @@ async function showAnswer(question, answer, { signal, isStatic } = {}) {
         typeWriter(answerEl, answer);
       }
     } else {
+      await new Promise((r) => setTimeout(r, 2000));
+      if (signal?.aborted) return;
       typeWriter(answerEl, answer);
     }
     return;
