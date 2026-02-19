@@ -48,6 +48,9 @@ export class ThreeViewer {
     this.planeZ = new THREE.Plane(new THREE.Vector3(0, 0, -1), -5);
     this.raycaster = new THREE.Raycaster();
     this._headLookEnableTimeoutId = null;
+    this._headInitialQuat = new THREE.Quaternion(0, 0, 0, 0);
+    this._useInitialHeadRotation = false;
+    this._storeHeadInitialNextFrame = false;
     this.init();
   }
 
@@ -247,7 +250,8 @@ export class ThreeViewer {
     this._walkClip = walkClip;
   }
 
-  startIntroSequence() {
+  startIntroSequence(options = {}) {
+    const { enableHeadLook = true } = options;
     if (!this.mixer || !this._ironmanClip || !this._walkClip) return;
 
     if (this.model) this.model.visible = true;
@@ -261,6 +265,7 @@ export class ThreeViewer {
     ironmanAction.enabled = true;
     ironmanAction.reset().play();
     this.animationAction = ironmanAction;
+    this._storeHeadInitialNextFrame = true;
 
     setTimeout(() => {
       document.body.classList.add('body-shake');
@@ -278,9 +283,10 @@ export class ThreeViewer {
       ironmanAction.fadeOut(0.5);
       walkAction.reset().fadeIn(0.5).play();
       this.animationAction = walkAction;
-      this.headLookEnabled = true;
+      this.headLookEnabled = enableHeadLook;
+      if (!enableHeadLook) this._useInitialHeadRotation = true;
       this.onWalkStart();
-      console.log('Switched to walk (loop), head look enabled');
+      console.log('Switched to walk (loop), head look', enableHeadLook ? 'enabled' : 'disabled');
     };
 
     this.mixer.addEventListener('finished', transitionToWalk);
@@ -289,6 +295,15 @@ export class ThreeViewer {
       ironmanDuration: ironmanClip.duration,
       walk: walkClip.name
     });
+  }
+
+  disableHeadLookAndResetHead() {
+    this.headLookEnabled = false;
+    this._useInitialHeadRotation = true;
+    if (this.headBone) {
+      this.headBone.quaternion.copy(this._headInitialQuat);
+      this.headBone.getWorldQuaternion(this.smoothedHeadWorldQuat);
+    }
   }
 
   playAnimation(clipName, transitionDuration = 0.5) {
@@ -312,6 +327,7 @@ export class ThreeViewer {
       this._headLookEnableTimeoutId = null;
     }
     this.headLookEnabled = false;
+    this._useInitialHeadRotation = false;
 
     if (this.animationAction) {
       this.animationAction.fadeOut(transitionDuration);
@@ -388,6 +404,13 @@ export class ThreeViewer {
 
     if (this.mixer) {
       this.mixer.update(delta);
+    }
+    if (this._storeHeadInitialNextFrame && this.headBone) {
+      this._storeHeadInitialNextFrame = false;
+    }
+    if (!this.headLookEnabled && this._useInitialHeadRotation && this.headBone) {
+      this.headBone.quaternion.copy(this._headInitialQuat);
+      this.headBone.getWorldQuaternion(this.smoothedHeadWorldQuat);
     }
     if (this.headLookEnabled && this.headBone && this.smoothedMouseTarget) {
       const head = this.headBone;

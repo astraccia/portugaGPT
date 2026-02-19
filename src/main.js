@@ -581,6 +581,9 @@ const portugaHeading = document.querySelector('.portuga-heading');
 if (portugaHeading) {
   portugaHeading.addEventListener('click', () => {
     stopAllPlayingMusic();
+    if (threeViewer && typeof threeViewer.disableHeadLookAndResetHead === 'function') {
+      threeViewer.disableHeadLookAndResetHead();
+    }
     window.scrollTo({ top: 0, behavior: 'smooth' });
     if (turnSoundOn) turnSoundOn();
     setTimeout(() => {
