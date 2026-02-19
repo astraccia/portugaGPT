@@ -569,6 +569,30 @@ if (speakerButton) {
   }
 }
 
+function stopAllPlayingMusic() {
+  if (audio && !audio.paused) {
+    audio.pause();
+    audio.currentTime = 0;
+  }
+  stopAudioAndHidePlayer();
+}
+
+const portugaHeading = document.querySelector('.portuga-heading');
+if (portugaHeading) {
+  portugaHeading.addEventListener('click', () => {
+    stopAllPlayingMusic();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (turnSoundOn) turnSoundOn();
+    setTimeout(() => {
+      if (threeViewer && typeof threeViewer.startIntroSequence === 'function') {
+        threeViewer.startIntroSequence({ enableHeadLook: false });
+      }
+    }, 500);
+  });
+  portugaHeading.setAttribute('role', 'button');
+  portugaHeading.setAttribute('aria-label', 'Scroll to top and play intro');
+}
+
 const bottomMenuNav = document.querySelector('.bottom-menu-nav');
 const BOTTOM_MENU_ZONE_FRACTION = 0.12;
 const BOTTOM_MENU_SCROLL_SPEED = 8;

@@ -254,6 +254,7 @@ body {
   font-weight: normal;
   line-height: 1.1;
   font-family: 'CooperBlack', 'Roboto', serif;
+  cursor: pointer;
 }
 
 .im-text {
@@ -295,6 +296,10 @@ body {
   text-decoration: none;
   color: #000000;
   transition: color 0.2s;
+}
+
+.header-nav a {
+  cursor: pointer;
 }
 
 .header-nav a:hover {
