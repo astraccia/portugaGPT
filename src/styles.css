@@ -221,10 +221,15 @@ body {
 
 .ola-text {
   font-size: 34px;
-  color: #000000;
+  color: #ff0066;
   font-family: 'Selfie Printed', cursive, 'Roboto', sans-serif;
   font-weight: normal;
   font-style: normal;
+}
+
+.ola-text2 {
+  margin-top: -10px;
+  margin-bottom: 5px;
 }
 
 .name-input {
