@@ -656,6 +656,7 @@ body {
   padding: 12px 20px;
   height: 65px;
   width: 85%;
+  padding-left: 25px;
 }
 
 .input-pill {
