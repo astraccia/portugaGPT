@@ -251,7 +251,6 @@ export class ThreeViewer {
   }
 
   startIntroSequence(options = {}) {
-    const { enableHeadLook = true } = options;
     if (!this.mixer || !this._ironmanClip || !this._walkClip) return;
 
     if (this.model) this.model.visible = true;
@@ -283,10 +282,11 @@ export class ThreeViewer {
       ironmanAction.fadeOut(0.5);
       walkAction.reset().fadeIn(0.5).play();
       this.animationAction = walkAction;
-      this.headLookEnabled = enableHeadLook;
-      if (!enableHeadLook) this._useInitialHeadRotation = true;
+      this.headLookEnabled = true;
+      this._useInitialHeadRotation = false;
+      if (this.headBone) this.headBone.getWorldQuaternion(this.smoothedHeadWorldQuat);
       this.onWalkStart();
-      console.log('Switched to walk (loop), head look', enableHeadLook ? 'enabled' : 'disabled');
+      console.log('Switched to walk (loop), head look enabled');
     };
 
     this.mixer.addEventListener('finished', transitionToWalk);

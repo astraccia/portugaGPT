@@ -78,11 +78,26 @@ if (audioElement) {
   });
 }
 
+// Placeholder text for answerDisplay; <amigo> is replaced by name-input value
+const ANSWER_PLACEHOLDER_TEMPLATE = 'Nice to meet you, <amigo>! Ask me anything or pick a question below.';
+
+function getDisplayName() {
+  return (savedUserName && savedUserName.trim()) || 'amigo';
+}
+
+function updateAnswerPlaceholder() {
+  if (!answerDisplay || !answerDisplay.classList.contains('placeholder')) return;
+  answerDisplay.textContent = ANSWER_PLACEHOLDER_TEMPLATE.replace(/<amigo>/g, getDisplayName());
+}
+
 // Saved name used for <amigo> in static answers; updated when user leaves the name field
 let savedUserName = '';
 if (nameInputEl) {
+  savedUserName = (nameInputEl.value && nameInputEl.value.trim()) || '';
+  updateAnswerPlaceholder();
   nameInputEl.addEventListener('blur', () => {
     savedUserName = (nameInputEl.value && nameInputEl.value.trim()) || '';
+    updateAnswerPlaceholder();
   });
 }
 
