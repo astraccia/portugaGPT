@@ -18,6 +18,8 @@ document.fonts.ready.then(() => {
 });
 
 let threeViewer = null;
+/** When true, start intro + sound as soon as the GLB model is loaded (used after reload without cookies modal). */
+let startIntroWhenModelReady = false;
 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initThreeViewer);
@@ -31,7 +33,18 @@ function initThreeViewer() {
     console.log('Initializing Three.js viewer...');
     threeViewer = new ThreeViewer('three-canvas', {
       onModelLoadStart: showLoader,
-      onModelLoaded: hideLoader,
+      onModelLoaded: () => {
+        hideLoader();
+        if (startIntroWhenModelReady) {
+          startIntroWhenModelReady = false;
+          setTimeout(() => {
+            if (typeof turnSoundOn === 'function') turnSoundOn();
+            if (threeViewer && typeof threeViewer.startIntroSequence === 'function') {
+              threeViewer.startIntroSequence();
+            }
+          }, 100);
+        }
+      },
       onModelLoadError: hideLoader,
       onWalkStart: startWalkingSound
     });
@@ -487,12 +500,23 @@ const cookiesModal = document.getElementById('cookies-modal');
 const cookiesModalAcceptBtn = document.getElementById('cookies-modal-accept-btn');
 const cookiesModalRefuseBtn = document.getElementById('cookies-modal-refuse-btn');
 
+const COOKIES_MODAL_SKIP_KEY = 'portuga_skip_cookies_modal';
+
 function dismissCookiesModal() {
   if (cookiesModal) {
     cookiesModal.classList.add('is-dismissed');
     cookiesModal.setAttribute('aria-hidden', 'true');
   }
 }
+
+// If we reloaded via portuga-heading click, hide cookies modal and start intro when model is loaded
+try {
+  if (sessionStorage.getItem(COOKIES_MODAL_SKIP_KEY)) {
+    sessionStorage.removeItem(COOKIES_MODAL_SKIP_KEY);
+    dismissCookiesModal();
+    startIntroWhenModelReady = true;
+  }
+} catch (_) {}
 
 function onCookiesModalDismiss() {
   dismissCookiesModal();
@@ -595,20 +619,13 @@ function stopAllPlayingMusic() {
 const portugaHeading = document.querySelector('.portuga-heading');
 if (portugaHeading) {
   portugaHeading.addEventListener('click', () => {
-    stopAllPlayingMusic();
-    if (threeViewer && typeof threeViewer.disableHeadLookAndResetHead === 'function') {
-      threeViewer.disableHeadLookAndResetHead();
-    }
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    if (turnSoundOn) turnSoundOn();
-    setTimeout(() => {
-      if (threeViewer && typeof threeViewer.startIntroSequence === 'function') {
-        threeViewer.startIntroSequence({ enableHeadLook: false });
-      }
-    }, 500);
+    try {
+      sessionStorage.setItem(COOKIES_MODAL_SKIP_KEY, '1');
+    } catch (_) {}
+    window.location.reload();
   });
   portugaHeading.setAttribute('role', 'button');
-  portugaHeading.setAttribute('aria-label', 'Scroll to top and play intro');
+  portugaHeading.setAttribute('aria-label', 'Reload page');
 }
 
 const bottomMenuNav = document.querySelector('.bottom-menu-nav');
