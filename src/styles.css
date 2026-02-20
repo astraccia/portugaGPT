@@ -129,7 +129,7 @@ body.body-shake {
   border-radius: 50%;
   background: #ff0066;
   animation: glowPulse 1.5s ease-in-out infinite;
-  box-shadow: 0 0 10px #ff0066, 0 0 20px #ff0066, 0 0 30px #ff006640;
+  box-shadow: 0 0 10px #ff0066, 0 0 20px #ff0066, 0 0 25px #ff006640;
 }
 
 .thinking-text {
@@ -146,7 +146,7 @@ body.body-shake {
   50% { 
       transform: scale(1.2); 
       opacity: 1;
-      box-shadow: 0 0 20px #ff0066, 0 0 40px #ff0066, 0 0 60px #ff006680;
+      box-shadow: 0 0 20px #ff0066, 0 0 20px #ff0066, 0 0 10px #ff006680;
   }
 }
 
