@@ -632,9 +632,17 @@ const bottomMenuNav = document.querySelector('.bottom-menu-nav');
 const BOTTOM_MENU_ZONE_FRACTION = 0.12;
 const BOTTOM_MENU_SCROLL_SPEED = 8;
 let mouseX = 0;
+let isMouseOverBottomMenu = false;
 
 if (bottomMenuNav) {
-  document.addEventListener('mousemove', (e) => {
+  bottomMenuNav.addEventListener('mouseenter', () => {
+    isMouseOverBottomMenu = true;
+  });
+  bottomMenuNav.addEventListener('mouseleave', () => {
+    isMouseOverBottomMenu = false;
+    mouseX = window.innerWidth / 2;
+  });
+  bottomMenuNav.addEventListener('mousemove', (e) => {
     mouseX = e.clientX;
   });
 
@@ -644,12 +652,14 @@ if (bottomMenuNav) {
       requestAnimationFrame(tickBottomMenuScroll);
       return;
     }
-    const zoneWidth = window.innerWidth * BOTTOM_MENU_ZONE_FRACTION;
     let delta = 0;
-    if (mouseX < zoneWidth) {
-      delta = -BOTTOM_MENU_SCROLL_SPEED * (1 - mouseX / zoneWidth);
-    } else if (mouseX > window.innerWidth - zoneWidth) {
-      delta = BOTTOM_MENU_SCROLL_SPEED * (1 - (window.innerWidth - mouseX) / zoneWidth);
+    if (isMouseOverBottomMenu) {
+      const zoneWidth = window.innerWidth * BOTTOM_MENU_ZONE_FRACTION;
+      if (mouseX < zoneWidth) {
+        delta = -BOTTOM_MENU_SCROLL_SPEED * (1 - mouseX / zoneWidth);
+      } else if (mouseX > window.innerWidth - zoneWidth) {
+        delta = BOTTOM_MENU_SCROLL_SPEED * (1 - (window.innerWidth - mouseX) / zoneWidth);
+      }
     }
     const next = bottomMenuNav.scrollLeft + delta;
     bottomMenuNav.scrollLeft = Math.max(0, Math.min(next, maxScroll));
