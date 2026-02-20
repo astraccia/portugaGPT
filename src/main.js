@@ -229,6 +229,7 @@ const TYPEWRITER_AUDIO_DELAY_MS = 600;
 
 function typeWriter(element, text, audioUrl = null) {
   if (!element) return;
+  const msPerChar = voiceModeEnabled ? TYPEWRITER_MS_PER_CHAR : TYPEWRITER_MS_PER_CHAR / 3.5;
   const myGen = typewriterGeneration;
   element.innerHTML = '';
   let i = 0;
@@ -237,7 +238,7 @@ function typeWriter(element, text, audioUrl = null) {
     if (i < text.length) {
       element.innerHTML = text.substring(0, i + 1) + '<span class="typewriter-cursor"></span>';
       i++;
-      setTimeout(type, TYPEWRITER_MS_PER_CHAR);
+      setTimeout(type, msPerChar);
     } else {
       element.innerHTML = text;
     }
