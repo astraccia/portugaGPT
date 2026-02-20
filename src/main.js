@@ -88,6 +88,7 @@ if (voiceToggle) {
 if (audioElement) {
   audioElement.addEventListener('ended', () => {
     voicePlayer?.classList.remove('playing');
+    restoreWalkingVolumeAfterVoice();
   });
 }
 
@@ -151,6 +152,7 @@ function stopAudioAndHidePlayer() {
     audioElement.currentTime = 0;
   }
   voicePlayer?.classList.remove('playing', 'visible');
+  restoreWalkingVolumeAfterVoice();
 }
 
 function showThinking() {
@@ -216,6 +218,7 @@ async function generateVoice(text, signal = null) {
 
 function setupAndPlayAudio(audioUrl) {
   if (!audioElement || !voicePlayer) return;
+  duckWalkingVolumeForVoice();
   audioElement.src = audioUrl;
   voicePlayer.classList.add('visible');
   audioElement.play().then(() => voicePlayer.classList.add('playing')).catch(() => {});
@@ -606,6 +609,13 @@ if (speakerButton) {
   } catch (error) {
     console.error('Error initializing audio:', error);
   }
+}
+
+function duckWalkingVolumeForVoice() {
+  if (audio && isSoundOn) audio.volume = (savedVolumes.get(audio) || 0.1) * 0.1;
+}
+function restoreWalkingVolumeAfterVoice() {
+  if (audio && isSoundOn) audio.volume = savedVolumes.get(audio) || 0.1;
 }
 
 function stopAllPlayingMusic() {
