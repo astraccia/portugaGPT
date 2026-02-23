@@ -350,15 +350,15 @@ if (sendButton && userInput) {
 const MENU_TO_ANIMATION = {
   "Home (default)": "walk",
   "Transition HOME to WORK": "backflip",
-  "Who's Portuga?": "spining",
+  "Who's Portuga?": "who",
   "Proudest work?": "idle",
-  "Any awards?": "dance01",
-  "Brands you touched?": "hifive",
-  "Where are you now?": "hi",
-  "Sneaker count?": "dance02",
-  "Sneakers count?": "dance02",
-  "Why Portuga?": "yes",
-  "Let's get a coffee?": "cellphonewalk"
+  "Any awards?": "awards",
+  "Brands you touched?": "brands",
+  "Where are you now?": "where",
+  "Sneaker count?": "sneaker",
+  "Sneakers count?": "sneaker",
+  "Why Portuga?": "why",
+  "Let's get a coffee?": "coffee"
 };
 
 

@@ -1088,3 +1088,10 @@ html.skip-cookies-modal .cookies-modal {
     left: 0;
   }
 }
+
+/* 2560px and higher */
+@media (min-width: 2560px) {
+  .right-chat-panel {
+    margin-bottom: 5vh;
+  }
+}

@@ -232,7 +232,7 @@ export class ThreeViewer {
     this.animationClips = gltf.animations;
     this.mixer = new THREE.AnimationMixer(this.model);
 
-    const ironmanClip = gltf.animations.find((a) => a.name.toLowerCase() === 'ironman') || gltf.animations[12];
+    const ironmanClip = gltf.animations.find((a) => a.name.toLowerCase() === 'iron') || gltf.animations[12];
     const walkClip = gltf.animations.find((a) => a.name.toLowerCase() === 'walk') || gltf.animations[8];
 
     if (!ironmanClip || !walkClip) {
