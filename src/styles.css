@@ -1089,6 +1089,18 @@ html.skip-cookies-modal .cookies-modal {
   }
 }
 
+.spider-link {
+  background-color: #ff0;
+  position: fixed;
+  width: 20px;
+  height: 20px;
+  top: 0;
+  left: 0;
+  margin-top: 42vw;
+  margin-left: 26vw;
+  cursor: pointer;
+}
+
 /* 2560px and higher */
 @media (min-width: 2560px) {
   .right-chat-panel {

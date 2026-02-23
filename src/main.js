@@ -466,6 +466,14 @@ leftMenuItems.forEach((item) => {
   });
 });
 
+const spiderLink = document.querySelector('.spider-link');
+if (spiderLink) {
+  spiderLink.addEventListener('click', () => {
+    if (threeViewer && typeof threeViewer.playAnimation === 'function') {
+      threeViewer.playAnimation('spider');
+    }
+  });
+}
 
 const warningModal = document.getElementById('warning-modal');
 const infoWarningBtn = document.getElementById('info-warning-btn');

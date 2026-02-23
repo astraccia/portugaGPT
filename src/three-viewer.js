@@ -320,7 +320,14 @@ export class ThreeViewer {
     const newAction = this.mixer.clipAction(clip);
     const name = clip.name.toLowerCase();
     const pingPongClips = ['spining', 'dance01', 'hi', 'yes'];
-    newAction.setLoop(pingPongClips.includes(name) ? THREE.LoopPingPong : THREE.LoopRepeat);
+    const onceClips = ['spider'];
+    const isOnceClip = onceClips.some((once) => name.includes(once));
+    if (isOnceClip) {
+      newAction.setLoop(THREE.LoopOnce);
+      newAction.clampWhenFinished = true;
+    } else {
+      newAction.setLoop(pingPongClips.includes(name) ? THREE.LoopPingPong : THREE.LoopRepeat);
+    }
 
     if (this._headLookEnableTimeoutId != null) {
       clearTimeout(this._headLookEnableTimeoutId);
@@ -334,6 +341,23 @@ export class ThreeViewer {
     }
     newAction.reset().fadeIn(transitionDuration).play();
     this.animationAction = newAction;
+
+    if (isOnceClip && this._walkClip) {
+      const blendToWalk = () => {
+        if (this.animationAction !== newAction) return;
+        this.mixer.removeEventListener('finished', blendToWalk);
+        const walkAction = this.mixer.clipAction(this._walkClip);
+        walkAction.setLoop(THREE.LoopRepeat);
+        newAction.fadeOut(transitionDuration);
+        walkAction.reset().fadeIn(transitionDuration).play();
+        this.animationAction = walkAction;
+        this.headLookEnabled = true;
+        this._useInitialHeadRotation = false;
+        if (this.headBone) this.headBone.getWorldQuaternion(this.smoothedHeadWorldQuat);
+        this.onWalkStart();
+      };
+      this.mixer.addEventListener('finished', blendToWalk);
+    }
 
     const enableHeadLookForClip = name === 'walk' || name === 'idle';
     if (enableHeadLookForClip) {
