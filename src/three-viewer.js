@@ -320,7 +320,7 @@ export class ThreeViewer {
     const newAction = this.mixer.clipAction(clip);
     const name = clip.name.toLowerCase();
     const pingPongClips = ['spining', 'dance01', 'hi', 'yes'];
-    const onceClips = ['spider'];
+    const onceClips = ['spider', 'who'];
     const isOnceClip = onceClips.some((once) => name.includes(once));
     if (isOnceClip) {
       newAction.setLoop(THREE.LoopOnce);
