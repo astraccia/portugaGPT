@@ -2,6 +2,22 @@ import { ThreeViewer } from './three-viewer.js';
 
 console.log('Portuga WebApp loaded');
 
+if (typeof history !== 'undefined' && 'scrollRestoration' in history) {
+  history.scrollRestoration = 'manual';
+}
+
+function scrollToTop() {
+  window.scrollTo(0, 0);
+  if (document.documentElement) document.documentElement.scrollTop = 0;
+  if (document.body) document.body.scrollTop = 0;
+}
+
+scrollToTop();
+window.addEventListener('load', () => {
+  scrollToTop();
+  requestAnimationFrame(scrollToTop);
+});
+
 const loaderEl = document.getElementById('loader');
 
 function showLoader() {
@@ -22,7 +38,10 @@ let threeViewer = null;
 let startIntroWhenModelReady = false;
 
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initThreeViewer);
+  document.addEventListener('DOMContentLoaded', () => {
+    scrollToTop();
+    initThreeViewer();
+  });
 } else {
   initThreeViewer();
 }
