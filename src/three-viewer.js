@@ -105,10 +105,10 @@ export class ThreeViewer {
   }
 
   setupLighting() {
-    const ambientLight = new THREE.AmbientLight(0xffffff, 1.6);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
     this.scene.add(ambientLight);
 
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 1.2);
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
     directionalLight.position.set(2.5, 10, 5);
     directionalLight.castShadow = true;
     directionalLight.shadow.mapSize.width = 2048;
@@ -320,7 +320,7 @@ export class ThreeViewer {
     const newAction = this.mixer.clipAction(clip);
     const name = clip.name.toLowerCase();
     const pingPongClips = ['spining', 'dance01', 'hi', 'yes'];
-    const onceClips = ['spider', 'who'];
+    const onceClips = ['spider'];
     const isOnceClip = onceClips.some((once) => name.includes(once));
     if (isOnceClip) {
       newAction.setLoop(THREE.LoopOnce);
