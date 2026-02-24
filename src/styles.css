@@ -977,7 +977,7 @@ html.skip-cookies-modal .cookies-modal {
 }
 
 .bottom-menu {
-  position: fixed;
+  position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;

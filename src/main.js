@@ -424,6 +424,21 @@ function setActiveMenuByText(text) {
   });
 }
 
+function scrollToEndSmoothly() {
+  const durationMs = 1500;
+  const start = window.scrollY ?? document.documentElement.scrollTop;
+  const end = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+  const startTime = performance.now();
+
+  function step(now) {
+    const t = Math.min((now - startTime) / durationMs, 1);
+    const eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+    window.scrollTo(0, start + (end - start) * eased);
+    if (t < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
 const bottomMenuItems = document.querySelectorAll('.bottom-menu-item');
 bottomMenuItems.forEach((item) => {
   item.addEventListener('click', () => {
@@ -432,6 +447,7 @@ bottomMenuItems.forEach((item) => {
     trackQuickBtn(text);
     const animation = MENU_TO_ANIMATION[text];
     if (animation && threeViewer) threeViewer.playAnimation(animation);
+    if (text === 'Proudest work?') scrollToEndSmoothly();
     const predefined = getPredefinedReply(text);
     if (predefined != null) {
       showThinking();
@@ -460,6 +476,7 @@ leftMenuItems.forEach((item) => {
     trackQuickBtn(text);
     const animation = MENU_TO_ANIMATION[text];
     if (animation && threeViewer) threeViewer.playAnimation(animation);
+    if (text === 'Proudest work?') scrollToEndSmoothly();
     if (userInput) userInput.value = text;
     const predefined = getPredefinedReply(text);
     if (predefined != null) {
