@@ -189,13 +189,22 @@ body.body-shake {
   pointer-events: none;
 }
 
+:root {
+  --header-height: 110px;
+}
+
 body {
   display: grid;
-  grid-template-rows: auto 1fr auto;
+  grid-template-rows: var(--header-height) 1fr auto;
   min-height: 100vh;
 }
 
 .top-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -334,6 +343,8 @@ body {
   background-repeat: no-repeat;
   background-position: 7% 20%;
   width: 100%;
+  height: calc(100vh - 138px);
+  margin-top: 138px;
 }
 
 .resize-warning {
