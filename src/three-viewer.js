@@ -268,7 +268,10 @@ export class ThreeViewer {
 
     setTimeout(() => {
       document.body.classList.add('body-shake');
-      setTimeout(() => document.body.classList.remove('body-shake'), 2000);
+      setTimeout(() => {
+        document.body.classList.remove('body-shake');
+        document.body.classList.add('body-scroll-enabled');
+      }, 2000);
     }, 500);
 
     const ironmanSound = new Audio(import.meta.env.BASE_URL + 'sound/ironman.mp3');
