@@ -459,7 +459,7 @@ body {
   align-items: flex-start;
   margin-bottom: -40px;
   margin-top: auto;
-  width: 80%;
+  width: 87%;
   padding: 0px 25px;
   box-sizing: border-box;
 }
@@ -1099,6 +1099,10 @@ html.skip-cookies-modal .cookies-modal {
   margin-top: 42vw;
   margin-left: 26vw;
   cursor: pointer;
+}
+
+.text-pink {
+  color: #ff0066;
 }
 
 /* 2560px and higher */

@@ -93,15 +93,22 @@ if (audioElement) {
 }
 
 // Placeholder text for answerDisplay; <amigo> is replaced by name-input value
-const ANSWER_PLACEHOLDER_TEMPLATE = 'Nice to meet you, <amigo>! Ask me anything or pick a question below.';
+const ANSWER_PLACEHOLDER_TEMPLATE = '<b><span class="text-pink">Nice to meet you, </span><amigo><span class="text-pink">!</span></b><br>I’m really glad you’re here. So, let’s talk. Just start typing below and smile.🤓';
 
 function getDisplayName() {
   return (savedUserName && savedUserName.trim()) || 'amigo';
 }
 
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
 function updateAnswerPlaceholder() {
   if (!answerDisplay || !answerDisplay.classList.contains('placeholder')) return;
-  answerDisplay.textContent = ANSWER_PLACEHOLDER_TEMPLATE.replace(/<amigo>/g, getDisplayName());
+  const name = escapeHtml(getDisplayName());
+  answerDisplay.innerHTML = ANSWER_PLACEHOLDER_TEMPLATE.replace(/<amigo>/g, name);
 }
 
 // Saved name used for <amigo> in static answers; updated when user leaves the name field
