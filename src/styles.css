@@ -1066,10 +1066,15 @@ html.skip-cookies-modal .cookies-modal {
   border: 0;
 }
 
+#fullpage-works-section-list {
+  display: flex;
+  overflow-x: scroll;
+}
+
 .fullpage-works-section-content {
   width: 100vw;
   height: 90vh;
-  position: absolute;
+  /* position: absolute; */
   bottom: 0;
   left: 0;
   display: flex;
