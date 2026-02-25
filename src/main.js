@@ -443,21 +443,43 @@ function setActiveMenuByText(text) {
   });
 }
 
-function scrollToEndSmoothly() {
-  setTimeout(() => {
-    const durationMs = 1500;
-    const start = window.scrollY ?? document.documentElement.scrollTop;
-    const end = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
-    const startTime = performance.now();
+const SMOOTH_SCROLL_DURATION_MS = 1500;
 
+/**
+ * Smoothly scroll to a vertical position.
+ * @param {number|{ top: number, delayMs?: number, durationMs?: number }} options - Target scroll top in px, or { top, delayMs, durationMs }
+ */
+function scrollToSmoothly(options) {
+  const opts = typeof options === 'number' ? { top: options } : options;
+  const top = opts.top;
+  const delayMs = opts.delayMs ?? 0;
+  const durationMs = opts.durationMs ?? SMOOTH_SCROLL_DURATION_MS;
+
+  const run = () => {
+    const start = window.scrollY ?? document.documentElement.scrollTop;
+    const startTime = performance.now();
     function step(now) {
       const t = Math.min((now - startTime) / durationMs, 1);
       const eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
-      window.scrollTo(0, start + (end - start) * eased);
+      window.scrollTo(0, start + (top - start) * eased);
       if (t < 1) requestAnimationFrame(step);
     }
     requestAnimationFrame(step);
-  }, 2000);
+  };
+
+  if (delayMs > 0) setTimeout(run, delayMs);
+  else run();
+}
+
+function scrollToEndSmoothly() {
+  scrollToSmoothly({
+    top: Math.max(0, document.documentElement.scrollHeight - window.innerHeight),
+    delayMs: 2000,
+  });
+}
+
+function scrollToTopSmoothly() {
+  scrollToSmoothly(0);
 }
 
 const bottomMenuItems = document.querySelectorAll('.bottom-menu-item');
@@ -523,7 +545,7 @@ if (spiderLink) {
 const homeButton = document.getElementById('home-button') || document.querySelector('.fullpage-works-section-button');
 if (homeButton) {
   homeButton.addEventListener('click', () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    scrollToTopSmoothly();
   });
 }
 
