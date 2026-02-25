@@ -1096,6 +1096,13 @@ html.skip-cookies-modal .cookies-modal {
   }
 }
 
+.fullpage-works-section-image-plus {
+  position: absolute;
+  margin-top: -355px;
+  margin-left: 50px;
+  cursor: pointer;
+}
+
 .fullpage-works-section-title, .fullpage-works-section-image {
   width: 50%;
   display: flex;
@@ -1120,7 +1127,7 @@ html.skip-cookies-modal .cookies-modal {
 }
 
 .fullpage-works-section-client {
-  font-size: 24px;
+  font-size: 30px;
   margin-bottom: 25px;
 }
 
