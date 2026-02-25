@@ -549,6 +549,87 @@ if (homeButton) {
   });
 }
 
+function getWorkSectionId(imagePath) {
+  if (!imagePath) return '';
+  const base = imagePath.replace(/^.*\//, '').replace(/-img\.(jpg|png)$/i, '');
+  return base || 'work';
+}
+
+function createWorkSection(work) {
+  const id = getWorkSectionId(work.image);
+  const section = document.createElement('div');
+  section.className = 'fullpage-works-section-content';
+  section.id = id;
+
+  const info = document.createElement('div');
+  info.className = 'fullpage-works-section-info';
+
+  const clientEl = document.createElement('div');
+  clientEl.className = 'fullpage-works-section-client';
+  clientEl.textContent = work.client || '';
+
+  const descriptionEl = document.createElement('div');
+  descriptionEl.className = 'fullpage-works-section-description';
+  descriptionEl.textContent = work.description || '';
+
+  info.appendChild(clientEl);
+  info.appendChild(descriptionEl);
+  section.appendChild(info);
+
+  const titleWrap = document.createElement('div');
+  titleWrap.className = 'fullpage-works-section-title';
+  const titleImg = document.createElement('img');
+  titleImg.src = work.titleImage || '';
+  titleImg.alt = work.client || 'Work';
+  titleWrap.appendChild(titleImg);
+  section.appendChild(titleWrap);
+
+  const imageWrap = document.createElement('div');
+  imageWrap.className = 'fullpage-works-section-image';
+
+  const plusImg = document.createElement('img');
+  plusImg.className = 'fullpage-works-section-image-plus';
+  plusImg.src = 'images/works_plus.png';
+  if (work.url) {
+    plusImg.setAttribute('role', 'link');
+    plusImg.style.cursor = 'pointer';
+    plusImg.addEventListener('click', () => window.open(work.url, '_blank', 'noopener,noreferrer'));
+  }
+  imageWrap.appendChild(plusImg);
+
+  const mainImg = document.createElement('img');
+  mainImg.src = work.image || '';
+  mainImg.alt = work.client || 'Work';
+  imageWrap.appendChild(mainImg);
+
+  section.appendChild(imageWrap);
+  return section;
+}
+
+async function loadWorksSections() {
+  const container = document.getElementById('fullpage-works-section-list');
+  if (!container) return;
+  try {
+    const base = import.meta.env.BASE_URL || '/';
+    const res = await fetch(`${base}works-data.json`);
+    if (!res.ok) throw new Error('Failed to load works');
+    const works = await res.json();
+    if (!Array.isArray(works)) return;
+    container.innerHTML = '';
+    works.forEach((work) => {
+      container.appendChild(createWorkSection(work));
+    });
+  } catch (e) {
+    console.warn('Could not load works-data.json', e);
+  }
+}
+
+loadWorksSections();
+
+// Remove duplicate/broken warning-modal if present (cleanup from invalid HTML)
+const modals = document.querySelectorAll('[id="warning-modal"]');
+if (modals.length > 1) modals[0].remove();
+
 const warningModal = document.getElementById('warning-modal');
 const infoWarningBtn = document.getElementById('info-warning-btn');
 const warningModalClose = document.querySelector('.warning-modal-close');
