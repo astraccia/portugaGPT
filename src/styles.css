@@ -988,12 +988,12 @@ html.skip-cookies-modal .cookies-modal {
   z-index: 100;
   padding: 0px 0px;
   height: auto;
-  margin-bottom: -9px;
+  margin-bottom: -5px;
 }
 
 .bottom-menu-nav {
   width: 100%;
-  overflow-x: auto;
+  overflow-x: hidden;
   overflow-y: hidden;
   background-color: #ffffff;
 }
