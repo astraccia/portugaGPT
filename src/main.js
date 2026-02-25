@@ -520,6 +520,13 @@ if (spiderLink) {
   });
 }
 
+const homeButton = document.getElementById('home-button') || document.querySelector('.fullpage-works-section-button');
+if (homeButton) {
+  homeButton.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+}
+
 const warningModal = document.getElementById('warning-modal');
 const infoWarningBtn = document.getElementById('info-warning-btn');
 const warningModalClose = document.querySelector('.warning-modal-close');

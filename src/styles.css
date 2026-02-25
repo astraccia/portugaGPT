@@ -1044,6 +1044,31 @@ html.skip-cookies-modal .cookies-modal {
   border-radius: 2px;
 }
 
+.fullpage-works-section-content {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-content: flex-end;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.fullpage-works-section-button {
+  width: 100vw;
+  height: 40px;
+  background-color: #ff0066;
+  border: none;
+  cursor: pointer;
+  transform: translateY(5px);
+
+  img {
+    height: 100%;
+    filter: brightness(0) invert(1);
+  }
+}
+
 @media (max-width: 1024px) {
   .main-content {
     grid-template-columns: minmax(150px, 0.2fr) 0.67fr minmax(220px, 0.48fr);
@@ -1121,14 +1146,14 @@ html.skip-cookies-modal .cookies-modal {
   color: #ff0066;
 }
 
-.fullpage-iframe-section {
+.fullpage-works-section {
   width: 100vw;
   height: 100vh;
   min-height: 100vh;
   margin-top: 100vh;
 }
 
-.fullpage-iframe-section iframe {
+.fullpage-works-section works {
   display: block;
   width: 100%;
   height: 100%;
