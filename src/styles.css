@@ -1113,8 +1113,12 @@ html.skip-cookies-modal .cookies-modal {
 .fullpage-works-section-image-plus {
   position: absolute;
   margin-top: -355px;
-  margin-left: 50px;
+  margin-left: 70px;
   cursor: pointer;
+}
+
+.fullpage-works-section-image-main {
+  width: 100%;
 }
 
 .fullpage-works-section-title, .fullpage-works-section-image {
@@ -1131,7 +1135,7 @@ html.skip-cookies-modal .cookies-modal {
 .fullpage-works-section-info {
   position: absolute;
   z-index: 9;
-  width: 30vw;
+  width: 26vw;
   margin-left: 10vw;
   margin-top: 25vh;
   display: flex;
@@ -1143,10 +1147,13 @@ html.skip-cookies-modal .cookies-modal {
 .fullpage-works-section-client {
   font-size: 30px;
   margin-bottom: 25px;
+  margin-right: -30px;
+  font-weight: 400;
 }
 
 .fullpage-works-section-description {
   font-size: 24px;
+  line-height: 1.2;
 }
 
 @media (max-width: 1024px) {
@@ -1211,7 +1218,7 @@ html.skip-cookies-modal .cookies-modal {
 }
 
 .spider-link {
-  background-color: #ff0;
+  /* background-color: #ff0; */
   position: fixed;
   width: 20px;
   height: 20px;

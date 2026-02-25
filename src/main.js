@@ -598,6 +598,7 @@ function createWorkSection(work) {
   imageWrap.appendChild(plusImg);
 
   const mainImg = document.createElement('img');
+  mainImg.className = 'fullpage-works-section-image-main';
   mainImg.src = work.image || '';
   mainImg.alt = work.client || 'Work';
   imageWrap.appendChild(mainImg);
