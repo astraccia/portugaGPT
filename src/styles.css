@@ -1068,13 +1068,22 @@ html.skip-cookies-modal .cookies-modal {
 
 #fullpage-works-section-list {
   display: flex;
-  overflow-x: scroll;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  width: 100vw;
+  height: 85vh;
+  margin-bottom: 40px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
 }
 
 .fullpage-works-section-content {
+  flex: 0 0 100vw;
+  min-width: 100vw;
   width: 100vw;
   height: 90vh;
-  /* position: absolute; */
+  position: relative;
   bottom: 0;
   left: 0;
   display: flex;
@@ -1122,7 +1131,7 @@ html.skip-cookies-modal .cookies-modal {
 .fullpage-works-section-info {
   position: absolute;
   z-index: 9;
-  width: 25vw;
+  width: 30vw;
   margin-left: 10vw;
   margin-top: 25vh;
   display: flex;
