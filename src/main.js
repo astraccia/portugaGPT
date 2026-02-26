@@ -593,7 +593,7 @@ function createWorkSection(work) {
   if (work.url) {
     plusImg.setAttribute('role', 'link');
     plusImg.style.cursor = 'pointer';
-    plusImg.addEventListener('click', () => window.open(work.url, '_blank', 'noopener,noreferrer'));
+    plusImg.addEventListener('click', () => openWorkInIframe(work.url));
   }
   imageWrap.appendChild(plusImg);
 
@@ -650,6 +650,36 @@ function scrollWorksToIndex(index) {
 }
 
 loadWorksSections();
+
+function openWorkInIframe(url) {
+  const overlay = document.getElementById('work-iframe-overlay');
+  const iframe = document.getElementById('work-iframe');
+  if (overlay && iframe) {
+    iframe.src = url;
+    overlay.classList.add('is-open');
+    overlay.setAttribute('aria-hidden', 'false');
+  }
+}
+
+function closeWorkInIframe() {
+  const overlay = document.getElementById('work-iframe-overlay');
+  const iframe = document.getElementById('work-iframe');
+  if (overlay && iframe) {
+    overlay.classList.remove('is-open');
+    overlay.setAttribute('aria-hidden', 'true');
+    iframe.src = 'about:blank';
+  }
+}
+
+const workIframeClose = document.getElementById('work-iframe-close');
+if (workIframeClose) workIframeClose.addEventListener('click', closeWorkInIframe);
+
+const workIframeOverlay = document.getElementById('work-iframe-overlay');
+if (workIframeOverlay) {
+  workIframeOverlay.addEventListener('click', (e) => {
+    if (e.target === workIframeOverlay) closeWorkInIframe();
+  });
+}
 
 // Remove duplicate/broken warning-modal if present (cleanup from invalid HTML)
 const modals = document.querySelectorAll('[id="warning-modal"]');
