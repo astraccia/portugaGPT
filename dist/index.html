@@ -11,8 +11,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;900&display=swap" rel="stylesheet">
-  <script type="module" crossorigin src="./assets/index-BaR5kqHx.js"></script>
-  <link rel="stylesheet" crossorigin href="./assets/index-BiDMFFNU.css">
+  <script type="module" crossorigin src="./assets/index-4D7-zFFm.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-BiNPEOHC.css">
 </head>
 <body>
 
@@ -155,9 +155,20 @@
   <canvas id="three-canvas"></canvas>
   
   <div class="fullpage-works-section">
+    <aside class="works-menu left-menu" id="works-menu">
+      <h2 class="menu-heading works-menu-heading">My proudest work are:</h2>
+      <ul class="menu-list" id="works-menu-list"></ul>
+    </aside>
     <div id="fullpage-works-section-list" class="fullpage-works-section-list"></div>
     <button class="fullpage-works-section-button" id="home-button">
       <img src="images/menu_back.svg" alt="Back to Home">
+    </button>
+  </div>
+
+  <div id="work-iframe-overlay" class="work-iframe-overlay" aria-hidden="true">
+    <iframe id="work-iframe" class="work-iframe" title="Work link"></iframe>
+    <button type="button" class="work-iframe-close" id="work-iframe-close" aria-label="Close">
+      <img src="images/bt_close.svg" alt="Close" />
     </button>
   </div>
 

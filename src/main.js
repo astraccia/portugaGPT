@@ -593,7 +593,11 @@ function createWorkSection(work) {
   if (work.url) {
     plusImg.setAttribute('role', 'link');
     plusImg.style.cursor = 'pointer';
-    plusImg.addEventListener('click', () => openWorkInIframe(work.url));
+    plusImg.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      openWorkInIframe(work.url);
+    });
   }
   imageWrap.appendChild(plusImg);
 
@@ -655,6 +659,7 @@ function openWorkInIframe(url) {
   const overlay = document.getElementById('work-iframe-overlay');
   const iframe = document.getElementById('work-iframe');
   if (overlay && iframe) {
+    const scrollY = window.scrollY ?? document.documentElement.scrollTop;
     iframe.src = url;
     overlay.classList.add('is-open');
     overlay.setAttribute('aria-hidden', 'false');
