@@ -609,6 +609,7 @@ function createWorkSection(work) {
 
 async function loadWorksSections() {
   const container = document.getElementById('fullpage-works-section-list');
+  const menuList = document.getElementById('works-menu-list');
   if (!container) return;
   try {
     const base = import.meta.env.BASE_URL || '/';
@@ -620,9 +621,31 @@ async function loadWorksSections() {
     works.forEach((work) => {
       container.appendChild(createWorkSection(work));
     });
+    if (menuList) {
+      menuList.innerHTML = '';
+      works.forEach((work, index) => {
+        const li = document.createElement('li');
+        li.className = 'menu-item works-menu-item';
+        li.textContent = work.title || work.client || `Work ${index + 1}`;
+        li.setAttribute('data-works-index', String(index));
+        li.addEventListener('click', () => scrollWorksToIndex(index));
+        menuList.appendChild(li);
+      });
+    }
   } catch (e) {
     console.warn('Could not load works-data.json', e);
   }
+}
+
+function scrollWorksToIndex(index) {
+  const container = document.getElementById('fullpage-works-section-list');
+  if (!container || !container.children[index]) return;
+  const child = container.children[index];
+  const targetScrollLeft = child.offsetLeft;
+  container.scrollTo({ left: targetScrollLeft, behavior: 'smooth' });
+  document.querySelectorAll('.works-menu-item').forEach((el, i) => {
+    el.classList.toggle('active', i === index);
+  });
 }
 
 loadWorksSections();

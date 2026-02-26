@@ -1066,6 +1066,35 @@ html.skip-cookies-modal .cookies-modal {
   border: 0;
 }
 
+.works-menu {
+  position: absolute;
+  left: 0;
+  top: 120px;
+  bottom: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding-top: 2rem;
+  pointer-events: none;
+  line-height: 1.2;
+}
+
+.works-menu .menu-list {
+  pointer-events: auto;
+  clip-path: none;
+  overflow: visible;
+}
+
+.works-menu .menu-item {
+  pointer-events: auto;
+  font-size: 12px;
+}
+
+.works-menu-heading {
+  font-size: 14px;
+}
+
 #fullpage-works-section-list {
   display: flex;
   flex-direction: row;
@@ -1136,7 +1165,7 @@ html.skip-cookies-modal .cookies-modal {
   position: absolute;
   z-index: 9;
   width: 26vw;
-  margin-left: 10vw;
+  margin-left: 13vw;
   margin-top: 25vh;
   display: flex;
   flex-direction: column;
