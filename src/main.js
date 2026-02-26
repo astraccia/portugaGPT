@@ -626,7 +626,8 @@ async function loadWorksSections() {
       works.forEach((work, index) => {
         const li = document.createElement('li');
         li.className = 'menu-item works-menu-item';
-        li.textContent = work.title || work.client || `Work ${index + 1}`;
+        const label = work.title || work.client || `Work ${index + 1}`;
+        li.textContent = work.client ? `${label} (${work.client})` : label;
         li.setAttribute('data-works-index', String(index));
         li.addEventListener('click', () => scrollWorksToIndex(index));
         menuList.appendChild(li);
