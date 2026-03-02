@@ -19,13 +19,53 @@ window.addEventListener('load', () => {
 });
 
 const loaderEl = document.getElementById('loader');
+let loaderShownAt = 0;
+
+let loaderHidePending = false;
+
+function isCookiesPageActive() {
+  const cookiesEl = document.getElementById('cookies-modal');
+  const skipped = document.documentElement.classList.contains('skip-cookies-modal');
+  return cookiesEl && !cookiesEl.classList.contains('is-dismissed') && !skipped;
+}
+
+/** True when we should run the intro (sound + startIntroSequence) once the loader has gone. */
+let introPendingWhenLoaderGone = false;
+
+function applyLoaderLoaded() {
+  if (loaderEl) loaderEl.classList.add('loaded');
+  loaderHidePending = false;
+  if (introPendingWhenLoaderGone) {
+    introPendingWhenLoaderGone = false;
+    if (typeof turnSoundOn === 'function') turnSoundOn();
+    if (threeViewer && typeof threeViewer.startIntroSequence === 'function') {
+      threeViewer.startIntroSequence();
+    }
+  } else if (threeViewer && typeof threeViewer.startDefaultAnimation === 'function') {
+    threeViewer.startDefaultAnimation();
+  }
+}
 
 function showLoader() {
-  if (loaderEl) loaderEl.classList.remove('loaded');
+  if (loaderEl) {
+    loaderEl.classList.remove('loaded');
+    loaderShownAt = Date.now();
+  }
+  loaderHidePending = false;
 }
 
 function hideLoader() {
-  if (loaderEl) loaderEl.classList.add('loaded');
+  if (!loaderEl) return;
+  const elapsed = Date.now() - loaderShownAt;
+  const minShowMs = 3000;
+  const delay = Math.max(0, minShowMs - elapsed);
+  setTimeout(() => {
+    if (isCookiesPageActive()) {
+      loaderHidePending = true;
+      return;
+    }
+    applyLoaderLoaded();
+  }, delay);
 }
 
 document.fonts.ready.then(() => {
@@ -56,12 +96,7 @@ function initThreeViewer() {
         hideLoader();
         if (startIntroWhenModelReady) {
           startIntroWhenModelReady = false;
-          setTimeout(() => {
-            if (typeof turnSoundOn === 'function') turnSoundOn();
-            if (threeViewer && typeof threeViewer.startIntroSequence === 'function') {
-              threeViewer.startIntroSequence();
-            }
-          }, 100);
+          introPendingWhenLoaderGone = true;
         }
       },
       onModelLoadError: hideLoader,
@@ -752,12 +787,8 @@ setTimeout(() => {
 
 function onCookiesModalDismiss() {
   dismissCookiesModal();
-  if (turnSoundOn) turnSoundOn();
-  setTimeout(() => {
-    if (threeViewer && typeof threeViewer.startIntroSequence === 'function') {
-      threeViewer.startIntroSequence();
-    }
-  }, 500);
+  introPendingWhenLoaderGone = true;
+  if (loaderHidePending) applyLoaderLoaded();
 }
 
 if (cookiesModalAcceptBtn) cookiesModalAcceptBtn.addEventListener('click', onCookiesModalDismiss);

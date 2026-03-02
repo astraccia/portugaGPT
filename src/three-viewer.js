@@ -240,14 +240,27 @@ export class ThreeViewer {
       if (gltf.animations.length > 0) {
         this.animationAction = this.mixer.clipAction(gltf.animations[0]);
         this.animationAction.setLoop(THREE.LoopRepeat);
-        this.animationAction.play();
-        this.animationAction.paused = false;
+        // Don't play here – main.js starts animations only after the loader has gone
       }
       return;
     }
 
     this._ironmanClip = ironmanClip;
     this._walkClip = walkClip;
+  }
+
+  /** Start the default/idle animation. Called from main when the loader has gone. */
+  startDefaultAnimation() {
+    if (!this.mixer) return;
+    if (this.animationAction) {
+      this.animationAction.play();
+      return;
+    }
+    if (this.animationClips && this.animationClips.length > 0) {
+      this.animationAction = this.mixer.clipAction(this.animationClips[0]);
+      this.animationAction.setLoop(THREE.LoopRepeat);
+      this.animationAction.play();
+    }
   }
 
   startIntroSequence(options = {}) {
