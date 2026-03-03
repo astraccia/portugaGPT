@@ -1154,7 +1154,7 @@ html.skip-cookies-modal .cookies-modal {
   height: 85vh;
   margin-bottom: 40px;
   overflow: hidden;
-  touch-action: pan-y pinch-zoom;
+  touch-action: none;
 }
 
 #fullpage-works-section-list {

@@ -827,10 +827,7 @@ try {
   }
 } catch (_) {}
 
-// Fallback: enable body scroll after 5s if intro never ran (e.g. model failed to load)
-setTimeout(() => {
-  document.body.classList.add('body-scroll-enabled');
-}, 5000);
+
 
 function onCookiesModalDismiss() {
   dismissCookiesModal();

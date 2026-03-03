@@ -285,7 +285,6 @@ export class ThreeViewer {
       document.body.classList.add('body-shake');
       setTimeout(() => {
         document.body.classList.remove('body-shake');
-        document.body.classList.add('body-scroll-enabled');
       }, 2000);
     }, 500);
 
