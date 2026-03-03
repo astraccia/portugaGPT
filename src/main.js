@@ -1,4 +1,5 @@
 import { ThreeViewer } from './three-viewer.js';
+import { gsap } from 'gsap';
 
 console.log('Portuga WebApp loaded');
 
@@ -675,17 +676,57 @@ async function loadWorksSections() {
   } catch (e) {
     console.warn('Could not load works-data.json', e);
   }
+  initWorksSwipe();
 }
 
 function scrollWorksToIndex(index) {
+  goToWorksIndex(index);
+}
+
+let worksCurrentIndex = 0;
+const WORKS_SWIPE_THRESHOLD = 120;
+const WORKS_ANIM_DURATION = 0.4;
+
+function goToWorksIndex(index) {
   const container = document.getElementById('fullpage-works-section-list');
-  if (!container || !container.children[index]) return;
-  const child = container.children[index];
-  const targetScrollLeft = child.offsetLeft;
-  container.scrollTo({ left: targetScrollLeft, behavior: 'smooth' });
+  const viewport = document.getElementById('fullpage-works-section-viewport');
+  if (!container || !viewport) return;
+  const count = container.children.length;
+  if (count === 0) return;
+  const clamped = Math.max(0, Math.min(index, count - 1));
+  worksCurrentIndex = clamped;
+  const x = -clamped * viewport.offsetWidth;
+  gsap.to(container, { x, duration: WORKS_ANIM_DURATION, ease: 'power2.out' });
   document.querySelectorAll('.works-menu-item').forEach((el, i) => {
-    el.classList.toggle('active', i === index);
+    el.classList.toggle('active', i === clamped);
   });
+}
+
+function initWorksSwipe() {
+  const viewport = document.getElementById('fullpage-works-section-viewport');
+  const container = document.getElementById('fullpage-works-section-list');
+  if (!viewport || !container) return;
+  gsap.set(container, { x: 0 });
+
+  let touchStartY = 0;
+  viewport.addEventListener('touchstart', (e) => {
+    touchStartY = e.touches[0].clientY;
+  }, { passive: true });
+  viewport.addEventListener('touchend', (e) => {
+    const touchEndY = e.changedTouches[0].clientY;
+    const delta = touchStartY - touchEndY;
+    if (Math.abs(delta) < WORKS_SWIPE_THRESHOLD) return;
+    if (delta > 0) goToWorksIndex(worksCurrentIndex + 1);
+    else goToWorksIndex(worksCurrentIndex - 1);
+  }, { passive: true });
+
+  viewport.addEventListener('wheel', (e) => {
+    const count = container.children.length;
+    if (count === 0) return;
+    if (e.deltaY > 0) goToWorksIndex(worksCurrentIndex + 1);
+    else if (e.deltaY < 0) goToWorksIndex(worksCurrentIndex - 1);
+    e.preventDefault();
+  }, { passive: false });
 }
 
 loadWorksSections();

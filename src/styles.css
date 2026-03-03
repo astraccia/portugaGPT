@@ -1148,16 +1148,25 @@ html.skip-cookies-modal .cookies-modal {
 .works-menu-heading {
 }
 
+.fullpage-works-section-viewport {
+  flex: 1 1 auto;
+  width: 100vw;
+  height: 85vh;
+  margin-bottom: 40px;
+  overflow: hidden;
+  touch-action: pan-y pinch-zoom;
+}
+
 #fullpage-works-section-list {
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
-  width: 100vw;
-  height: 85vh;
-  margin-bottom: 40px;
-  overflow-x: auto;
-  overflow-y: hidden;
-  -webkit-overflow-scrolling: touch;
+  height: 100%;
+  will-change: transform;
+}
+
+#fullpage-works-section-list::-webkit-scrollbar {
+  display: none;
 }
 
 .fullpage-works-section-content {
