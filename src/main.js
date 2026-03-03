@@ -680,23 +680,41 @@ async function loadWorksSections() {
 }
 
 function scrollWorksToIndex(index) {
-  goToWorksIndex(index);
+  goToWorksIndex(index, 0);
 }
 
 let worksCurrentIndex = 0;
 const WORKS_SWIPE_THRESHOLD = 200;
 const WORKS_WHEEL_THRESHOLD = 250;
 const WORKS_ANIM_DURATION = 0.4;
+const WORKS_BLUR_MAX_PX = 24;
+const WORKS_SPEED_FOR_MAX_BLUR = 2;
+const WORKS_MENU_CLICK_BLUR_PX = 6;
 
-function goToWorksIndex(index) {
+function goToWorksIndex(index, gestureSpeed = 0) {
   const container = document.getElementById('fullpage-works-section-list');
   const viewport = document.getElementById('fullpage-works-section-viewport');
+  const blurPrimitive = document.getElementById('works-blur-primitive');
   if (!container || !viewport) return;
   const count = container.children.length;
   if (count === 0) return;
   const clamped = Math.max(0, Math.min(index, count - 1));
   worksCurrentIndex = clamped;
   const x = -clamped * viewport.offsetWidth;
+  const blurStart = gestureSpeed > 0
+    ? Math.min(WORKS_BLUR_MAX_PX, (gestureSpeed / WORKS_SPEED_FOR_MAX_BLUR) * WORKS_BLUR_MAX_PX)
+    : WORKS_MENU_CLICK_BLUR_PX;
+  if (blurPrimitive) blurPrimitive.setAttribute('stdDeviation', `${blurStart} 0`);
+  gsap.killTweensOf(container);
+  const blurProxy = { blur: blurStart };
+  gsap.to(blurProxy, {
+    blur: 0,
+    duration: WORKS_ANIM_DURATION,
+    ease: 'power2.out',
+    onUpdate: () => {
+      if (blurPrimitive) blurPrimitive.setAttribute('stdDeviation', `${blurProxy.blur} 0`);
+    }
+  });
   gsap.to(container, { x, duration: WORKS_ANIM_DURATION, ease: 'power2.out' });
   document.querySelectorAll('.works-menu-item').forEach((el, i) => {
     el.classList.toggle('active', i === clamped);
@@ -710,25 +728,33 @@ function initWorksSwipe() {
   gsap.set(container, { x: 0 });
 
   let touchStartY = 0;
+  let touchStartTime = 0;
   viewport.addEventListener('touchstart', (e) => {
     touchStartY = e.touches[0].clientY;
+    touchStartTime = Date.now();
   }, { passive: true });
   viewport.addEventListener('touchend', (e) => {
     const touchEndY = e.changedTouches[0].clientY;
     const delta = touchStartY - touchEndY;
     if (Math.abs(delta) < WORKS_SWIPE_THRESHOLD) return;
-    if (delta > 0) goToWorksIndex(worksCurrentIndex + 1);
-    else goToWorksIndex(worksCurrentIndex - 1);
+    const elapsed = Math.max(1, Date.now() - touchStartTime);
+    const speedPxPerMs = Math.abs(delta) / elapsed;
+    if (delta > 0) goToWorksIndex(worksCurrentIndex + 1, speedPxPerMs);
+    else goToWorksIndex(worksCurrentIndex - 1, speedPxPerMs);
   }, { passive: true });
 
   let wheelAccum = 0;
+  let wheelStartTime = 0;
   viewport.addEventListener('wheel', (e) => {
     const count = container.children.length;
     if (count === 0) return;
+    if (wheelAccum === 0) wheelStartTime = Date.now();
     wheelAccum += e.deltaY;
     if (Math.abs(wheelAccum) >= WORKS_WHEEL_THRESHOLD) {
-      if (wheelAccum > 0) goToWorksIndex(worksCurrentIndex + 1);
-      else goToWorksIndex(worksCurrentIndex - 1);
+      const elapsed = Math.max(1, Date.now() - wheelStartTime);
+      const speedPxPerMs = Math.abs(wheelAccum) / elapsed;
+      if (wheelAccum > 0) goToWorksIndex(worksCurrentIndex + 1, speedPxPerMs);
+      else goToWorksIndex(worksCurrentIndex - 1, speedPxPerMs);
       wheelAccum = 0;
     }
     e.preventDefault();

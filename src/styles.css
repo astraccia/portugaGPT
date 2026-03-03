@@ -1163,6 +1163,7 @@ html.skip-cookies-modal .cookies-modal {
   flex-wrap: nowrap;
   height: 100%;
   will-change: transform;
+  filter: url(#works-horizontal-blur);
 }
 
 #fullpage-works-section-list::-webkit-scrollbar {
