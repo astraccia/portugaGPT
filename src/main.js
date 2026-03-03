@@ -170,7 +170,7 @@ let savedUserName = '';
 if (nameInputEl) {
   savedUserName = (nameInputEl.value && nameInputEl.value.trim()) || '';
   updateAnswerPlaceholder();
-  nameInputEl.addEventListener('blur', () => {
+  nameInputEl.addEventListener('input', () => {
     savedUserName = (nameInputEl.value && nameInputEl.value.trim()) || '';
     updateAnswerPlaceholder();
   });
