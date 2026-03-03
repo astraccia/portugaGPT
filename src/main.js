@@ -684,7 +684,8 @@ function scrollWorksToIndex(index) {
 }
 
 let worksCurrentIndex = 0;
-const WORKS_SWIPE_THRESHOLD = 120;
+const WORKS_SWIPE_THRESHOLD = 200;
+const WORKS_WHEEL_THRESHOLD = 250;
 const WORKS_ANIM_DURATION = 0.4;
 
 function goToWorksIndex(index) {
@@ -720,11 +721,16 @@ function initWorksSwipe() {
     else goToWorksIndex(worksCurrentIndex - 1);
   }, { passive: true });
 
+  let wheelAccum = 0;
   viewport.addEventListener('wheel', (e) => {
     const count = container.children.length;
     if (count === 0) return;
-    if (e.deltaY > 0) goToWorksIndex(worksCurrentIndex + 1);
-    else if (e.deltaY < 0) goToWorksIndex(worksCurrentIndex - 1);
+    wheelAccum += e.deltaY;
+    if (Math.abs(wheelAccum) >= WORKS_WHEEL_THRESHOLD) {
+      if (wheelAccum > 0) goToWorksIndex(worksCurrentIndex + 1);
+      else goToWorksIndex(worksCurrentIndex - 1);
+      wheelAccum = 0;
+    }
     e.preventDefault();
   }, { passive: false });
 }
