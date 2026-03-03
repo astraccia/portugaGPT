@@ -343,8 +343,10 @@ export class ThreeViewer {
     const newAction = this.mixer.clipAction(clip);
     const name = clip.name.toLowerCase();
     const pingPongClips = ['spining', 'dance01', 'hi', 'yes'];
-    const onceClips = ['spider'];
-    const isOnceClip = onceClips.some((once) => name.includes(once));
+    const transitionToWalkWhenFinished = [
+      'spider', 'backflip', 'who', 'idle', 'awards', 'brands', 'where', 'sneaker', 'why', 'coffee'
+    ];
+    const isOnceClip = transitionToWalkWhenFinished.some((key) => name.includes(key));
     if (isOnceClip) {
       newAction.setLoop(THREE.LoopOnce);
       newAction.clampWhenFinished = true;
