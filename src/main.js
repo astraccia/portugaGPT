@@ -820,11 +820,17 @@ if (speakerButton) {
         speakerButton.classList.add('sound-off');
         speakerButton.classList.remove('sound-on');
         isSoundOn = false;
+        voiceModeEnabled = false;
+        localStorage.setItem('portugagpt_voice_mode', 'false');
+        updateVoiceUI();
       } else {
         updatePageVolume(1.0);
         speakerButton.classList.remove('sound-off');
         speakerButton.classList.add('sound-on');
         isSoundOn = true;
+        voiceModeEnabled = true;
+        localStorage.setItem('portugagpt_voice_mode', 'true');
+        updateVoiceUI();
       }
     });
 
