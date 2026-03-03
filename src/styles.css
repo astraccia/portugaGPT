@@ -758,7 +758,6 @@ body.body-scroll-enabled {
   border: none;
   background: none;
   cursor: pointer;
-  transform: translateY(-2px);
 }
 
 .info-icon-btn .info-icon {
