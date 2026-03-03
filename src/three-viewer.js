@@ -65,7 +65,7 @@ export class ThreeViewer {
       const height = window.innerHeight;
       const aspect = width / height;
       this.camera = new THREE.PerspectiveCamera(50, aspect, 0.1, 1000);
-      this.camera.position.set(0, 0.9, 2.4);
+      this.camera.position.set(0, 0.9, 2.25);
       this.modelPosition = new THREE.Vector3(0, 0, 0);
       this.cameraTweakPosition = new THREE.Vector3(0, -1, 0);
 
