@@ -411,6 +411,7 @@ body.body-scroll-enabled {
 
 .left-menu.menu-open .menu-list {
   clip-path: inset(0 0 0 0);
+  line-height: 1.2;
 }
 
 .menu-item {
