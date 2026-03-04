@@ -593,12 +593,12 @@ if (homeButton) {
 
 function getWorkSectionId(imagePath) {
   if (!imagePath) return '';
-  const base = imagePath.replace(/^.*\//, '').replace(/-img\.(jpg|png)$/i, '');
+  const base = imagePath.replace(/^.*\//, '').replace(/-img\.(jpg|png)$/i, '').replace(/\.(mp4|webm|mov)$/i, '');
   return base || 'work';
 }
 
 function createWorkSection(work) {
-  const id = getWorkSectionId(work.image);
+  const id = getWorkSectionId(work.video || work.image);
   const section = document.createElement('div');
   section.className = 'fullpage-works-section-content';
   section.id = id;
@@ -643,11 +643,24 @@ function createWorkSection(work) {
   }
   imageWrap.appendChild(plusImg);
 
-  const mainImg = document.createElement('img');
-  mainImg.className = 'fullpage-works-section-image-main';
-  mainImg.src = work.image || '';
-  mainImg.alt = work.client || 'Work';
-  imageWrap.appendChild(mainImg);
+  if (work.video) {
+    const mainVideo = document.createElement('video');
+    mainVideo.className = 'fullpage-works-section-image-main';
+    mainVideo.src = work.video;
+    mainVideo.muted = true;
+    mainVideo.loop = true;
+    mainVideo.playsInline = true;
+    mainVideo.autoplay = true;
+    mainVideo.setAttribute('playsinline', '');
+    mainVideo.setAttribute('aria-label', work.client || 'Work');
+    imageWrap.appendChild(mainVideo);
+  } else {
+    const mainImg = document.createElement('img');
+    mainImg.className = 'fullpage-works-section-image-main';
+    mainImg.src = work.image || '';
+    mainImg.alt = work.client || 'Work';
+    imageWrap.appendChild(mainImg);
+  }
 
   section.appendChild(imageWrap);
   return section;

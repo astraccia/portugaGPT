@@ -1225,6 +1225,8 @@ html.skip-cookies-modal .cookies-modal {
 
 .fullpage-works-section-image-main {
   width: 100%;
+  display: block;
+  object-fit: cover;
 }
 
 .fullpage-works-section-title, .fullpage-works-section-image {
