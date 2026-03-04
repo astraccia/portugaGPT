@@ -1201,10 +1201,18 @@ html.skip-cookies-modal .cookies-modal {
   border: none;
   cursor: pointer;
   transform: translateY(3px);
-
+  transition: 0.2s;
   img {
     height: 100%;
     filter: brightness(0) invert(1);
+  }
+}
+
+.fullpage-works-section-button:hover {
+  background-color: #000;
+
+  img {
+    filter: brightness(0) saturate(100%) invert(16%) sepia(99%) saturate(6594%) hue-rotate(331deg) brightness(100%) contrast(101%);
   }
 }
 
