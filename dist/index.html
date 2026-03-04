@@ -11,8 +11,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;900&display=swap" rel="stylesheet">
-  <script type="module" crossorigin src="./assets/index-B67pYc5r.js"></script>
-  <link rel="stylesheet" crossorigin href="./assets/index-DL0rsobC.css">
+  <script type="module" crossorigin src="./assets/index-CHt9ZYOF.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-BOLRMlV3.css">
 </head>
 <body>
 
@@ -153,13 +153,26 @@
   </footer>
 
   <canvas id="three-canvas"></canvas>
+
+  <svg xmlns="http://www.w3.org/2000/svg" style="position:absolute;width:0;height:0;visibility:hidden" aria-hidden="true">
+    <defs>
+      <filter id="works-horizontal-blur" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur id="works-blur-primitive" in="SourceGraphic" stdDeviation="0 0" result="blur"/>
+        <feMerge>
+          <feMergeNode in="blur"/>
+        </feMerge>
+      </filter>
+    </defs>
+  </svg>
   
   <div class="fullpage-works-section">
     <aside class="works-menu left-menu" id="works-menu">
       <h2 class="menu-heading works-menu-heading">My proudest work are:</h2>
       <ul class="menu-list" id="works-menu-list"></ul>
     </aside>
-    <div id="fullpage-works-section-list" class="fullpage-works-section-list"></div>
+    <div class="fullpage-works-section-viewport" id="fullpage-works-section-viewport">
+      <div id="fullpage-works-section-list" class="fullpage-works-section-list"></div>
+    </div>
     <button class="fullpage-works-section-button" id="home-button">
       <img src="images/menu_back.svg" alt="Back to Home">
     </button>
