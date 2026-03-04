@@ -518,6 +518,76 @@ function scrollToTopSmoothly() {
   scrollToSmoothly(0);
 }
 
+const FIRST_FOLD_SWIPE_UP_THRESHOLD = 80;
+const FIRST_FOLD_SCROLL_THRESHOLD = 120;
+const PROUDEST_WORK_TRIGGER_COOLDOWN_MS = 2000;
+
+function isInFirstFold() {
+  return (window.scrollY ?? document.documentElement.scrollTop) < FIRST_FOLD_SCROLL_THRESHOLD;
+}
+
+let lastProudestWorkTriggeredAt = 0;
+function triggerProudestWork() {
+  const now = Date.now();
+  if (now - lastProudestWorkTriggeredAt < PROUDEST_WORK_TRIGGER_COOLDOWN_MS) return;
+  lastProudestWorkTriggeredAt = now;
+
+  const text = 'Proudest work?';
+  setActiveMenuByText(text);
+  trackQuickBtn(text);
+  if (threeViewer && typeof threeViewer.playAnimation === 'function') threeViewer.playAnimation('idle');
+  scrollToEndSmoothly();
+  goToWorksIndex(0, 0);
+  const predefined = getPredefinedReply(text);
+  if (predefined != null) {
+    showThinking();
+    cancelCurrentQuestion(false);
+    currentAbortController = new AbortController();
+    showAnswer(text, predefined, { signal: currentAbortController.signal, isStatic: true });
+  }
+}
+
+let firstFoldTouchStartY = 0;
+let firstFoldTouchActive = false;
+document.addEventListener('touchstart', (e) => {
+  if (isInFirstFold()) {
+    firstFoldTouchStartY = e.touches[0].clientY;
+    firstFoldTouchActive = true;
+  }
+}, { passive: true });
+document.addEventListener('touchend', (e) => {
+  if (!firstFoldTouchActive || !isInFirstFold()) return;
+  firstFoldTouchActive = false;
+  const endY = e.changedTouches[0].clientY;
+  const delta = firstFoldTouchStartY - endY;
+  if (delta >= FIRST_FOLD_SWIPE_UP_THRESHOLD) triggerProudestWork();
+}, { passive: true });
+document.addEventListener('touchcancel', () => {
+  firstFoldTouchActive = false;
+}, { passive: true });
+
+let firstFoldWheelAccum = 0;
+let firstFoldWheelTriggered = false;
+document.addEventListener('wheel', (e) => {
+  if (!isInFirstFold()) {
+    firstFoldWheelAccum = 0;
+    firstFoldWheelTriggered = false;
+    return;
+  }
+  if (e.deltaY > 0) {
+    firstFoldWheelAccum += e.deltaY;
+    if (firstFoldWheelAccum >= 100 && !firstFoldWheelTriggered) {
+      firstFoldWheelTriggered = true;
+      firstFoldWheelAccum = 0;
+      e.preventDefault();
+      triggerProudestWork();
+    }
+  } else {
+    firstFoldWheelAccum = 0;
+    firstFoldWheelTriggered = false;
+  }
+}, { passive: false });
+
 const bottomMenuItems = document.querySelectorAll('.bottom-menu-item');
 bottomMenuItems.forEach((item) => {
   item.addEventListener('click', () => {
