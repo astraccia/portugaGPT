@@ -526,7 +526,10 @@ bottomMenuItems.forEach((item) => {
     trackQuickBtn(text);
     const animation = MENU_TO_ANIMATION[text];
     if (animation && threeViewer) threeViewer.playAnimation(animation);
-    if (text === 'Proudest work?') scrollToEndSmoothly();
+    if (text === 'Proudest work?') {
+      scrollToEndSmoothly();
+      goToWorksIndex(0, 0);
+    }
     const predefined = getPredefinedReply(text);
     if (predefined != null) {
       showThinking();
@@ -555,7 +558,10 @@ leftMenuItems.forEach((item) => {
     trackQuickBtn(text);
     const animation = MENU_TO_ANIMATION[text];
     if (animation && threeViewer) threeViewer.playAnimation(animation);
-    if (text === 'Proudest work?') scrollToEndSmoothly();
+    if (text === 'Proudest work?') {
+      scrollToEndSmoothly();
+      goToWorksIndex(0, 0);
+    }
     if (userInput) userInput.value = text;
     const predefined = getPredefinedReply(text);
     if (predefined != null) {
@@ -677,6 +683,7 @@ async function loadWorksSections() {
     console.warn('Could not load works-data.json', e);
   }
   initWorksSwipe();
+  goToWorksIndex(0, 0);
 }
 
 function scrollWorksToIndex(index) {
@@ -686,7 +693,7 @@ function scrollWorksToIndex(index) {
 let worksCurrentIndex = 0;
 const WORKS_SWIPE_THRESHOLD = 200;
 const WORKS_WHEEL_THRESHOLD = 250;
-const WORKS_ANIM_DURATION = 1;
+const WORKS_ANIM_DURATION = 1.5;
 const WORKS_BLUR_MAX_PX = 440;
 const WORKS_SPEED_FOR_MAX_BLUR = 12;
 const WORKS_MENU_CLICK_BLUR_PX = 16;

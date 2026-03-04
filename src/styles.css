@@ -1145,6 +1145,12 @@ html.skip-cookies-modal .cookies-modal {
   pointer-events: auto;
 }
 
+.works-menu .menu-item.active {
+  color: #ff005a;
+  text-decoration: underline !important;
+  font-weight: bold;
+}
+
 .works-menu-heading {
 }
 
