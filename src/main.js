@@ -686,10 +686,10 @@ function scrollWorksToIndex(index) {
 let worksCurrentIndex = 0;
 const WORKS_SWIPE_THRESHOLD = 200;
 const WORKS_WHEEL_THRESHOLD = 250;
-const WORKS_ANIM_DURATION = 0.4;
-const WORKS_BLUR_MAX_PX = 24;
-const WORKS_SPEED_FOR_MAX_BLUR = 2;
-const WORKS_MENU_CLICK_BLUR_PX = 6;
+const WORKS_ANIM_DURATION = 1;
+const WORKS_BLUR_MAX_PX = 440;
+const WORKS_SPEED_FOR_MAX_BLUR = 12;
+const WORKS_MENU_CLICK_BLUR_PX = 16;
 
 function goToWorksIndex(index, gestureSpeed = 0) {
   const container = document.getElementById('fullpage-works-section-list');
@@ -699,23 +699,29 @@ function goToWorksIndex(index, gestureSpeed = 0) {
   const count = container.children.length;
   if (count === 0) return;
   const clamped = Math.max(0, Math.min(index, count - 1));
+  const willMove = clamped !== worksCurrentIndex;
   worksCurrentIndex = clamped;
   const x = -clamped * viewport.offsetWidth;
-  const blurStart = gestureSpeed > 0
-    ? Math.min(WORKS_BLUR_MAX_PX, (gestureSpeed / WORKS_SPEED_FOR_MAX_BLUR) * WORKS_BLUR_MAX_PX)
-    : WORKS_MENU_CLICK_BLUR_PX;
-  if (blurPrimitive) blurPrimitive.setAttribute('stdDeviation', `${blurStart} 0`);
   gsap.killTweensOf(container);
-  const blurProxy = { blur: blurStart };
-  gsap.to(blurProxy, {
-    blur: 0,
-    duration: WORKS_ANIM_DURATION,
-    ease: 'power2.out',
-    onUpdate: () => {
-      if (blurPrimitive) blurPrimitive.setAttribute('stdDeviation', `${blurProxy.blur} 0`);
-    }
-  });
-  gsap.to(container, { x, duration: WORKS_ANIM_DURATION, ease: 'power2.out' });
+  if (!willMove) {
+    if (blurPrimitive) blurPrimitive.setAttribute('stdDeviation', '0 0');
+    gsap.set(container, { x });
+  } else {
+    const blurStart = gestureSpeed > 0
+      ? Math.min(WORKS_BLUR_MAX_PX, (gestureSpeed / WORKS_SPEED_FOR_MAX_BLUR) * WORKS_BLUR_MAX_PX)
+      : WORKS_MENU_CLICK_BLUR_PX;
+    if (blurPrimitive) blurPrimitive.setAttribute('stdDeviation', `${blurStart} 0`);
+    const blurProxy = { blur: blurStart };
+    gsap.to(blurProxy, {
+      blur: 0,
+      duration: WORKS_ANIM_DURATION,
+      ease: 'power2.out',
+      onUpdate: () => {
+        if (blurPrimitive) blurPrimitive.setAttribute('stdDeviation', `${blurProxy.blur} 0`);
+      }
+    });
+    gsap.to(container, { x, duration: WORKS_ANIM_DURATION, ease: 'power2.out' });
+  }
   document.querySelectorAll('.works-menu-item').forEach((el, i) => {
     el.classList.toggle('active', i === clamped);
   });
