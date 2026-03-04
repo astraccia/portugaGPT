@@ -1200,7 +1200,7 @@ html.skip-cookies-modal .cookies-modal {
   background-color: #ff0066;
   border: none;
   cursor: pointer;
-  transform: translateY(3px);
+  transform: translateY(6px);
   transition: 0.2s;
   img {
     height: 100%;
