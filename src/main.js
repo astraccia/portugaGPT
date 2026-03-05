@@ -313,14 +313,15 @@ function typeWriter(element, text, audioUrl = null) {
   }
 }
 
-async function showAnswer(question, answer, { signal, isStatic } = {}) {
+async function showAnswer(question, answer, { signal, isStatic, skipVoice, skipQuestionDisplay } = {}) {
   const answerEl = document.getElementById('answerDisplay') || answerDisplay;
   const questionEl = document.getElementById('questionDisplay') || questionDisplay;
   if (!answerEl) return;
-  if (questionEl) questionEl.textContent = question;
+  if (questionEl && !skipQuestionDisplay) questionEl.textContent = question;
   answerEl.classList.remove('placeholder');
+  const useVoice = voiceModeEnabled && !skipVoice;
   if (isStatic) {
-    if (voiceModeEnabled) {
+    if (useVoice) {
       try {
         const audioUrl = await generateVoice(answer, signal);
         if (signal?.aborted) return;
@@ -340,7 +341,7 @@ async function showAnswer(question, answer, { signal, isStatic } = {}) {
     }
     return;
   }
-  if (voiceModeEnabled) {
+  if (useVoice) {
     try {
       const audioUrl = await generateVoice(answer, signal);
       if (signal?.aborted) return;
@@ -538,13 +539,6 @@ function triggerProudestWork() {
   if (threeViewer && typeof threeViewer.playAnimation === 'function') threeViewer.playAnimation('idle');
   scrollToEndSmoothly();
   goToWorksIndex(0, 0);
-  const predefined = getPredefinedReply(text);
-  if (predefined != null) {
-    showThinking();
-    cancelCurrentQuestion(false);
-    currentAbortController = new AbortController();
-    showAnswer(text, predefined, { signal: currentAbortController.signal, isStatic: true });
-  }
 }
 
 let firstFoldTouchStartY = 0;
@@ -599,6 +593,7 @@ bottomMenuItems.forEach((item) => {
     if (text === 'Proudest work?') {
       scrollToEndSmoothly();
       goToWorksIndex(0, 0);
+      return;
     }
     const predefined = getPredefinedReply(text);
     if (predefined != null) {
@@ -631,6 +626,7 @@ leftMenuItems.forEach((item) => {
     if (text === 'Proudest work?') {
       scrollToEndSmoothly();
       goToWorksIndex(0, 0);
+      return;
     }
     if (userInput) userInput.value = text;
     const predefined = getPredefinedReply(text);
