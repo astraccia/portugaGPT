@@ -780,6 +780,23 @@ const WORKS_ANIM_DURATION = 1.5;
 const WORKS_BLUR_MAX_PX = 440;
 const WORKS_SPEED_FOR_MAX_BLUR = 12;
 const WORKS_MENU_CLICK_BLUR_PX = 16;
+const WORKS_PARALLAX_CLIENT_RATE = 0.75;
+const WORKS_PARALLAX_DESCRIPTION_RATE = 0.5;
+
+function updateWorksParallax(container, viewportWidth) {
+  if (!container || !viewportWidth) return;
+  const containerX = gsap.getProperty(container, 'x') || 0;
+  for (let i = 0; i < container.children.length; i++) {
+    const slide = container.children[i];
+    const clientEl = slide.querySelector('.fullpage-works-section-client');
+    const descriptionEl = slide.querySelector('.fullpage-works-section-description');
+    const base = containerX + i * viewportWidth;
+    const clientX = (1 - WORKS_PARALLAX_CLIENT_RATE) * base;
+    const descriptionX = (1 - WORKS_PARALLAX_DESCRIPTION_RATE) * base;
+    if (clientEl) gsap.set(clientEl, { x: clientX });
+    if (descriptionEl) gsap.set(descriptionEl, { x: descriptionX });
+  }
+}
 
 function goToWorksIndex(index, gestureSpeed = 0) {
   const container = document.getElementById('fullpage-works-section-list');
@@ -796,6 +813,7 @@ function goToWorksIndex(index, gestureSpeed = 0) {
   if (!willMove) {
     if (blurPrimitive) blurPrimitive.setAttribute('stdDeviation', '0 0');
     gsap.set(container, { x });
+    updateWorksParallax(container, viewport.offsetWidth);
   } else {
     const blurStart = gestureSpeed > 0
       ? Math.min(WORKS_BLUR_MAX_PX, (gestureSpeed / WORKS_SPEED_FOR_MAX_BLUR) * WORKS_BLUR_MAX_PX)
@@ -810,7 +828,12 @@ function goToWorksIndex(index, gestureSpeed = 0) {
         if (blurPrimitive) blurPrimitive.setAttribute('stdDeviation', `${blurProxy.blur} 0`);
       }
     });
-    gsap.to(container, { x, duration: WORKS_ANIM_DURATION, ease: 'power2.out' });
+    gsap.to(container, {
+      x,
+      duration: WORKS_ANIM_DURATION,
+      ease: 'power2.out',
+      onUpdate: () => updateWorksParallax(container, viewport.offsetWidth)
+    });
   }
   document.querySelectorAll('.works-menu-item').forEach((el, i) => {
     el.classList.toggle('active', i === clamped);
@@ -822,6 +845,7 @@ function initWorksSwipe() {
   const container = document.getElementById('fullpage-works-section-list');
   if (!viewport || !container) return;
   gsap.set(container, { x: 0 });
+  updateWorksParallax(container, viewport.offsetWidth);
 
   let touchStartY = 0;
   let touchStartTime = 0;
