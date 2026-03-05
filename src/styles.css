@@ -1236,6 +1236,10 @@ html.skip-cookies-modal .cookies-modal {
   align-items: center;
 }
 
+.fullpage-works-section-title {
+  will-change: transform;
+}
+
 .fullpage-works-section-title img {
   position: absolute;
 }

@@ -780,19 +780,23 @@ const WORKS_ANIM_DURATION = 1.5;
 const WORKS_BLUR_MAX_PX = 440;
 const WORKS_SPEED_FOR_MAX_BLUR = 12;
 const WORKS_MENU_CLICK_BLUR_PX = 16;
-const WORKS_PARALLAX_CLIENT_RATE = 0.75;
-const WORKS_PARALLAX_DESCRIPTION_RATE = 0.5;
+const WORKS_PARALLAX_CLIENT_RATE = 0.3;
+const WORKS_PARALLAX_DESCRIPTION_RATE = 0.6;
+const WORKS_PARALLAX_TITLE_RATE = 0.9;
 
 function updateWorksParallax(container, viewportWidth) {
   if (!container || !viewportWidth) return;
   const containerX = gsap.getProperty(container, 'x') || 0;
   for (let i = 0; i < container.children.length; i++) {
     const slide = container.children[i];
+    const titleEl = slide.querySelector('.fullpage-works-section-title');
     const clientEl = slide.querySelector('.fullpage-works-section-client');
     const descriptionEl = slide.querySelector('.fullpage-works-section-description');
     const base = containerX + i * viewportWidth;
+    const titleX = (1 - WORKS_PARALLAX_TITLE_RATE) * base;
     const clientX = (1 - WORKS_PARALLAX_CLIENT_RATE) * base;
     const descriptionX = (1 - WORKS_PARALLAX_DESCRIPTION_RATE) * base;
+    if (titleEl) gsap.set(titleEl, { x: titleX });
     if (clientEl) gsap.set(clientEl, { x: clientX });
     if (descriptionEl) gsap.set(descriptionEl, { x: descriptionX });
   }
