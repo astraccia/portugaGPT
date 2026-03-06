@@ -511,7 +511,7 @@ function scrollToSmoothly(options) {
 function scrollToEndSmoothly() {
   scrollToSmoothly({
     top: Math.max(0, document.documentElement.scrollHeight - window.innerHeight),
-    delayMs: 2000,
+    delayMs: 500,
   });
 }
 

@@ -478,7 +478,7 @@ body.body-scroll-enabled {
   margin-bottom: -40px;
   margin-top: auto;
   width: 87%;
-  padding: 0px 75px 0 31px;
+  padding: 0px 75px 0 27px;
   box-sizing: border-box;
 }
 
@@ -531,7 +531,7 @@ body.body-scroll-enabled {
   display: flex;
   gap: 8px;
   margin-top: -10px;
-  margin-left: 10px;
+  margin-left: 25px;
   flex-direction: row;
   flex-wrap: nowrap;
   align-content: center;
