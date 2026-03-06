@@ -1104,7 +1104,7 @@ html.skip-cookies-modal .cookies-modal {
 
 .fullpage-works-section {
   width: 100vw;
-  height: 100vh;
+  height: 100%;
   min-height: 100vh;
   margin-top: 100vh;
   top: 0;
@@ -1203,7 +1203,7 @@ html.skip-cookies-modal .cookies-modal {
   background-color: #ff0066;
   border: none;
   cursor: pointer;
-  transform: translateY(6px);
+  margin-bottom: 0px;
   transition: 0.2s;
   img {
     height: 100%;

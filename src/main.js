@@ -509,6 +509,9 @@ function scrollToSmoothly(options) {
 }
 
 function scrollToEndSmoothly() {
+  const btn = document.querySelector('.fullpage-works-section-button');
+  if (btn) btn.style.marginBottom = '-2px';
+
   scrollToSmoothly({
     top: Math.max(0, document.documentElement.scrollHeight - window.innerHeight),
     delayMs: 500,
