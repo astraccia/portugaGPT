@@ -1225,6 +1225,27 @@ html.skip-cookies-modal .cookies-modal {
   margin-top: -355px;
   margin-left: 70px;
   cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+
+.fullpage-works-section-image-plus.following {
+  opacity: 1;
+  position: fixed;
+  margin: 0;
+  left: 0;
+  top: 0;
+  z-index: 100;
+  pointer-events: none;
+}
+
+.fullpage-works-section-image.cursor-hidden {
+  /* cursor: none; */
+}
+
+.fullpage-works-section-image-main.cursor-hidden {
+  /* cursor: none; */
 }
 
 .fullpage-works-section-image-main {
