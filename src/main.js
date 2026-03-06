@@ -704,6 +704,8 @@ function createWorkSection(work) {
       }
     : null;
 
+  const projectId = work.project || (work.url ? work.url.replace(/^https?:\/\/[^/]+/, '').replace(/\.php$/i, '').replace(/^\//, '') : '') || '';
+
   if (work.video) {
     const mainVideo = document.createElement('video');
     mainVideo.className = 'fullpage-works-section-image-main';
@@ -714,6 +716,7 @@ function createWorkSection(work) {
     mainVideo.autoplay = true;
     mainVideo.setAttribute('playsinline', '');
     mainVideo.setAttribute('aria-label', work.client || 'Work');
+    mainVideo.dataset.project = projectId;
     if (openWork) {
       mainVideo.style.cursor = 'pointer';
       mainVideo.addEventListener('click', (e) => {
@@ -728,13 +731,14 @@ function createWorkSection(work) {
     mainImg.className = 'fullpage-works-section-image-main';
     mainImg.src = work.image || '';
     mainImg.alt = work.client || 'Work';
+    mainImg.dataset.project = projectId;
     if (openWork) {
       mainImg.style.cursor = 'pointer';
-      mainImg.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        openWork();
-      });
+      // mainImg.addEventListener('click', (e) => {
+      //   e.preventDefault();
+      //   e.stopPropagation();
+      //   openWork();
+      // });
     }
     imageWrap.appendChild(mainImg);
   }
