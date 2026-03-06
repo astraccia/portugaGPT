@@ -1276,6 +1276,7 @@ html.skip-cookies-modal .cookies-modal {
 
 .fullpage-works-section-description {
   position: absolute;
+  width: 300px;
   top: -40px;
   left: 0;
   right: 0;
