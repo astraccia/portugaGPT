@@ -4,18 +4,19 @@
   <script>
     (function(){try{if(sessionStorage.getItem('portuga_skip_cookies_modal'))document.documentElement.classList.add('skip-cookies-modal');}catch(e){}})();
   </script>
-  <script>
-    (function(){
-      var m = window.matchMedia && window.matchMedia('(max-width: 768px)');
-      if (m && m.matches) {
-        console.log('mobile');
-        window.location.replace('https://www.danielportuga.com/portugaGPT/');
-        return;
-      }
-    })();
-  </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+    (function(){
+      function isMobile(){
+        var ua = typeof navigator !== 'undefined' ? navigator.userAgent || '' : '';
+        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile|mobile|CriOS|FxiOS/i.test(ua)) return true;
+        var m = window.matchMedia && window.matchMedia('(max-width: 768px)');
+        return m && m.matches;
+      }
+      if (isMobile()) window.location.replace('https://www.danielportuga.com/portugaGPT/');
+    })();
+  </script>
   <title>PortugaGPT</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
