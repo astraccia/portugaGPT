@@ -898,6 +898,7 @@ function initWorksSwipe() {
     const relatedMain = e.relatedTarget && e.relatedTarget.closest ? e.relatedTarget.closest('.fullpage-works-section-image-main') : null;
     if (main && main !== relatedMain) {
       const plus = document.getElementById('works-plus-cursor');
+      const imageWrap = main.closest('.fullpage-works-section-image');
       if (plus) {
         plus.classList.add('following');
         const w = plus.offsetWidth;
@@ -905,6 +906,7 @@ function initWorksSwipe() {
         plus.style.left = (e.clientX - w / 2) + 'px';
         plus.style.top = (e.clientY - h / 2) + 'px';
         main.classList.add('cursor-hidden');
+        if (imageWrap) imageWrap.classList.add('cursor-hidden');
       }
     }
   });
@@ -924,9 +926,11 @@ function initWorksSwipe() {
 
     if (main && !main.contains(e.relatedTarget)) {
       const plus = document.getElementById('works-plus-cursor');
+      const imageWrap = main.closest('.fullpage-works-section-image');
       if (plus) {
         plus.classList.remove('following');
         main.classList.remove('cursor-hidden');
+        if (imageWrap) imageWrap.classList.remove('cursor-hidden');
       }
     }
   });

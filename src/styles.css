@@ -1240,12 +1240,10 @@ html.skip-cookies-modal .cookies-modal {
   pointer-events: none;
 }
 
-.fullpage-works-section-image.cursor-hidden {
-  /* cursor: none; */
-}
-
+.fullpage-works-section-image.cursor-hidden,
+.fullpage-works-section-image.cursor-hidden *,
 .fullpage-works-section-image-main.cursor-hidden {
-  /* cursor: none; */
+  cursor: none !important;
 }
 
 .fullpage-works-section-image-main {
