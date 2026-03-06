@@ -851,6 +851,26 @@ function goToWorksIndex(index, gestureSpeed = 0) {
   });
 }
 
+const WORKS_PLUS_FOLLOW_LERP = 0.14;
+
+function startPlusFollowLoop(plus) {
+  if (!plus || plus._followRafId) return;
+  function tick() {
+    if (!plus.classList.contains('following')) {
+      plus._followRafId = 0;
+      return;
+    }
+    const x = plus._followX + (plus._targetX - plus._followX) * WORKS_PLUS_FOLLOW_LERP;
+    const y = plus._followY + (plus._targetY - plus._followY) * WORKS_PLUS_FOLLOW_LERP;
+    plus._followX = x;
+    plus._followY = y;
+    plus.style.left = x + 'px';
+    plus.style.top = y + 'px';
+    plus._followRafId = requestAnimationFrame(tick);
+  }
+  plus._followRafId = requestAnimationFrame(tick);
+}
+
 function initWorksSwipe() {
   const viewport = document.getElementById('fullpage-works-section-viewport');
   const container = document.getElementById('fullpage-works-section-list');
@@ -903,10 +923,17 @@ function initWorksSwipe() {
         plus.classList.add('following');
         const w = plus.offsetWidth;
         const h = plus.offsetHeight;
-        plus.style.left = (e.clientX - w / 2) + 'px';
-        plus.style.top = (e.clientY - h / 2) + 'px';
+        const tx = e.clientX - w / 2;
+        const ty = e.clientY - h / 2;
+        plus.style.left = tx + 'px';
+        plus.style.top = ty + 'px';
+        plus._followX = tx;
+        plus._followY = ty;
+        plus._targetX = tx;
+        plus._targetY = ty;
         main.classList.add('cursor-hidden');
         if (imageWrap) imageWrap.classList.add('cursor-hidden');
+        startPlusFollowLoop(plus);
       }
     }
   });
@@ -915,8 +942,8 @@ function initWorksSwipe() {
     if (plus && plus.classList.contains('following')) {
       const w = plus.offsetWidth;
       const h = plus.offsetHeight;
-      plus.style.left = (e.clientX - w / 2) + 'px';
-      plus.style.top = (e.clientY - h / 2) + 'px';
+      plus._targetX = e.clientX - w / 2;
+      plus._targetY = e.clientY - h / 2;
     }
   });
   viewport.addEventListener('mouseout', (e) => {
@@ -929,6 +956,10 @@ function initWorksSwipe() {
       const imageWrap = main.closest('.fullpage-works-section-image');
       if (plus) {
         plus.classList.remove('following');
+        if (plus._followRafId) {
+          cancelAnimationFrame(plus._followRafId);
+          plus._followRafId = 0;
+        }
         main.classList.remove('cursor-hidden');
         if (imageWrap) imageWrap.classList.remove('cursor-hidden');
       }
