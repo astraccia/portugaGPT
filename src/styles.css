@@ -1248,6 +1248,8 @@ html.skip-cookies-modal .cookies-modal {
   top: 0;
   z-index: 100;
   pointer-events: none;
+  transform: scale(0);
+  transition: transform 0.15s ease-in-out;
 }
 
 .fullpage-works-section-image.cursor-hidden,

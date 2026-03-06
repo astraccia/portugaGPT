@@ -921,6 +921,7 @@ function initWorksSwipe() {
       const imageWrap = main.closest('.fullpage-works-section-image');
       if (plus) {
         plus.classList.add('following');
+        plus.style.transform = 'scale(0)';
         const w = plus.offsetWidth;
         const h = plus.offsetHeight;
         const tx = e.clientX - w / 2;
@@ -934,6 +935,9 @@ function initWorksSwipe() {
         main.classList.add('cursor-hidden');
         if (imageWrap) imageWrap.classList.add('cursor-hidden');
         startPlusFollowLoop(plus);
+        requestAnimationFrame(() => {
+          plus.style.transform = 'scale(1)';
+        });
       }
     }
   });
@@ -954,14 +958,27 @@ function initWorksSwipe() {
     if (main && !main.contains(e.relatedTarget)) {
       const plus = document.getElementById('works-plus-cursor');
       const imageWrap = main.closest('.fullpage-works-section-image');
-      if (plus) {
-        plus.classList.remove('following');
-        if (plus._followRafId) {
-          cancelAnimationFrame(plus._followRafId);
-          plus._followRafId = 0;
-        }
-        main.classList.remove('cursor-hidden');
-        if (imageWrap) imageWrap.classList.remove('cursor-hidden');
+      if (plus && plus.classList.contains('following')) {
+        plus._scaleOutMain = main;
+        plus._scaleOutImageWrap = imageWrap;
+        plus.style.transform = 'scale(0)';
+        const onScaleDownEnd = () => {
+          plus.removeEventListener('transitionend', onScaleDownEnd);
+          plus.classList.remove('following');
+          if (plus._followRafId) {
+            cancelAnimationFrame(plus._followRafId);
+            plus._followRafId = 0;
+          }
+          if (plus._scaleOutMain) {
+            plus._scaleOutMain.classList.remove('cursor-hidden');
+            plus._scaleOutMain = null;
+          }
+          if (plus._scaleOutImageWrap) {
+            plus._scaleOutImageWrap.classList.remove('cursor-hidden');
+            plus._scaleOutImageWrap = null;
+          }
+        };
+        plus.addEventListener('transitionend', onScaleDownEnd);
       }
     }
   });
