@@ -4,6 +4,16 @@
   <script>
     (function(){try{if(sessionStorage.getItem('portuga_skip_cookies_modal'))document.documentElement.classList.add('skip-cookies-modal');}catch(e){}})();
   </script>
+  <script>
+    (function(){
+      var m = window.matchMedia && window.matchMedia('(max-width: 768px)');
+      if (m && m.matches) {
+        console.log('mobile');
+        window.location.replace('https://www.danielportuga.com/portugaGPT/');
+        return;
+      }
+    })();
+  </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PortugaGPT</title>
