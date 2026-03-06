@@ -966,6 +966,7 @@ body.body-scroll-enabled {
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.25s ease, visibility 0.25s ease;
+  background-color: #ff0066;
 }
 
 .password-modal.is-open {
@@ -976,7 +977,6 @@ body.body-scroll-enabled {
 .password-modal-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.85);
 }
 
 .password-modal-box {
@@ -990,7 +990,6 @@ body.body-scroll-enabled {
   flex-direction: column;
   align-items: center;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  background: #000;
   color: #fff;
   transform: scale(1.1);
   transition: transform 0.25s ease;
@@ -1017,8 +1016,13 @@ body.body-scroll-enabled {
 .password-modal-form {
   display: flex;
   gap: 12px;
-  width: 100%;
-  max-width: 320px;
+  width: 49%;
+  max-width: 310px;
+  position: absolute;
+  bottom: 0;
+  flex-direction: row;
+  bottom: 125px;
+  border: none;
 }
 
 .password-modal-input {
@@ -1030,6 +1034,8 @@ body.body-scroll-enabled {
   background: transparent;
   color: #fff;
   outline: none;
+  width: 210px;
+  border: none;
 }
 
 .password-modal-input::placeholder {
@@ -1046,21 +1052,28 @@ body.body-scroll-enabled {
   font-weight: 600;
   font-family: inherit;
   color: #000;
-  background: #fff;
+  background: transparent;
   border: none;
   cursor: pointer;
+  border-radius: 50%;
+  transition: 0.2s;
 }
 
 .password-modal-submit:hover {
-  background: #ff0066;
+  background: #ff00662b;
   color: #fff;
 }
 
 .password-modal-error {
   margin-top: 12px;
   font-size: 14px;
-  color: #ff0066;
+  color: #fff;
   min-height: 20px;
+  background-color: #ff0066;
+  margin-bottom: 116px;
+  margin-left: -40px;
+  position: absolute;
+  bottom: 0;
 }
 
 /* Cookies modal – full screen, top white, bottom repeating cookies */
