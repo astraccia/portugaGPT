@@ -955,6 +955,114 @@ body.body-scroll-enabled {
   text-decoration: underline;
 }
 
+.password-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.password-modal.is-open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.password-modal-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+}
+
+.password-modal-box {
+  position: relative;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 40px 20px;
+  max-width: 520px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #000;
+  color: #fff;
+  transform: scale(1.1);
+  transition: transform 0.25s ease;
+}
+
+.password-modal.is-open .password-modal-box {
+  transform: scale(1);
+}
+
+.password-modal-close {
+  position: fixed;
+  top: 21px;
+  right: 36px;
+  z-index: 999999;
+}
+
+.password-modal-image {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin-bottom: 24px;
+}
+
+.password-modal-form {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  max-width: 320px;
+}
+
+.password-modal-input {
+  flex: 1;
+  padding: 12px 16px;
+  font-size: 16px;
+  font-family: inherit;
+  border: 2px solid #fff;
+  background: transparent;
+  color: #fff;
+  outline: none;
+}
+
+.password-modal-input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.password-modal-input:focus {
+  border-color: #ff0066;
+}
+
+.password-modal-submit {
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: inherit;
+  color: #000;
+  background: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+.password-modal-submit:hover {
+  background: #ff0066;
+  color: #fff;
+}
+
+.password-modal-error {
+  margin-top: 12px;
+  font-size: 14px;
+  color: #ff0066;
+  min-height: 20px;
+}
+
 /* Cookies modal – full screen, top white, bottom repeating cookies */
 /* Hide cookies modal from first paint when reloading via portuga-heading (see inline script in index.html) */
 html.skip-cookies-modal .cookies-modal {

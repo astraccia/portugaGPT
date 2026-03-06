@@ -706,6 +706,15 @@ function createWorkSection(work) {
 
   const projectId = work.project || (work.url ? work.url.replace(/^https?:\/\/[^/]+/, '').replace(/\.php$/i, '').replace(/^\//, '') : '') || '';
 
+  function doOpenProject(mainEl) {
+    if (window.ProjectOverlay) {
+      const r = mainEl.getBoundingClientRect();
+      window.ProjectOverlay.open('https://www.danielportuga.com/portugaGPT_new/projects/' + projectId, r.left + r.width / 2, r.top + r.height / 2);
+    } else if (openWork) {
+      openWork();
+    }
+  }
+
   if (work.video) {
     const mainVideo = document.createElement('video');
     mainVideo.className = 'fullpage-works-section-image-main';
@@ -722,7 +731,11 @@ function createWorkSection(work) {
       mainVideo.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
-        openWork();
+        if (work.passwordProtected) {
+          openPasswordModal(() => doOpenProject(mainVideo));
+        } else {
+          doOpenProject(mainVideo);
+        }
       });
     }
     imageWrap.appendChild(mainVideo);
@@ -731,14 +744,16 @@ function createWorkSection(work) {
     mainImg.className = 'fullpage-works-section-image-main';
     mainImg.src = work.image || '';
     mainImg.alt = work.client || 'Work';
-    mainImg.dataset.project = work.project || '';
+    mainImg.dataset.project = projectId;
     if (openWork) {
       mainImg.style.cursor = 'pointer';
-      // mainImg.addEventListener('click', (e) => {
-      //   e.preventDefault();
-      //   e.stopPropagation();
-      //   openWork();
-      // });
+      if (work.passwordProtected) {
+        mainImg.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          openPasswordModal(() => doOpenProject(mainImg));
+        });
+      }
     }
     imageWrap.appendChild(mainImg);
   }
@@ -778,6 +793,20 @@ async function loadWorksSections() {
   }
   initWorksSwipe();
   goToWorksIndex(0, 0);
+  loadProjectOverlayScript();
+}
+
+const PROJECT_OVERLAY_SCRIPT_URL = 'https://www.danielportuga.com/portugaGPT_new/projects/project-overlay.js';
+let projectOverlayScriptLoaded = false;
+
+function loadProjectOverlayScript() {
+  if (projectOverlayScriptLoaded) return;
+  projectOverlayScriptLoaded = true;
+  const script = document.createElement('script');
+  script.src = PROJECT_OVERLAY_SCRIPT_URL;
+  script.async = true;
+  document.body.appendChild(script);
+  console.log('Project overlay script loaded');
 }
 
 function scrollWorksToIndex(index) {
@@ -1056,6 +1085,59 @@ if (warningModalOverlay) {
 const warningModalBackBtn = document.getElementById('warning-modal-back-btn');
 if (warningModalBackBtn) {
   warningModalBackBtn.addEventListener('click', closeWarningModal);
+}
+
+/* Password modal – open before protected projects, password SM!LE */
+const PASSWORD_MODAL_PASSWORD = 'SM!LE';
+let passwordModalPendingOpen = null;
+
+const passwordModal = document.getElementById('password-modal');
+const passwordModalClose = document.querySelector('.password-modal-close');
+const passwordModalOverlay = document.querySelector('.password-modal-overlay');
+const passwordModalInput = document.getElementById('password-modal-input');
+const passwordModalSubmit = document.getElementById('password-modal-submit');
+const passwordModalError = document.getElementById('password-modal-error');
+
+function openPasswordModal(pendingOpenCallback) {
+  passwordModalPendingOpen = pendingOpenCallback || null;
+  if (passwordModalInput) passwordModalInput.value = '';
+  if (passwordModalError) passwordModalError.textContent = '';
+  if (passwordModal) {
+    passwordModal.classList.add('is-open');
+    passwordModal.setAttribute('aria-hidden', 'false');
+  }
+  setTimeout(() => passwordModalInput && passwordModalInput.focus(), 100);
+}
+
+function closePasswordModal() {
+  passwordModalPendingOpen = null;
+  if (passwordModal) {
+    passwordModal.classList.remove('is-open');
+    passwordModal.setAttribute('aria-hidden', 'true');
+  }
+  if (passwordModalInput) passwordModalInput.value = '';
+  if (passwordModalError) passwordModalError.textContent = '';
+}
+
+function checkPasswordAndOpen() {
+  const value = passwordModalInput ? passwordModalInput.value.trim() : '';
+  if (value !== PASSWORD_MODAL_PASSWORD) {
+    if (passwordModalError) passwordModalError.textContent = 'Wrong password. Try again.';
+    return;
+  }
+  const cb = passwordModalPendingOpen;
+  closePasswordModal();
+  if (typeof cb === 'function') cb();
+}
+
+if (passwordModalClose) passwordModalClose.addEventListener('click', closePasswordModal);
+if (passwordModalOverlay) passwordModalOverlay.addEventListener('click', closePasswordModal);
+if (passwordModalSubmit) passwordModalSubmit.addEventListener('click', checkPasswordAndOpen);
+if (passwordModalInput) {
+  passwordModalInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') checkPasswordAndOpen();
+  });
+  passwordModalInput.addEventListener('focus', () => { if (passwordModalError) passwordModalError.textContent = ''; });
 }
 
 const cookiesModal = document.getElementById('cookies-modal');

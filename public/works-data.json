@@ -96,7 +96,8 @@
     "titleImage": "images/works/work11-projeto-a-01-title.png",
     "video": "videos/works/portfolio2026_thumb_asics.mp4",
     "project": "a-01",
-    "url": "http://danielportuga.com/projeto-a-01.php"
+    "url": "http://danielportuga.com/projeto-a-01.php",
+    "passwordProtected": true
   },
   {
     "title": "Don't be a Hero",
@@ -105,7 +106,8 @@
     "titleImage": "images/works/work12-projeto-s-06-title.png",
     "video": "videos/works/portfolio2026_thumb_hero.mp4",
     "project": "s-06",
-    "url": "http://danielportuga.com/projeto-s-06.php"
+    "url": "http://danielportuga.com/projeto-s-06.php",
+    "passwordProtected": true
   },
   {
     "title": "Your Cup",
@@ -114,7 +116,8 @@
     "titleImage": "images/works/work13-projeto-s-03-title.png",
     "video": "videos/works/portfolio2026_thumb_cup.mp4",
     "project": "s-03",
-    "url": "http://danielportuga.com/projeto-s-03.php"
+    "url": "http://danielportuga.com/projeto-s-03.php",
+    "passwordProtected": true
   },
   {
     "title": "We-comm",
@@ -123,6 +126,7 @@
     "titleImage": "images/works/work14-projeto-s-02-title.png",
     "video": "videos/works/portfolio2026_thumb_wecomm.mp4",
     "project": "s-02",
-    "url": "http://danielportuga.com/projeto-s-02.php"
+    "url": "http://danielportuga.com/projeto-s-02.php",
+    "passwordProtected": true
   }
 ]

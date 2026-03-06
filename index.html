@@ -231,12 +231,12 @@
     </button>
   </div>
 
-  <div id="work-iframe-overlay" class="work-iframe-overlay" aria-hidden="true">
+  <!-- <div id="work-iframe-overlay" class="work-iframe-overlay" aria-hidden="true">
     <iframe id="work-iframe" class="work-iframe" title="Work link"></iframe>
     <button type="button" class="work-iframe-close" id="work-iframe-close" aria-label="Close">
       <img src="images/bt_close.svg" alt="Close" />
     </button>
-  </div>
+  </div> -->
 
   <div id="warning-modal" class="warning-modal" aria-hidden="true">
     <button type="button" class="warning-modal-close" aria-label="Close"><img src="images/bt_close.png" alt="Close" /></button>
@@ -253,6 +253,19 @@
     </div>
   </div>
 
+  <div id="password-modal" class="password-modal" aria-hidden="true">
+    <button type="button" class="warning-modal-close password-modal-close" aria-label="Close"><img src="images/bt_close.png" alt="Close" /></button>
+    <div class="password-modal-overlay"></div>
+    <div class="password-modal-box">
+      <img src="assets/images/password.jpg" alt="Password" class="password-modal-image" />
+      <div class="password-modal-form">
+        <input type="password" id="password-modal-input" class="password-modal-input" placeholder="Enter password" autocomplete="off" />
+        <button type="button" id="password-modal-submit" class="password-modal-submit" aria-label="Submit">Enter</button>
+      </div>
+      <p id="password-modal-error" class="password-modal-error" aria-live="polite"></p>
+    </div>
+  </div>
+
   <div id="cookies-modal" class="cookies-modal" aria-hidden="false">
     <div class="cookies-modal-content">
       <video src="videos/cookies.mp4?v=3" class="cookies-modal-image" autoplay muted playsinline></video>
@@ -266,8 +279,6 @@
       </div>
     </div>
   </div>
-
   <script type="module" src="/src/main.js"></script>
-  <script src="https://www.danielportuga.com/portugaGPT_new/projects/project-overlay.js"></script>
 </body>
 </html>
