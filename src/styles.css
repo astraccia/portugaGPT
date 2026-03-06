@@ -1126,6 +1126,7 @@ html.skip-cookies-modal .cookies-modal {
 
 .works-menu {
   position: absolute;
+  width: 400px;
   left: 0;
   top: 120px;
   bottom: 0;
@@ -1261,17 +1262,27 @@ html.skip-cookies-modal .cookies-modal {
 }
 
 .fullpage-works-section-client {
+  position: absolute;
+  top: -100px;
+  left: 0;
+  right: 0;
   font-size: 30px;
-  margin-bottom: 25px;
+  margin-bottom: 0;
   margin-right: -30px;
   font-weight: 400;
   will-change: transform;
+  text-align: right;
 }
 
 .fullpage-works-section-description {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  right: 0;
   font-size: 24px;
   line-height: 1.2;
   will-change: transform;
+  text-align: right;
 }
 
 @media (max-width: 1024px) {
