@@ -1126,8 +1126,26 @@ function checkPasswordAndOpen() {
     return;
   }
   const cb = passwordModalPendingOpen;
-  closePasswordModal();
-  if (typeof cb === 'function') cb();
+  if (typeof cb !== 'function') return;
+  cb();
+
+  /* Close password modal only after the project overlay iframe has loaded (#po gets .po-open) */
+  const closeWhenOverlayReady = () => {
+    const po = document.getElementById('po');
+    if (po && po.classList.contains('po-open')) {
+      closePasswordModal();
+      return true;
+    }
+    return false;
+  };
+  if (closeWhenOverlayReady()) return;
+  const interval = setInterval(() => {
+    if (closeWhenOverlayReady()) clearInterval(interval);
+  }, 200);
+  setTimeout(() => {
+    clearInterval(interval);
+    closePasswordModal();
+  }, 15000);
 }
 
 if (passwordModalClose) passwordModalClose.addEventListener('click', closePasswordModal);

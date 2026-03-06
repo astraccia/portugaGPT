@@ -974,6 +974,17 @@ body.body-scroll-enabled {
   visibility: visible;
 }
 
+/* Project overlay iframe opens above password modal */
+#po.po-active,
+#po.po-white,
+#po.po-loading,
+#po.po-open {
+  z-index: 10001 !important;
+}
+#po-close {
+  z-index: 10002 !important;
+}
+
 .password-modal-overlay {
   position: absolute;
   inset: 0;
