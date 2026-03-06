@@ -731,7 +731,7 @@ function createWorkSection(work) {
     mainImg.className = 'fullpage-works-section-image-main';
     mainImg.src = work.image || '';
     mainImg.alt = work.client || 'Work';
-    mainImg.dataset.project = projectId;
+    mainImg.dataset.project = work.project || '';
     if (openWork) {
       mainImg.style.cursor = 'pointer';
       // mainImg.addEventListener('click', (e) => {
