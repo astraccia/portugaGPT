@@ -1511,15 +1511,21 @@ html.skip-cookies-modal .cookies-modal {
 }
 
 .spider-link {
-  /* background-color: #ff0; */
-  position: fixed;
-  width: 20px;
-  height: 20px;
-  top: 0;
-  left: 0;
-  margin-top: 42vw;
-  margin-left: 26vw;
-  cursor: pointer;
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    top: 0;
+    left: 0;
+    margin-top: 32vw;
+    margin-left: 26.2vw;
+    cursor: pointer;
+    opacity: 0;
+    z-index: 99999;
+    transition: all 0.2s;
+}
+
+.spider-link:hover {
+  opacity: 1;
 }
 
 .text-pink {
