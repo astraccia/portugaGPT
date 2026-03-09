@@ -412,9 +412,8 @@ if (sendButton && userInput) {
 
 const MENU_TO_ANIMATION = {
   "Home (default)": "walk",
-  "Transition HOME to WORK": "backflip",
   "Who's Portuga?": "who",
-  "Proudest work?": "idle",
+  "Proudest work?": "backflip",
   "Any awards?": "awards",
   "Brands you touched?": "brands",
   "Where are you now?": "where",
@@ -539,7 +538,7 @@ function triggerProudestWork() {
   const text = 'Proudest work?';
   setActiveMenuByText(text);
   trackQuickBtn(text);
-  if (threeViewer && typeof threeViewer.playAnimation === 'function') threeViewer.playAnimation('idle');
+  if (threeViewer && typeof threeViewer.playAnimation === 'function') threeViewer.playAnimation('backflip');
   scrollToEndSmoothly();
   goToWorksIndex(0, 0);
 }
