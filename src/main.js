@@ -664,6 +664,7 @@ if (homeButton) {
       updateAnswerPlaceholder();
     }
     if (questionDisplay) questionDisplay.textContent = '';
+    if (threeViewer && typeof threeViewer.playAnimation === 'function') threeViewer.playAnimation('backflip', 0.5, 'walk');
   });
 }
 

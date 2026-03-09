@@ -329,7 +329,7 @@ export class ThreeViewer {
     }
   }
 
-  playAnimation(clipName, transitionDuration = 0.5) {
+  playAnimation(clipName, transitionDuration = 0.5, afterClip = null) {
     if (!this.mixer || !this.animationClips || this.animationClips.length === 0) return;
 
     const clip = this.animationClips.find(
@@ -370,8 +370,26 @@ export class ThreeViewer {
     newAction.reset().fadeIn(transitionDuration).play();
     this.animationAction = newAction;
 
-    const isTransitionToIdle = transitionToIdleWhenFinished.some((key) => name.includes(key));
-    if (isOnceClip && isTransitionToIdle && this._idleClip) {
+    const resolvedAfterClip = afterClip
+      ? (this.animationClips.find((c) => c.name === afterClip || c.name.toLowerCase().includes(afterClip.toLowerCase())) || null)
+      : null;
+    const isTransitionToIdle = !resolvedAfterClip && transitionToIdleWhenFinished.some((key) => name.includes(key));
+    if (isOnceClip && resolvedAfterClip) {
+      const afterAction = this.mixer.clipAction(resolvedAfterClip);
+      afterAction.setLoop(THREE.LoopRepeat);
+      const blendToAfter = () => {
+        if (this.animationAction !== newAction) return;
+        this.mixer.removeEventListener('finished', blendToAfter);
+        newAction.fadeOut(transitionDuration);
+        afterAction.reset().fadeIn(transitionDuration).play();
+        this.animationAction = afterAction;
+        this.headLookEnabled = true;
+        this._useInitialHeadRotation = false;
+        if (this.headBone) this.headBone.getWorldQuaternion(this.smoothedHeadWorldQuat);
+        if (resolvedAfterClip === this._walkClip) this.onWalkStart();
+      };
+      this.mixer.addEventListener('finished', blendToAfter);
+    } else if (isOnceClip && isTransitionToIdle && this._idleClip) {
       const blendToIdle = () => {
         if (this.animationAction !== newAction) return;
         this.mixer.removeEventListener('finished', blendToIdle);
