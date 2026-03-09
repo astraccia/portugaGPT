@@ -249,6 +249,7 @@ export class ThreeViewer {
 
     this._ironmanClip = ironmanClip;
     this._walkClip = walkClip;
+    this._idleClip = gltf.animations.find((a) => a.name.toLowerCase() === 'idle') || null;
   }
 
   /** Start the default/idle animation. Called from main when the loader has gone. */
@@ -343,9 +344,12 @@ export class ThreeViewer {
     const name = clip.name.toLowerCase();
     const pingPongClips = ['spining', 'dance01', 'hi', 'yes'];
     const transitionToWalkWhenFinished = [
-      'spider', 'backflip', 'who', 'idle', 'awards', 'brands', 'where', 'sneaker', 'why', 'coffee'
+      'spider', 'who', 'idle', 'awards', 'brands', 'where', 'sneaker', 'why', 'coffee'
     ];
-    const isOnceClip = transitionToWalkWhenFinished.some((key) => name.includes(key));
+    const transitionToIdleWhenFinished = ['backflip'];
+    const isOnceClip =
+      transitionToWalkWhenFinished.some((key) => name.includes(key)) ||
+      transitionToIdleWhenFinished.some((key) => name.includes(key));
     if (isOnceClip) {
       newAction.setLoop(THREE.LoopOnce);
       newAction.clampWhenFinished = true;
@@ -366,7 +370,22 @@ export class ThreeViewer {
     newAction.reset().fadeIn(transitionDuration).play();
     this.animationAction = newAction;
 
-    if (isOnceClip && this._walkClip) {
+    const isTransitionToIdle = transitionToIdleWhenFinished.some((key) => name.includes(key));
+    if (isOnceClip && isTransitionToIdle && this._idleClip) {
+      const blendToIdle = () => {
+        if (this.animationAction !== newAction) return;
+        this.mixer.removeEventListener('finished', blendToIdle);
+        const idleAction = this.mixer.clipAction(this._idleClip);
+        idleAction.setLoop(THREE.LoopRepeat);
+        newAction.fadeOut(transitionDuration);
+        idleAction.reset().fadeIn(transitionDuration).play();
+        this.animationAction = idleAction;
+        this.headLookEnabled = true;
+        this._useInitialHeadRotation = false;
+        if (this.headBone) this.headBone.getWorldQuaternion(this.smoothedHeadWorldQuat);
+      };
+      this.mixer.addEventListener('finished', blendToIdle);
+    } else if (isOnceClip && this._walkClip) {
       const blendToWalk = () => {
         if (this.animationAction !== newAction) return;
         this.mixer.removeEventListener('finished', blendToWalk);
