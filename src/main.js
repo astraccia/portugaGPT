@@ -571,12 +571,12 @@ document.addEventListener('wheel', (e) => {
     firstFoldWheelTriggered = false;
     return;
   }
+  e.preventDefault();
   if (e.deltaY > 0) {
     firstFoldWheelAccum += e.deltaY;
     if (firstFoldWheelAccum >= 100 && !firstFoldWheelTriggered) {
       firstFoldWheelTriggered = true;
       firstFoldWheelAccum = 0;
-      e.preventDefault();
       triggerProudestWork();
     }
   } else {
@@ -932,6 +932,14 @@ function initWorksSwipe() {
   viewport.addEventListener('wheel', (e) => {
     const count = container.children.length;
     if (count === 0) return;
+    if (e.cancelable) {
+      e.preventDefault();
+    } else {
+      const worksTop = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+      if (Math.abs((window.scrollY ?? document.documentElement.scrollTop) - worksTop) > 5) {
+        window.scrollTo(0, worksTop);
+      }
+    }
     if (wheelAccum === 0) wheelStartTime = Date.now();
     wheelAccum += e.deltaY;
     if (Math.abs(wheelAccum) >= WORKS_WHEEL_THRESHOLD) {
@@ -941,7 +949,6 @@ function initWorksSwipe() {
       else goToWorksIndex(worksCurrentIndex - 1, speedPxPerMs);
       wheelAccum = 0;
     }
-    e.preventDefault();
   }, { passive: false });
 
   viewport.addEventListener('mouseover', (e) => {
