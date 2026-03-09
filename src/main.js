@@ -657,6 +657,14 @@ const homeButton = document.getElementById('home-button') || document.querySelec
 if (homeButton) {
   homeButton.addEventListener('click', () => {
     scrollToTopSmoothly();
+    document.querySelectorAll('.menu-item, .bottom-menu-item').forEach((el) => el.classList.remove('active'));
+    cancelCurrentQuestion(false);
+    const el = document.getElementById('answerDisplay') || answerDisplay;
+    if (el) {
+      el.classList.add('placeholder');
+      updateAnswerPlaceholder();
+    }
+    if (questionDisplay) questionDisplay.textContent = '';
   });
 }
 
