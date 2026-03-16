@@ -53,6 +53,12 @@ export class ThreeViewer {
     this._headInitialQuat = new THREE.Quaternion(0, 0, 0, 0);
     this._useInitialHeadRotation = false;
     this._storeHeadInitialNextFrame = false;
+    this._headLerpToZero = false;
+    this._headLerpDuration = 0.2;
+    this._headLerpElapsed = 0;
+    this._headLerpHoldMs = 200;
+    this._pendingAnimation = null;
+    this._pendingAnimationTimeoutId = null;
     this.init();
   }
 
@@ -321,6 +327,12 @@ export class ThreeViewer {
   }
 
   disableHeadLookAndResetHead() {
+    this._headLerpToZero = false;
+    if (this._pendingAnimationTimeoutId != null) {
+      clearTimeout(this._pendingAnimationTimeoutId);
+      this._pendingAnimationTimeoutId = null;
+    }
+    this._pendingAnimation = null;
     this.headLookEnabled = false;
     this._useInitialHeadRotation = true;
     if (this.headBone) {
@@ -361,19 +373,39 @@ export class ThreeViewer {
       clearTimeout(this._headLookEnableTimeoutId);
       this._headLookEnableTimeoutId = null;
     }
+    const resolvedAfterClip = afterClip
+      ? (this.animationClips.find((c) => c.name === afterClip || c.name.toLowerCase().includes(afterClip.toLowerCase())) || null)
+      : null;
+    const isTransitionToIdle = !resolvedAfterClip && transitionToIdleWhenFinished.some((key) => name.includes(key));
+
+    const wasHeadLookEnabled = this.headLookEnabled;
+    if (wasHeadLookEnabled && this.headBone) {
+      this._useInitialHeadRotation = false;
+      this._headLerpToZero = true;
+      this._headLerpElapsed = 0;
+      this._pendingAnimation = {
+        newAction,
+        transitionDuration,
+        name,
+        isOnceClip,
+        resolvedAfterClip,
+        isTransitionToIdle
+      };
+      return;
+    }
+
     this.headLookEnabled = false;
     this._useInitialHeadRotation = false;
+    this._startNewAnimation(newAction, transitionDuration, name, isOnceClip, resolvedAfterClip, isTransitionToIdle);
+  }
 
+  _startNewAnimation(newAction, transitionDuration, name, isOnceClip, resolvedAfterClip, isTransitionToIdle) {
     if (this.animationAction) {
       this.animationAction.fadeOut(transitionDuration);
     }
     newAction.reset().fadeIn(transitionDuration).play();
     this.animationAction = newAction;
 
-    const resolvedAfterClip = afterClip
-      ? (this.animationClips.find((c) => c.name === afterClip || c.name.toLowerCase().includes(afterClip.toLowerCase())) || null)
-      : null;
-    const isTransitionToIdle = !resolvedAfterClip && transitionToIdleWhenFinished.some((key) => name.includes(key));
     if (isOnceClip && resolvedAfterClip) {
       const afterAction = this.mixer.clipAction(resolvedAfterClip);
       afterAction.setLoop(THREE.LoopRepeat);
@@ -497,33 +529,70 @@ export class ThreeViewer {
       this.headBone.quaternion.copy(this._headInitialQuat);
       this.headBone.getWorldQuaternion(this.smoothedHeadWorldQuat);
     }
-    if (this.headLookEnabled && this.headBone && this.smoothedMouseTarget) {
+    if (this.headLookEnabled && this.headBone && (this.smoothedMouseTarget || this._headLerpToZero)) {
       const head = this.headBone;
-      const helper = this._headLookHelper;
-      head.getWorldPosition(this._headWorldPos);
-      this._headLookAtPoint.set(
-        this.smoothedMouseTarget.x,
-        this._headWorldPos.y + (this.smoothedMouseTarget.y - this._headWorldPos.y+1.5) * this.headLookYFactor,
-        this.smoothedMouseTarget.z
-      );
-      helper.position.copy(this._headWorldPos);
-      helper.lookAt(this._headLookAtPoint);
-      helper.rotateY(Math.PI);
-      head.getWorldQuaternion(this._animHeadWorldQuat);
-      this._headLookDeltaQuat.copy(helper.quaternion).premultiply(
-        this._headLookTempQuat.copy(this._animHeadWorldQuat).invert()
-      );
-      this._headLookTargetWorldQuat.copy(this._animHeadWorldQuat).multiply(
-        this._headLookBlendQuat.identity().slerp(this._headLookDeltaQuat, this.headLookInfluence)
-      );
-      this.smoothedHeadWorldQuat.slerp(this._headLookTargetWorldQuat, this.headRotationLerpFactor);
-      if (head.parent) {
-        head.parent.getWorldQuaternion(this._parentWorldQuat);
-        head.quaternion.copy(this.smoothedHeadWorldQuat).premultiply(
-          this._headLookTempQuat.copy(this._parentWorldQuat).invert()
-        );
+      if (this._headLerpToZero) {
+        this._headLerpElapsed += delta;
+        if (head.parent) {
+          head.parent.getWorldQuaternion(this._parentWorldQuat);
+          this._headLookTargetWorldQuat.copy(this._parentWorldQuat);
+        } else {
+          this._headLookTargetWorldQuat.identity();
+        }
+        this.smoothedHeadWorldQuat.slerp(this._headLookTargetWorldQuat, this.headRotationLerpFactor);
+        if (head.parent) {
+          head.quaternion.copy(this.smoothedHeadWorldQuat).premultiply(
+            this._headLookTempQuat.copy(this._parentWorldQuat).invert()
+          );
+        } else {
+          head.quaternion.copy(this.smoothedHeadWorldQuat);
+        }
+        if (this._headLerpElapsed >= this._headLerpDuration) {
+          this._headLerpToZero = false;
+          this.headLookEnabled = false;
+          if (this._pendingAnimation) {
+            const p = this._pendingAnimation;
+            this._pendingAnimation = null;
+            this._pendingAnimationTimeoutId = setTimeout(() => {
+              this._pendingAnimationTimeoutId = null;
+              this._startNewAnimation(
+                p.newAction,
+                p.transitionDuration,
+                p.name,
+                p.isOnceClip,
+                p.resolvedAfterClip,
+                p.isTransitionToIdle
+              );
+            }, this._headLerpHoldMs);
+          }
+        }
       } else {
-        head.quaternion.copy(this.smoothedHeadWorldQuat);
+        const helper = this._headLookHelper;
+        head.getWorldPosition(this._headWorldPos);
+        this._headLookAtPoint.set(
+          this.smoothedMouseTarget.x,
+          this._headWorldPos.y + (this.smoothedMouseTarget.y - this._headWorldPos.y + 1.5) * this.headLookYFactor,
+          this.smoothedMouseTarget.z
+        );
+        helper.position.copy(this._headWorldPos);
+        helper.lookAt(this._headLookAtPoint);
+        helper.rotateY(Math.PI);
+        head.getWorldQuaternion(this._animHeadWorldQuat);
+        this._headLookDeltaQuat.copy(helper.quaternion).premultiply(
+          this._headLookTempQuat.copy(this._animHeadWorldQuat).invert()
+        );
+        this._headLookTargetWorldQuat.copy(this._animHeadWorldQuat).multiply(
+          this._headLookBlendQuat.identity().slerp(this._headLookDeltaQuat, this.headLookInfluence)
+        );
+        this.smoothedHeadWorldQuat.slerp(this._headLookTargetWorldQuat, this.headRotationLerpFactor);
+        if (head.parent) {
+          head.parent.getWorldQuaternion(this._parentWorldQuat);
+          head.quaternion.copy(this.smoothedHeadWorldQuat).premultiply(
+            this._headLookTempQuat.copy(this._parentWorldQuat).invert()
+          );
+        } else {
+          head.quaternion.copy(this.smoothedHeadWorldQuat);
+        }
       }
     }
 
@@ -535,6 +604,12 @@ export class ThreeViewer {
       clearTimeout(this._headLookEnableTimeoutId);
       this._headLookEnableTimeoutId = null;
     }
+    this._headLerpToZero = false;
+    if (this._pendingAnimationTimeoutId != null) {
+      clearTimeout(this._pendingAnimationTimeoutId);
+      this._pendingAnimationTimeoutId = null;
+    }
+    this._pendingAnimation = null;
     if (this.mixer) {
       this.mixer.stopAllAction();
       this.mixer = null;
