@@ -378,7 +378,7 @@ body.body-scroll-enabled {
   display: none;
 }
 
-@media (max-width: 960px) {
+@media (max-width: 960px), (max-height: 767px) {
   .resize-warning {
     display: flex;
   }
