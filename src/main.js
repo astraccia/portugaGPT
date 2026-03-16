@@ -128,6 +128,10 @@ function updateVoiceUI() {
   if (toggleSwitch) {
     toggleSwitch.classList.toggle('active', voiceModeEnabled);
   }
+  if (audioElement) {
+    audioElement.muted = !voiceModeEnabled;
+    audioElement.volume = voiceModeEnabled ? 1 : 0;
+  }
 }
 updateVoiceUI();
 
@@ -136,6 +140,13 @@ if (voiceToggle) {
     voiceModeEnabled = !voiceModeEnabled;
     localStorage.setItem('portugagpt_voice_mode', voiceModeEnabled);
     updateVoiceUI();
+    if (!voiceModeEnabled) {
+      muteVoiceAndHidePlayer();
+    } else if (audioElement && audioElement.src && audioElement.paused) {
+      duckWalkingVolumeForVoice();
+      voicePlayer?.classList.add('visible');
+      audioElement.play().then(() => voicePlayer?.classList.add('playing')).catch(() => {});
+    }
   });
 }
 
@@ -214,6 +225,12 @@ function stopAudioAndHidePlayer() {
     audioElement.removeAttribute('src');
     audioElement.load();
   }
+  voicePlayer?.classList.remove('playing', 'visible');
+  restoreWalkingVolumeAfterVoice();
+}
+
+function muteVoiceAndHidePlayer() {
+  if (audioElement) audioElement.pause();
   voicePlayer?.classList.remove('playing', 'visible');
   restoreWalkingVolumeAfterVoice();
 }
