@@ -438,7 +438,7 @@ const MENU_QUESTIONS = [
 
 
 const MENU_PREDEFINED_REPLIES = {
-  "Who's Portuga?": "A Brazilian creative with 20+ years of multicultural experience across Brazil, UK, Singapore, and US, grounded in ideas, art direction, innovation and business solutions, fueled by smiles and passion. I've led global brands, built cool client relationships, and grown teams that, EOD, became good friends.",
+  "Who's Portuga?": "A Brazilian creative leader with 20+ years of multicultural experience across Brazil, UK, Singapore, and US, grounded in ideas, art direction, innovation and business solutions, fueled by smiles and passion. I've led global brands, built cool client relationships, and grown teams that, EOD, became good friends.",
   "Proudest work?": "So many moments <amigo> — but the ones that stick are when an idea actually moved a brand and people, campaigns that got talked about, and teams that grew into friends. I'm most proud when courage meets a great brief and the client says yes.",
   "Any awards?": "Yes, a few — maybe 90 so far, including #Cannes, One Show, Webby, New York Festivals, and Lürzer's Archive. I've also been a judge for the Effies, Webbys, and a few others. Tbh, <amigo>, awards were never the goal, just a natural consequence of courage, focus on solving client problems, and creative criteria.",
   "Brands you touched?": "Roughly 130 brands, from Samsung, Stellantis, Mondelez, Citi, Abott, L'Oréal, Uniliver, Mars, Google, Asics, Sony, KPMG, Cartoon, Dow, Moët and McDonald's. But <amigo> the real joy is the human side, meeting clients, working closely, talking ideas, business, life, and occasionally a bit of nonsense.",
@@ -1238,6 +1238,7 @@ let audio = null;
 let isSoundOn = false;
 let savedVolumes = new Map();
 let turnSoundOn = null;
+const MUSIC_MUTED_KEY = 'portugagpt_music_muted';
 
 function startWalkingSound() {
   if (audio) audio.play().catch(() => {});
@@ -1249,27 +1250,29 @@ if (speakerButton) {
     audio.loop = true;
     audio.volume = 0.5;
     savedVolumes.set(audio, 0.5);
-    audio.volume = 0;
-    
-    speakerButton.classList.add('sound-off');
-    
+    const musicMuted = localStorage.getItem(MUSIC_MUTED_KEY) !== 'false';
+    if (musicMuted) {
+      audio.volume = 0;
+      speakerButton.classList.add('sound-off');
+    } else {
+      isSoundOn = true;
+      speakerButton.classList.remove('sound-off');
+      speakerButton.classList.add('sound-on');
+    }
+
     speakerButton.addEventListener('click', () => {
       if (isSoundOn) {
         updatePageVolume(0);
         speakerButton.classList.add('sound-off');
         speakerButton.classList.remove('sound-on');
         isSoundOn = false;
-        voiceModeEnabled = false;
-        localStorage.setItem('portugagpt_voice_mode', 'false');
-        updateVoiceUI();
+        localStorage.setItem(MUSIC_MUTED_KEY, 'true');
       } else {
         updatePageVolume(1.0);
         speakerButton.classList.remove('sound-off');
         speakerButton.classList.add('sound-on');
         isSoundOn = true;
-        voiceModeEnabled = true;
-        localStorage.setItem('portugagpt_voice_mode', 'true');
-        updateVoiceUI();
+        localStorage.setItem(MUSIC_MUTED_KEY, 'false');
       }
     });
 
@@ -1293,10 +1296,10 @@ if (speakerButton) {
           audio.volume = savedVolume;
         }
       }
-      
+      const voiceAudioEl = document.getElementById('audioElement');
       const allAudioElements = document.querySelectorAll('audio');
       allAudioElements.forEach((audioEl) => {
-        if (audioEl !== audio) {
+        if (audioEl !== audio && audioEl !== voiceAudioEl) {
           if (multiplier === 0) {
             if (!savedVolumes.has(audioEl)) {
               savedVolumes.set(audioEl, audioEl.volume);
