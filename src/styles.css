@@ -398,11 +398,18 @@ body.body-scroll-enabled {
   font-weight: 600;
   margin-bottom: 10px;
   font-family: 'Roboto', sans-serif;
-  cursor: pointer;
+  cursor: default;
   user-select: none;
 }
 
-.menu-heading:hover {
+.menu-heading span {
+  display: inline-block;
+  width: fit-content;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.menu-heading span:hover {
   color: #ff005a;
   text-decoration: underline;
   font-weight: bold;
@@ -428,16 +435,22 @@ body.body-scroll-enabled {
   color: #000000;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  cursor: pointer;
-  transition: color 0.2s;
+  cursor: default;
   padding: 0 0;
   font-family: 'Roboto', sans-serif;
   font-weight: 400;
 }
 
-.menu-item:hover,
-.menu-item:active,
-.menu-item.active {
+.menu-item span {
+  display: inline-block;
+  width: fit-content;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.menu-item span:hover,
+.menu-item span:active,
+.menu-item.active span {
   color: #ff005a;
   text-decoration: underline !important;
   font-weight: bold;
