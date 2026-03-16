@@ -30,7 +30,6 @@ function isCookiesPageActive() {
   return cookiesEl && !cookiesEl.classList.contains('is-dismissed') && !skipped;
 }
 
-/** True when we should run the intro (sound + startIntroSequence) once the loader has gone. */
 let introPendingWhenLoaderGone = false;
 
 function applyLoaderLoaded() {
@@ -802,6 +801,28 @@ async function loadWorksSections() {
   initWorksSwipe();
   goToWorksIndex(0, 0);
   loadProjectOverlayScript();
+
+  let resizeRafId = null;
+  window.addEventListener('resize', () => {
+    if (resizeRafId) cancelAnimationFrame(resizeRafId);
+    resizeRafId = requestAnimationFrame(() => {
+      resizeRafId = null;
+      // Re-snap works slides to the correct x position for the new viewport width
+      const container = document.getElementById('fullpage-works-section-list');
+      const viewport = document.getElementById('fullpage-works-section-viewport');
+      if (container && viewport) {
+        const x = -worksCurrentIndex * viewport.offsetWidth;
+        gsap.killTweensOf(container);
+        gsap.set(container, { x });
+        updateWorksParallax(container, viewport.offsetWidth);
+      }
+      // If currently in works fold, re-snap the scroll position to the fold boundary
+      if (!isInFirstFold()) {
+        const worksTop = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+        window.scrollTo(0, worksTop);
+      }
+    });
+  });
 }
 
 const PROJECT_OVERLAY_SCRIPT_URL = 'https://www.danielportuga.com/portugaGPT_new/projects/project-overlay.js';
