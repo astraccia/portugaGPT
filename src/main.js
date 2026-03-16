@@ -1346,8 +1346,11 @@ if (portugaHeading) {
 const bottomMenuNav = document.querySelector('.bottom-menu-nav');
 const BOTTOM_MENU_ZONE_FRACTION = 0.12;
 const BOTTOM_MENU_SCROLL_SPEED = 8;
+const BOTTOM_MENU_EASE_OUT_DECAY = 0.92;
+const BOTTOM_MENU_VELOCITY_MIN = 0.15;
 let mouseX = 0;
 let isMouseOverBottomMenu = false;
+let bottomMenuScrollVelocity = 0;
 
 if (bottomMenuNav) {
   bottomMenuNav.addEventListener('mouseenter', () => {
@@ -1367,16 +1370,20 @@ if (bottomMenuNav) {
       requestAnimationFrame(tickBottomMenuScroll);
       return;
     }
-    let delta = 0;
     if (isMouseOverBottomMenu) {
       const zoneWidth = window.innerWidth * BOTTOM_MENU_ZONE_FRACTION;
       if (mouseX < zoneWidth) {
-        delta = -BOTTOM_MENU_SCROLL_SPEED * (1 - mouseX / zoneWidth);
+        bottomMenuScrollVelocity = -BOTTOM_MENU_SCROLL_SPEED * (1 - mouseX / zoneWidth);
       } else if (mouseX > window.innerWidth - zoneWidth) {
-        delta = BOTTOM_MENU_SCROLL_SPEED * (1 - (window.innerWidth - mouseX) / zoneWidth);
+        bottomMenuScrollVelocity = BOTTOM_MENU_SCROLL_SPEED * (1 - (window.innerWidth - mouseX) / zoneWidth);
+      } else {
+        bottomMenuScrollVelocity = 0;
       }
+    } else {
+      bottomMenuScrollVelocity *= BOTTOM_MENU_EASE_OUT_DECAY;
+      if (Math.abs(bottomMenuScrollVelocity) < BOTTOM_MENU_VELOCITY_MIN) bottomMenuScrollVelocity = 0;
     }
-    const next = bottomMenuNav.scrollLeft + delta;
+    const next = bottomMenuNav.scrollLeft + bottomMenuScrollVelocity;
     bottomMenuNav.scrollLeft = Math.max(0, Math.min(next, maxScroll));
     requestAnimationFrame(tickBottomMenuScroll);
   }
