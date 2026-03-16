@@ -812,7 +812,9 @@ async function loadWorksSections() {
         const li = document.createElement('li');
         li.className = 'menu-item works-menu-item';
         const label = work.title || work.client || `Work ${index + 1}`;
-        li.textContent = work.client ? `${label} (${work.client})` : label;
+        const span = document.createElement('span');
+        span.textContent = work.client ? `${label} (${work.client})` : label;
+        li.appendChild(span);
         li.setAttribute('data-works-index', String(index));
         li.addEventListener('click', () => scrollWorksToIndex(index));
         menuList.appendChild(li);

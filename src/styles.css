@@ -1017,6 +1017,16 @@ body.body-scroll-enabled {
   color: #fff;
   transform: scale(1.1);
   transition: transform 0.25s ease;
+
+  p {
+    position: absolute;
+    text-align: center;
+    font-weight: bold;
+    bottom: 205px;
+    font-size: 25px;
+    line-height: 24px;
+    color: #ff0066;
+  }
 }
 
 .password-modal.is-open .password-modal-box {
@@ -1074,18 +1084,25 @@ body.body-scroll-enabled {
   padding: 12px 24px;
   font-size: 16px;
   font-weight: 600;
+  width: 55px;
+  height: 55px;
   font-family: inherit;
   color: #000;
   background: transparent;
   border: none;
   cursor: pointer;
   border-radius: 50%;
-  transition: 0.2s;
+  transition: 0.2s ease;
+  background-image: url('/images/password_submit_button.png');
+  background-size: cover;
+  background-position: center;
+  transform: translate(5px, 5px);
+  transform-origin: center;
 }
 
 .password-modal-submit:hover {
-  background: #ff00662b;
   color: #fff;
+  transform: scale(1.1) translate(5px, 5px);
 }
 
 .password-modal-error {
