@@ -208,9 +208,11 @@ function cancelCurrentQuestion(showThinkingState = true) {
 }
 
 function stopAudioAndHidePlayer() {
-  if (audioElement && !audioElement.paused) {
+  if (audioElement) {
     audioElement.pause();
     audioElement.currentTime = 0;
+    audioElement.removeAttribute('src');
+    audioElement.load();
   }
   voicePlayer?.classList.remove('playing', 'visible');
   restoreWalkingVolumeAfterVoice();
@@ -534,6 +536,8 @@ function triggerProudestWork() {
   if (now - lastProudestWorkTriggeredAt < PROUDEST_WORK_TRIGGER_COOLDOWN_MS) return;
   lastProudestWorkTriggeredAt = now;
 
+  cancelCurrentQuestion(false);
+
   const text = 'Proudest work?';
   setActiveMenuByText(text);
   trackQuickBtn(text);
@@ -592,6 +596,7 @@ bottomMenuItems.forEach((item) => {
     const animation = MENU_TO_ANIMATION[text];
     if (animation && threeViewer) threeViewer.playAnimation(animation);
     if (text === 'Proudest work?') {
+      cancelCurrentQuestion(false);
       scrollToEndSmoothly();
       goToWorksIndex(0, 0);
       return;
@@ -625,6 +630,7 @@ leftMenuItems.forEach((item) => {
     const animation = MENU_TO_ANIMATION[text];
     if (animation && threeViewer) threeViewer.playAnimation(animation);
     if (text === 'Proudest work?') {
+      cancelCurrentQuestion(false);
       scrollToEndSmoothly();
       goToWorksIndex(0, 0);
       return;
