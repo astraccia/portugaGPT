@@ -53,11 +53,11 @@ export class ThreeViewer {
     this._headInitialQuat = new THREE.Quaternion(0, 0, 0, 0);
     this._useInitialHeadRotation = false;
     this._storeHeadInitialNextFrame = false;
-    this._headLerpToZero = false;
-    this._headHoldZero = false;
-    this._headLerpDuration = 0.2;
-    this._headLerpElapsed = 0;
-    this._headLerpHoldMs = 200;
+    this._headInfluenceLerpToZero = false;
+    this._headInfluenceLerpDuration = 0.2;
+    this._headInfluenceLerpElapsed = 0;
+    this._headInfluenceLerpStart = 1;
+    this._headLerpHoldMs = 500;
     this._pendingAnimation = null;
     this._pendingAnimationTimeoutId = null;
     this._headReleaseNextFrame = false;
@@ -329,8 +329,7 @@ export class ThreeViewer {
   }
 
   disableHeadLookAndResetHead() {
-    this._headLerpToZero = false;
-    this._headHoldZero = false;
+    this._headInfluenceLerpToZero = false;
     this._headReleaseNextFrame = false;
     if (this._pendingAnimationTimeoutId != null) {
       clearTimeout(this._pendingAnimationTimeoutId);
@@ -383,10 +382,11 @@ export class ThreeViewer {
     const isTransitionToIdle = !resolvedAfterClip && transitionToIdleWhenFinished.some((key) => name.includes(key));
 
     const wasHeadLookEnabled = this.headLookEnabled;
-    if (wasHeadLookEnabled && this.headBone) {
+    if (wasHeadLookEnabled) {
       this._useInitialHeadRotation = false;
-      this._headLerpToZero = true;
-      this._headLerpElapsed = 0;
+      this._headInfluenceLerpStart = this.headLookInfluence;
+      this._headInfluenceLerpToZero = true;
+      this._headInfluenceLerpElapsed = 0;
       this._pendingAnimation = {
         newAction,
         transitionDuration,
@@ -533,58 +533,41 @@ export class ThreeViewer {
       this.headBone.quaternion.copy(this._headInitialQuat);
       this.headBone.getWorldQuaternion(this.smoothedHeadWorldQuat);
     }
-    if (this.headLookEnabled && this.headBone && (this.smoothedMouseTarget || this._headLerpToZero || this._headHoldZero || this._headReleaseNextFrame)) {
+    if (this.headLookEnabled && this.headBone && (this.smoothedMouseTarget || this._headInfluenceLerpToZero || this._headReleaseNextFrame)) {
       const head = this.headBone;
       if (this._headReleaseNextFrame) {
         head.getWorldQuaternion(this.smoothedHeadWorldQuat);
         this._headReleaseNextFrame = false;
         this.headLookEnabled = false;
-      } else if (this._headLerpToZero || this._headHoldZero) {
-        if (this._headLerpToZero) {
-          this._headLerpElapsed += delta;
-        }
-        if (head.parent) {
-          head.parent.getWorldQuaternion(this._parentWorldQuat);
-          this._headLookTargetWorldQuat.copy(this._parentWorldQuat);
-        } else {
-          this._headLookTargetWorldQuat.identity();
-        }
-        if (this._headLerpToZero && this._headLerpElapsed >= this._headLerpDuration) {
-          this.smoothedHeadWorldQuat.copy(this._headLookTargetWorldQuat);
-          this._headLerpToZero = false;
-          this._headHoldZero = true;
-          if (this._pendingAnimation) {
-            const p = this._pendingAnimation;
-            this._pendingAnimation = null;
-            this._pendingAnimationTimeoutId = setTimeout(() => {
-              this._pendingAnimationTimeoutId = null;
-              this._headHoldZero = false;
-              this._headReleaseNextFrame = true;
-              this._startNewAnimation(
-                p.newAction,
-                p.transitionDuration,
-                p.name,
-                p.isOnceClip,
-                p.resolvedAfterClip,
-                p.isTransitionToIdle
-              );
-            }, this._headLerpHoldMs);
-          } else {
-            this._headHoldZero = false;
-            this.headLookEnabled = false;
-          }
-        } else {
-          this.smoothedHeadWorldQuat.slerp(this._headLookTargetWorldQuat, this.headRotationLerpFactor);
-        }
-        if (head.parent) {
-          head.quaternion.copy(this.smoothedHeadWorldQuat).premultiply(
-            this._headLookTempQuat.copy(this._parentWorldQuat).invert()
-          );
-        } else {
-          head.quaternion.copy(this.smoothedHeadWorldQuat);
-        }
-        head.updateMatrixWorld(true);
+        this.headLookInfluence = 1;
       } else {
+        if (this._headInfluenceLerpToZero) {
+          this._headInfluenceLerpElapsed += delta;
+          const t = Math.min(1, this._headInfluenceLerpElapsed / this._headInfluenceLerpDuration);
+          this.headLookInfluence = this._headInfluenceLerpStart * (1 - t);
+          if (t >= 1) {
+            this._headInfluenceLerpToZero = false;
+            if (this._pendingAnimation) {
+              const p = this._pendingAnimation;
+              this._pendingAnimation = null;
+              this._pendingAnimationTimeoutId = setTimeout(() => {
+                this._pendingAnimationTimeoutId = null;
+                this._headReleaseNextFrame = true;
+                this._startNewAnimation(
+                  p.newAction,
+                  p.transitionDuration,
+                  p.name,
+                  p.isOnceClip,
+                  p.resolvedAfterClip,
+                  p.isTransitionToIdle
+                );
+              }, this._headLerpHoldMs);
+            } else {
+              this.headLookEnabled = false;
+              this.headLookInfluence = 1;
+            }
+          }
+        }
         const helper = this._headLookHelper;
         head.getWorldPosition(this._headWorldPos);
         this._headLookAtPoint.set(
@@ -622,8 +605,7 @@ export class ThreeViewer {
       clearTimeout(this._headLookEnableTimeoutId);
       this._headLookEnableTimeoutId = null;
     }
-    this._headLerpToZero = false;
-    this._headHoldZero = false;
+    this._headInfluenceLerpToZero = false;
     this._headReleaseNextFrame = false;
     if (this._pendingAnimationTimeoutId != null) {
       clearTimeout(this._pendingAnimationTimeoutId);
