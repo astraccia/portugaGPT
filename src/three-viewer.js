@@ -54,11 +54,13 @@ export class ThreeViewer {
     this._useInitialHeadRotation = false;
     this._storeHeadInitialNextFrame = false;
     this._headLerpToZero = false;
+    this._headHoldZero = false;
     this._headLerpDuration = 0.2;
     this._headLerpElapsed = 0;
     this._headLerpHoldMs = 200;
     this._pendingAnimation = null;
     this._pendingAnimationTimeoutId = null;
+    this._headReleaseNextFrame = false;
     this.init();
   }
 
@@ -328,6 +330,8 @@ export class ThreeViewer {
 
   disableHeadLookAndResetHead() {
     this._headLerpToZero = false;
+    this._headHoldZero = false;
+    this._headReleaseNextFrame = false;
     if (this._pendingAnimationTimeoutId != null) {
       clearTimeout(this._pendingAnimationTimeoutId);
       this._pendingAnimationTimeoutId = null;
@@ -529,32 +533,33 @@ export class ThreeViewer {
       this.headBone.quaternion.copy(this._headInitialQuat);
       this.headBone.getWorldQuaternion(this.smoothedHeadWorldQuat);
     }
-    if (this.headLookEnabled && this.headBone && (this.smoothedMouseTarget || this._headLerpToZero)) {
+    if (this.headLookEnabled && this.headBone && (this.smoothedMouseTarget || this._headLerpToZero || this._headHoldZero || this._headReleaseNextFrame)) {
       const head = this.headBone;
-      if (this._headLerpToZero) {
-        this._headLerpElapsed += delta;
+      if (this._headReleaseNextFrame) {
+        head.getWorldQuaternion(this.smoothedHeadWorldQuat);
+        this._headReleaseNextFrame = false;
+        this.headLookEnabled = false;
+      } else if (this._headLerpToZero || this._headHoldZero) {
+        if (this._headLerpToZero) {
+          this._headLerpElapsed += delta;
+        }
         if (head.parent) {
           head.parent.getWorldQuaternion(this._parentWorldQuat);
           this._headLookTargetWorldQuat.copy(this._parentWorldQuat);
         } else {
           this._headLookTargetWorldQuat.identity();
         }
-        this.smoothedHeadWorldQuat.slerp(this._headLookTargetWorldQuat, this.headRotationLerpFactor);
-        if (head.parent) {
-          head.quaternion.copy(this.smoothedHeadWorldQuat).premultiply(
-            this._headLookTempQuat.copy(this._parentWorldQuat).invert()
-          );
-        } else {
-          head.quaternion.copy(this.smoothedHeadWorldQuat);
-        }
-        if (this._headLerpElapsed >= this._headLerpDuration) {
+        if (this._headLerpToZero && this._headLerpElapsed >= this._headLerpDuration) {
+          this.smoothedHeadWorldQuat.copy(this._headLookTargetWorldQuat);
           this._headLerpToZero = false;
-          this.headLookEnabled = false;
+          this._headHoldZero = true;
           if (this._pendingAnimation) {
             const p = this._pendingAnimation;
             this._pendingAnimation = null;
             this._pendingAnimationTimeoutId = setTimeout(() => {
               this._pendingAnimationTimeoutId = null;
+              this._headHoldZero = false;
+              this._headReleaseNextFrame = true;
               this._startNewAnimation(
                 p.newAction,
                 p.transitionDuration,
@@ -564,8 +569,21 @@ export class ThreeViewer {
                 p.isTransitionToIdle
               );
             }, this._headLerpHoldMs);
+          } else {
+            this._headHoldZero = false;
+            this.headLookEnabled = false;
           }
+        } else {
+          this.smoothedHeadWorldQuat.slerp(this._headLookTargetWorldQuat, this.headRotationLerpFactor);
         }
+        if (head.parent) {
+          head.quaternion.copy(this.smoothedHeadWorldQuat).premultiply(
+            this._headLookTempQuat.copy(this._parentWorldQuat).invert()
+          );
+        } else {
+          head.quaternion.copy(this.smoothedHeadWorldQuat);
+        }
+        head.updateMatrixWorld(true);
       } else {
         const helper = this._headLookHelper;
         head.getWorldPosition(this._headWorldPos);
@@ -605,6 +623,8 @@ export class ThreeViewer {
       this._headLookEnableTimeoutId = null;
     }
     this._headLerpToZero = false;
+    this._headHoldZero = false;
+    this._headReleaseNextFrame = false;
     if (this._pendingAnimationTimeoutId != null) {
       clearTimeout(this._pendingAnimationTimeoutId);
       this._pendingAnimationTimeoutId = null;
