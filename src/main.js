@@ -671,6 +671,7 @@ const spiderLink = document.querySelector('.spider-link');
 if (spiderLink) {
   spiderLink.addEventListener('click', () => {
     if (threeViewer && typeof threeViewer.playAnimation === 'function') {
+      if (threeViewer.isAnimationPlaying && threeViewer.isAnimationPlaying('spider')) return;
       threeViewer.playAnimation('spider');
     }
   });

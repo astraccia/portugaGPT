@@ -61,7 +61,14 @@ export class ThreeViewer {
     this._pendingAnimation = null;
     this._pendingAnimationTimeoutId = null;
     this._headReleaseNextFrame = false;
+    this._currentClipName = null;
     this.init();
+  }
+
+  isAnimationPlaying(clipName) {
+    if (!clipName || !this._currentClipName) return false;
+    const key = clipName.toLowerCase();
+    return this._currentClipName.toLowerCase().includes(key);
   }
 
   init() {
@@ -409,6 +416,7 @@ export class ThreeViewer {
     }
     newAction.reset().fadeIn(transitionDuration).play();
     this.animationAction = newAction;
+    this._currentClipName = name;
 
     if (isOnceClip && resolvedAfterClip) {
       const afterAction = this.mixer.clipAction(resolvedAfterClip);
@@ -419,6 +427,7 @@ export class ThreeViewer {
         newAction.fadeOut(transitionDuration);
         afterAction.reset().fadeIn(transitionDuration).play();
         this.animationAction = afterAction;
+        this._currentClipName = resolvedAfterClip?.name ?? null;
         this.headLookEnabled = true;
         this._useInitialHeadRotation = false;
         if (this.headBone) this.headBone.getWorldQuaternion(this.smoothedHeadWorldQuat);
@@ -434,6 +443,7 @@ export class ThreeViewer {
         newAction.fadeOut(transitionDuration);
         idleAction.reset().fadeIn(transitionDuration).play();
         this.animationAction = idleAction;
+        this._currentClipName = this._idleClip?.name ?? null;
         this.headLookEnabled = true;
         this._useInitialHeadRotation = false;
         if (this.headBone) this.headBone.getWorldQuaternion(this.smoothedHeadWorldQuat);
@@ -448,6 +458,7 @@ export class ThreeViewer {
         newAction.fadeOut(transitionDuration);
         walkAction.reset().fadeIn(transitionDuration).play();
         this.animationAction = walkAction;
+        this._currentClipName = this._walkClip?.name ?? null;
         this.headLookEnabled = true;
         this._useInitialHeadRotation = false;
         if (this.headBone) this.headBone.getWorldQuaternion(this.smoothedHeadWorldQuat);
