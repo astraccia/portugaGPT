@@ -607,6 +607,7 @@ document.addEventListener('wheel', (e) => {
 const bottomMenuItems = document.querySelectorAll('.bottom-menu-item');
 bottomMenuItems.forEach((item) => {
   item.addEventListener('click', () => {
+    if (item.classList.contains('active')) return;
     const text = getMenuItemText(item);
     setActiveMenuByText(text);
     trackQuickBtn(text);
@@ -641,6 +642,7 @@ if (leftMenu && menuHeading) {
 const leftMenuItems = document.querySelectorAll('.menu-item');
 leftMenuItems.forEach((item) => {
   item.addEventListener('click', () => {
+    if (item.classList.contains('active')) return;
     const text = getMenuItemText(item);
     setActiveMenuByText(text);
     trackQuickBtn(text);
@@ -816,7 +818,10 @@ async function loadWorksSections() {
         span.textContent = work.client ? `${label} (${work.client})` : label;
         li.appendChild(span);
         li.setAttribute('data-works-index', String(index));
-        li.addEventListener('click', () => scrollWorksToIndex(index));
+        li.addEventListener('click', () => {
+          if (worksCurrentIndex === index) return;
+          scrollWorksToIndex(index);
+        });
         menuList.appendChild(li);
       });
     }
