@@ -911,6 +911,7 @@ function goToWorksIndex(index, gestureSpeed = 0) {
   if (count === 0) return;
   const clamped = Math.max(0, Math.min(index, count - 1));
   const willMove = clamped !== worksCurrentIndex;
+  const distance = Math.abs(clamped - worksCurrentIndex);
   worksCurrentIndex = clamped;
   const x = -clamped * viewport.offsetWidth;
   gsap.killTweensOf(container);
@@ -921,7 +922,7 @@ function goToWorksIndex(index, gestureSpeed = 0) {
   } else {
     const blurStart = gestureSpeed > 0
       ? Math.min(WORKS_BLUR_MAX_PX, (gestureSpeed / WORKS_SPEED_FOR_MAX_BLUR) * WORKS_BLUR_MAX_PX)
-      : WORKS_MENU_CLICK_BLUR_PX;
+      : Math.min(WORKS_BLUR_MAX_PX, WORKS_MENU_CLICK_BLUR_PX * Math.max(1, distance));
     if (blurPrimitive) blurPrimitive.setAttribute('stdDeviation', `${blurStart} 0`);
     const blurProxy = { blur: blurStart };
     gsap.to(blurProxy, {

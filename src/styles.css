@@ -1070,6 +1070,8 @@ body.body-scroll-enabled {
   outline: none;
   width: 210px;
   border: none;
+  margin-top: 10px;
+  text-align: center;
 }
 
 .password-modal-input::placeholder {
@@ -1106,15 +1108,14 @@ body.body-scroll-enabled {
 }
 
 .password-modal-error {
-  margin-top: 12px;
-  font-size: 14px;
-  color: #fff;
+  font-size: 20px !important;
+  color: #fff !important;
   min-height: 20px;
-  background-color: #ff0066;
   margin-bottom: 116px;
-  margin-left: -40px;
   position: absolute;
   bottom: 0;
+  bottom: -100px !important;
+  text-transform: uppercase;
 }
 
 /* Cookies modal – full screen, top white, bottom repeating cookies */
