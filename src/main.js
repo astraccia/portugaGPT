@@ -386,7 +386,7 @@ async function sendQuestionToChat(question, source = 'typed') {
   cancelCurrentQuestion(false);
   currentAbortController = new AbortController();
   const signal = currentAbortController.signal;
-  if (userInput && userInput === document.activeElement) userInput.value = '';
+  if (userInput) userInput.value = '';
   if (sendButton) sendButton.disabled = true;
   const thinkingShownAt = Date.now();
   const name = (nameInputEl && nameInputEl.value && nameInputEl.value.trim()) || '';
